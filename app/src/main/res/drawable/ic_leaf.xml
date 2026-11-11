@@ -1,0 +1,19 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <!-- Feuille pleine en dégradé de verts (gris sombres sur encre électronique), nervures évidées. -->
+    <path android:strokeColor="#0B4D2C" android:strokeWidth="6" android:strokeLineCap="round" android:pathData="M27,83 L13,97" />
+    <path android:pathData="M88,19 C60,11 27,26 21,62 C20,70 21,78 25,85 C31,88 40,89 47,88 C83,83 97,48 88,19 Z">
+        <!-- Dégradé vert, du pétiole (profond) à la pointe (tendre). -->
+        <aapt:attr name="android:fillColor">
+            <gradient android:type="linear" android:startX="22" android:startY="88" android:endX="90" android:endY="18">
+                <item android:offset="0" android:color="#0B4D2C" />
+                <item android:offset="0.55" android:color="#1F9D55" />
+                <item android:offset="1" android:color="#63C132" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path android:strokeColor="#FFFFFF" android:strokeWidth="4.6" android:strokeLineCap="round" android:pathData="M27,83 C42,64 60,44 79,28" />
+    <path android:strokeColor="#FFFFFF" android:strokeWidth="3.6" android:strokeLineCap="round" android:pathData="M43,63 L39,44 M56,49 L54,31 M46,60 L66,66 M59,46 L79,49" />
+</vector>
