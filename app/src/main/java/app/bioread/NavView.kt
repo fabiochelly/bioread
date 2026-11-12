@@ -1,6 +1,5 @@
 package app.bioread
 
-import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.text.TextUtils
@@ -11,7 +10,6 @@ import android.widget.BaseAdapter
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.ListView
-import android.widget.SeekBar
 import android.widget.TextView
 
 /**
@@ -23,7 +21,7 @@ class NavView(private val host: MainActivity, private val reader: ReaderView) : 
     private val panel = LinearLayout(host)
     private var chapter: TextView? = null
     private var where: TextView? = null
-    private var seek: SeekBar? = null
+    private var seek: PageSlider? = null
     private var dragging = false
 
     init {
@@ -76,26 +74,14 @@ class NavView(private val host: MainActivity, private val reader: ReaderView) : 
         where = label("", true, 14f).apply { setPadding(dp(20), dp(12), dp(20), 0) }
         panel.addView(where)
 
-        val sb = SeekBar(host)
-        sb.progressTintList = ColorStateList.valueOf(Theme.ui)
-        sb.thumbTintList = ColorStateList.valueOf(Theme.ui)
-        sb.progressBackgroundTintList = ColorStateList.valueOf(Theme.ui)
-        sb.setPadding(dp(26), dp(14), dp(26), dp(14))
-        sb.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(s: SeekBar, p: Int, fromUser: Boolean) {
-                // Pendant le glissement on n'affiche que la page visée : la page n'est composée qu'au relâchement.
-                if (fromUser) where?.text = positionText(p + 1)
-            }
-
-            override fun onStartTrackingTouch(s: SeekBar) {
-                dragging = true
-            }
-
-            override fun onStopTrackingTouch(s: SeekBar) {
-                dragging = false
-                reader.seekTo(s.progress + 1)
-            }
-        })
+        val sb = PageSlider(host)
+        // Pendant le glissement on n'affiche que la page visée : la page n'est composée qu'au relâchement.
+        sb.onChange = { p, fromUser -> if (fromUser) where?.text = positionText(p + 1) }
+        sb.onStart = { dragging = true }
+        sb.onStop = {
+            dragging = false
+            reader.seekTo(sb.progress + 1)
+        }
         seek = sb
         panel.addView(sb, LinearLayout.LayoutParams(-1, -2))
 

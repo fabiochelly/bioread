@@ -1,7 +1,6 @@
 package app.bioread
 
 import android.app.AlertDialog
-import android.content.res.ColorStateList
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.RectF
@@ -14,7 +13,6 @@ import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.ScrollView
-import android.widget.SeekBar
 import android.widget.TextView
 
 /**
@@ -385,29 +383,21 @@ class MenuView(private val host: MainActivity, private val reader: ReaderView, i
         } + if (v < 100) "  ·  ${Math.round(if (Theme.eink) Prefs.wipeMs else Prefs.slideMs)} ms" else ""
         paceLabel.text = paceText(Prefs.pace)
         val tc = Theme.tint(IconButton.TURN)
-        val pace = SeekBar(host)
+        val pace = PageSlider(host)
         // Un cran = 10 ms, du plus lent au plus vif ; le dernier cran coupe l'animation.
         val slow = if (Theme.eink) 400 else 300
         val fast = if (Theme.eink) 50 else 100
         val steps = (slow - fast) / 10
         pace.max = steps + 1
         pace.progress = if (Prefs.pace >= 100) steps + 1 else (slow - Math.round(if (Theme.eink) Prefs.wipeMs else Prefs.slideMs)) / 10
-        pace.progressTintList = ColorStateList.valueOf(tc)
-        pace.thumbTintList = ColorStateList.valueOf(tc)
-        pace.progressBackgroundTintList = ColorStateList.valueOf(Theme.ui)
-        pace.setPadding(dp(14), dp(10), dp(14), dp(10))
-        pace.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(sb: SeekBar, v: Int, fromUser: Boolean) {
-                if (!fromUser) return
-                Prefs.pace = if (v > steps) 100 else Math.round(v * 10f / (slow - fast) * 99f)
-                paceLabel.text = paceText(Prefs.pace)
-            }
-
-            override fun onStartTrackingTouch(sb: SeekBar) {}
-
-            override fun onStopTrackingTouch(sb: SeekBar) = Prefs.save()
-        })
-        panel.addView(pace, LinearLayout.LayoutParams(-1, -2).apply { leftMargin = -dp(8); rightMargin = -dp(8) })
+        pace.tint = tc
+        pace.pad = 12 * d
+        pace.onChange = { v, _ ->
+            Prefs.pace = if (v > steps) 100 else Math.round(v * 10f / (slow - fast) * 99f)
+            paceLabel.text = paceText(Prefs.pace)
+        }
+        pace.onStop = { Prefs.save() }
+        panel.addView(pace, LinearLayout.LayoutParams(-1, -2))
 
         // --- Chaleur du soir (smartphone) : l'écran jaunit à l'approche du coucher du soleil.
         if (!Theme.eink) {
@@ -417,30 +407,22 @@ class MenuView(private val host: MainActivity, private val reader: ReaderView, i
             section(IconButton.MOON, "Chaleur du soir", amount)
             val status = label(Warm.status(), false, 12f)
             val c = Theme.tint(IconButton.MOON)
-            val bar = SeekBar(host)
+            val bar = PageSlider(host)
             bar.max = 100
             bar.progress = Prefs.warm
-            bar.progressTintList = ColorStateList.valueOf(c)
-            bar.thumbTintList = ColorStateList.valueOf(c)
-            bar.progressBackgroundTintList = ColorStateList.valueOf(Theme.ui)
-            bar.setPadding(dp(14), dp(10), dp(14), dp(10))
-            bar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-                override fun onProgressChanged(sb: SeekBar, v: Int, fromUser: Boolean) {
-                    if (!fromUser) return
-                    Prefs.warm = v
-                    amount.text = "$v %"
-                    Warm.preview()   // aperçu à pleine force pendant le réglage, même en plein jour
-                    host.root.invalidate()
-                }
-
-                override fun onStartTrackingTouch(sb: SeekBar) {}
-
-                override fun onStopTrackingTouch(sb: SeekBar) {
-                    Prefs.save()
-                    status.text = Warm.status()
-                }
-            })
-            panel.addView(bar, LinearLayout.LayoutParams(-1, -2).apply { leftMargin = -dp(8); rightMargin = -dp(8) })
+            bar.tint = c
+            bar.pad = 12 * d
+            bar.onChange = { v, _ ->
+                Prefs.warm = v
+                amount.text = "$v %"
+                Warm.preview()   // aperçu à pleine force pendant le réglage, même en plein jour
+                host.root.invalidate()
+            }
+            bar.onStop = {
+                Prefs.save()
+                status.text = Warm.status()
+            }
+            panel.addView(bar, LinearLayout.LayoutParams(-1, -2))
             panel.addView(status)
         }
     }

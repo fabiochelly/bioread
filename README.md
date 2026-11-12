@@ -27,3 +27,27 @@ Bookerly-Regular.ttf  Bookerly-Italic.ttf  Bookerly-Bold.ttf  Bookerly-BoldItali
 
 Sans eux, l'app se compile et utilise la police serif du système. Les titres et l'interface
 utilisent Inter (licence OFL), fournie dans le dépôt.
+
+## Dictionnaire
+
+Un appui long sur un mot affiche sa définition (dictionnaire unilingue, hors-ligne) au-dessus de
+sa traduction ; un lien par zone déroule tous les sens et toutes les traductions par sens du
+dictionnaire. Les dictionnaires ne sont pas dans l'APK : ils se fabriquent à partir du
+Wiktionnaire (extractions [kaikki.org](https://kaikki.org), licence CC BY-SA 4.0), un fichier
+par langue :
+
+```
+python3 tools/make_dict.py --out dict-out en fr     # bioread-dict-en.bin, bioread-dict-fr.bin
+```
+
+Chaque fichier embarque les traductions vers les autres langues de l'app (`--targets fr,en` pour
+en garder moins).
+
+Déposez les fichiers `bioread-dict-*.bin` dans `Download/` de l'appareil : l'app les installe
+au lancement suivant (puis retire l'original). Le format est décrit en tête du script.
+
+## Bibliothèques tierces
+
+- `com.google.mlkit:translate` : traduction hors-ligne.
+- `org.lsposed.hiddenapibypass` (Apache 2.0) : utilisée uniquement sur les liseuses Onyx, pour
+  appeler le rafraîchissement complet de l'écran que leur firmware masque aux applications.

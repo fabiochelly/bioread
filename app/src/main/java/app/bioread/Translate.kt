@@ -56,6 +56,19 @@ object Translator {
         fonts = f
     }
 
+    private fun closeClients() {
+        for (c in clients.values) try { c.close() } catch (e: Exception) {}
+        clients.clear()
+        models.clear()
+    }
+
+    /** Délestage : traduction coupée, le moteur hors-ligne et les traductions gardées sont rendus. */
+    fun trim() {
+        if (Prefs.translate) return
+        closeClients()
+        cache.evictAll()
+    }
+
     fun label(code: String) = LABELS[maxOf(0, LANGS.indexOf(code))]
 
     /**
@@ -294,6 +307,8 @@ object Translator {
             try { MlKit.initialize(app) } catch (e: Exception) {}
         }
         val key = "$s>$t"
+        // Un seul moteur chargé à la fois : chaque paire de langues garde son modèle en mémoire native.
+        if (!clients.containsKey(key)) closeClients()
         val client = clients.getOrPut(key) {
             Translation.getClient(TranslatorOptions.Builder().setSourceLanguage(s).setTargetLanguage(t).build())
         }

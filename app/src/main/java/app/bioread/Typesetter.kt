@@ -115,7 +115,16 @@ class Typesetter(
     val translateZone = (mx + iconSize + 20 * density).toInt()
 
     /** Largeur, depuis le bord gauche, de la zone tactile de la loupe (recherche). */
-    val searchZone = maxOf(mx + iconSize + 12 * density, 48 * density).toInt()
+    val searchZone = if (Theme.eink) (mx + iconSize + 13 * density).toInt() else maxOf(mx + iconSize + 12 * density, 48 * density).toInt()
+
+    // Liseuse : icône de rafraîchissement de l'écran, à droite de la loupe.
+    // Large espace de part et d'autre : toute la bande entre la loupe et le pourcentage la déclenche.
+    private val refreshX = mx + iconSize * 1.5f + 26 * density
+    private val footTextX = if (Theme.eink) refreshX + iconSize / 2f + 24 * density else mx + iconSize + 8 * density
+
+    /** Bord droit de la zone tactile du rafraîchissement (0 hors liseuse : pas d'icône). */
+    val refreshZone = if (Theme.eink) (footTextX - 2 * density).toInt() else 0
+    private val arrow = android.graphics.Path()
     private val imgPaint = Paint(Paint.FILTER_BITMAP_FLAG)
     private val styled = Styled()   // blocs du mode « Fidèle au livre »
 
@@ -176,9 +185,13 @@ class Typesetter(
     /**
      * [parallel] : répartit la composition des paragraphes sur les cœurs disponibles (chapitre
      * attendu par le lecteur). [done] : paragraphes déjà composés par [quickPage], réutilisés.
+     * [stop] : consulté à chaque paragraphe ; dès qu'il rend vrai (réglage changé entre-temps,
+     * livre fermé), le travail est abandonné par une [java.util.concurrent.CancellationException].
      */
-    fun layoutChapter(index: Int, c: Chapter, epub: Epub, parallel: Boolean = false, done: Array<StaticLayout?>? = null) =
-        LaidChapter(index, c, paginate(c.blocks, 1f, epub, false, parallel, done))
+    fun layoutChapter(
+        index: Int, c: Chapter, epub: Epub, parallel: Boolean = false, done: Array<StaticLayout?>? = null,
+        stop: (() -> Boolean)? = null,
+    ) = LaidChapter(index, c, paginate(c.blocks, 1f, epub, false, parallel, done, stop = stop))
 
     /**
      * La seule page qui commence à la position [offset] du chapitre, sans composer ce qui la
@@ -216,13 +229,15 @@ class Typesetter(
      * est de loin l'étape la plus coûteuse et chaque paragraphe est indépendant : les fils se
      * partagent les blocs un par un, le fil appelant participe.
      */
-    private fun layoutAll(blocks: List<Block>, scale: Float, tr: Boolean, done: Array<StaticLayout?>?): Array<StaticLayout?> {
+    private fun layoutAll(
+        blocks: List<Block>, scale: Float, tr: Boolean, done: Array<StaticLayout?>?, stop: (() -> Boolean)?,
+    ): Array<StaticLayout?> {
         val out = done ?: arrayOfNulls<StaticLayout>(blocks.size)
         val next = java.util.concurrent.atomic.AtomicInteger(0)
         val work = Runnable {
             while (true) {
                 val i = next.getAndIncrement()
-                if (i >= blocks.size) break
+                if (i >= blocks.size || (stop != null && stop())) break
                 val b = blocks[i]
                 if (b.kind != Block.IMG && !b.hidden && out[i] == null) out[i] = layout(b, scale, tr)
             }
@@ -231,6 +246,7 @@ class Typesetter(
         for (k in 0 until WORKERS) helpers.add(POOL.submit(work))
         work.run()
         for (h in helpers) h.get()
+        if (stop != null && stop()) throw java.util.concurrent.CancellationException()
         return out
     }
 
@@ -253,8 +269,9 @@ class Typesetter(
     private fun paginate(
         blocks: List<Block>, scale: Float, epub: Epub?, tr: Boolean, parallel: Boolean,
         done: Array<StaticLayout?>? = null, fromBlock: Int = 0, fromLine: Int = 0, maxPages: Int = Int.MAX_VALUE,
+        stop: (() -> Boolean)? = null,
     ): ArrayList<Page> {
-        val ready = if (parallel && WORKERS > 0 && blocks.size >= 24) layoutAll(blocks, scale, tr, done) else done
+        val ready = if (parallel && WORKERS > 0 && blocks.size >= 24) layoutAll(blocks, scale, tr, done, stop) else done
         val pages = ArrayList<Page>()
         var cur = Page()
         val bodyLH = lineHeight(bodyPaint(scale, tr))
@@ -271,6 +288,7 @@ class Typesetter(
 
         for (index in fromBlock until blocks.size) {
             if (pages.size >= maxPages) break
+            if (stop != null && stop()) throw java.util.concurrent.CancellationException()
             val b = blocks[index]
             if (b.hidden) continue   // note appelée depuis le texte : lue dans sa fenêtre
             if (b.kind == Block.IMG) {
@@ -352,7 +370,7 @@ class Typesetter(
     fun drawFooter(c: Canvas, left: String, center: String, right: String, translating: Boolean) {
         val y = h - bottom / 2f + footPaint.textSize / 3f
         footPaint.textAlign = Paint.Align.LEFT
-        c.drawText(left, mx + iconSize + 8 * density, y, footPaint)
+        c.drawText(left, footTextX, y, footPaint)
         footPaint.textAlign = Paint.Align.CENTER
         c.drawText(center, w / 2f, y, footPaint)
         footPaint.textAlign = Paint.Align.RIGHT
@@ -378,6 +396,21 @@ class Typesetter(
         val ly = cy - (r - lr) * 0.6f
         c.drawCircle(lx, ly, lr, iconPaint)
         c.drawLine(lx + lr * 0.71f, ly + lr * 0.71f, lx + lr * 0.71f + r * 0.62f, ly + lr * 0.71f + r * 0.62f, iconPaint)
+
+        // Rafraîchissement de l'écran (liseuse) : flèche circulaire, ouverte en haut à droite.
+        if (Theme.eink) {
+            val rr = r * 0.78f
+            oval.set(refreshX - rr, cy - rr, refreshX + rr, cy + rr)
+            c.drawArc(oval, -20f, 300f, false, iconPaint)
+            // Pointe au bout de l'arc (à -80°), dans le sens de rotation.
+            val ax = refreshX + rr * 0.174f
+            val ay = cy - rr * 0.985f
+            arrow.rewind()
+            arrow.moveTo(ax - rr * 0.10f, ay - rr * 0.62f)
+            arrow.lineTo(ax + rr * 0.48f, ay + rr * 0.06f)
+            arrow.lineTo(ax - rr * 0.34f, ay + rr * 0.52f)
+            c.drawPath(arrow, iconPaint)
+        }
     }
 
     fun draw(c: Canvas, p: Page, epub: Epub?) {

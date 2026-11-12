@@ -7,6 +7,17 @@ import android.content.SharedPreferences
 object Prefs {
     lateinit var sp: SharedPreferences
 
+    /**
+     * Positions de lecture (pos_, pk_) : réécrites à chaque page tournée, donc dans leur propre
+     * petit fichier. Un fichier de préférences est réécrit en entier à chaque modification :
+     * mêlées au reste, ces écritures grossiraient avec la bibliothèque.
+     */
+    lateinit var pos: SharedPreferences
+
+    /** Nombre de pages par chapitre et par livre (pages_) : gros, rarement écrit, lu à la demande. */
+    val pages: SharedPreferences by lazy { app.getSharedPreferences("bioread.pages", 0) }
+    private lateinit var app: Context
+
     var fontSize = 18       // sp
     var lineSpacing = 135   // %
     var margin = 28         // dp
@@ -40,7 +51,10 @@ object Prefs {
     var faithful = false    // « Fidèle au livre » : la mise en forme voulue par l'éditeur (CSS) est respectée
 
     fun init(c: Context) {
+        app = c.applicationContext
         sp = c.getSharedPreferences("bioread", 0)
+        pos = c.getSharedPreferences("bioread.pos", 0)
+        migrate()
         fontSize = sp.getInt("fontSize", fontSize)
         lineSpacing = sp.getInt("lineSpacing", lineSpacing)
         margin = sp.getInt("margin", margin)
@@ -61,6 +75,27 @@ object Prefs {
         sort = sp.getInt("sort", sort)
         warm = sp.getInt("warm100", if (sp.contains("warm")) sp.getInt("warm", 3) * 20 else warm)
         faithful = sp.getBoolean("faithful", faithful)
+    }
+
+    /** Une fois : sort du fichier des réglages ce que les versions précédentes y rangeaient par livre. */
+    private fun migrate() {
+        if (sp.getBoolean("split", false)) return
+        val main = sp.edit().putBoolean("split", true)
+        val p = pos.edit()
+        var pg: SharedPreferences.Editor? = null
+        for ((k, v) in sp.all) {
+            if (v !is String) continue
+            when {
+                k.startsWith("pos_") || k.startsWith("pk_") -> p.putString(k, v)
+                k.startsWith("pages_") -> (pg ?: pages.edit().also { pg = it }).putString(k, v)
+                else -> continue
+            }
+            main.remove(k)
+        }
+        // Les copies d'abord, sur le stockage, avant d'effacer les originaux.
+        p.commit()
+        pg?.commit()
+        main.apply()
     }
 
     fun save() {

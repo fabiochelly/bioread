@@ -115,9 +115,68 @@ object Epd {
         }
     }
 
+    private var unlocked: Boolean? = null
+
+    /**
+     * Rend lisibles par réflexion les classes d'écran du firmware Onyx, qu'Android masque aux
+     * apps (liste des interfaces non publiques). Ne concerne que ce processus, et que les
+     * liseuses Onyx ; rend false si ce n'est pas possible.
+     */
+    fun unlock(): Boolean {
+        unlocked?.let { return it }
+        val ok = helper != null && try {
+            org.lsposed.hiddenapibypass.HiddenApiBypass.addHiddenApiExemptions("Landroid/onyx/", "Landroid/view/View;")
+        } catch (e: Throwable) {
+            false
+        }
+        unlocked = ok
+        return ok
+    }
+
+    private var gcOnce: Method? = null
+    private var gcSearched = false
+
+    /**
+     * Rafraîchissement complet ponctuel, celui du firmware (un bref flash) : la commande
+     * « applyGCOnce » d'Onyx demande que la prochaine image soit affichée en mode complet, sans
+     * rien changer au mode de l'app. Rend false si la commande n'existe pas sur cet appareil.
+     */
+    fun fullRefresh(v: View): Boolean {
+        if (!gcSearched) {
+            gcSearched = true
+            if (unlock()) try {
+                gcOnce = Class.forName("android.onyx.ViewUpdateHelper").getDeclaredMethod("applyGCOnce").also { it.isAccessible = true }
+            } catch (e: Throwable) {
+                note("rafraîchissement : applyGCOnce introuvable ($e)")
+            }
+        }
+        val m = gcOnce ?: return false
+        return try {
+            m.invoke(null)
+            v.invalidate()
+            if (Perf.on) Perf.log("écran : applyGCOnce appelé")
+            true
+        } catch (e: Throwable) {
+            note("rafraîchissement : applyGCOnce refusé (${e.cause ?: e})")
+            gcOnce = null
+            false
+        }
+    }
+
     /** Tout ce qu'on peut lire sans rien modifier : constantes, modes en vigueur, réglages du firmware. */
     fun report(c: Context, v: View): String {
         val sb = StringBuilder("\n== Écran Onyx : état et constantes ==\n")
+        sb.append("classes masquées rendues lisibles : ${unlock()}\n")
+        // Méthodes d'écran ajoutées à View par le firmware, masquées comprises.
+        try {
+            sb.append("méthodes de View (refresh / update / eink / onyx) :\n")
+            for (m in View::class.java.declaredMethods) {
+                val n = m.name.lowercase()
+                if ((n.contains("refresh") && !n.contains("drawable")) || n.contains("updatemode") || n.contains("eink") || n.contains("onyx") || n.contains("waveform")) sb.append("  ${m.toGenericString()}\n")
+            }
+        } catch (e: Throwable) {
+            sb.append("  illisibles : $e\n")
+        }
         sb.append("mode de la fenêtre : ").append(try { getMode?.invoke(v) } catch (e: Throwable) { "erreur $e" }).append('\n')
         sb.append("mode de l'app (EInkHelper) : ${current()}\n")
         sb.append("journal des demandes de mode (séances précédentes comprises) :\n")
@@ -133,7 +192,7 @@ object Epd {
             for (f in all) try {
                 if (!Modifier.isStatic(f.modifiers) || f.type != Int::class.javaPrimitiveType || !seen.add(f.name)) continue
                 val n = f.name.uppercase()
-                if (n.contains("ONYX") || n.contains("_GC") || n.contains("_DU") || n.contains("A2") || n.contains("UI_") ||
+                if (n.contains("ONYX") || n.contains("EINK") || n.contains("WAVEFORM") || n.contains("_GC") || n.contains("_DU") || n.contains("A2") || n.contains("UI_") ||
                     (n.contains("MODE") && !n.contains("SCROLL") && !n.contains("LAYOUT") && !n.contains("AUTOFILL"))
                 ) {
                     f.isAccessible = true

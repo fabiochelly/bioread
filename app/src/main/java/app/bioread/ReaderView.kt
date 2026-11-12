@@ -51,7 +51,14 @@ class ReaderView(private val host: MainActivity) : View(host) {
     // Chapitres déjà lus et analysés : un changement de réglage ne refait que la composition.
     private val parsed = HashMap<Int, Chapter>()
     private val loading = HashSet<Int>()
-    private var gen = 0
+    // Lu aussi par les fils de composition et de comptage : un travail d'une génération passée
+    // (réglage changé, livre fermé) s'arrête au paragraphe suivant au lieu d'aller au bout.
+    @Volatile private var gen = 0
+    // Chapitre que le fil de composition prépare pour l'affichage (-1 = aucun) : le comptage
+    // des pages l'attend au lieu de le composer une seconde fois en parallèle.
+    @Volatile private var busy = -1
+    // La vue a quitté sa fenêtre (activité détruite) : les travaux de fond n'ont plus à l'attendre.
+    @Volatile private var detached = false
     private var trGen = 0
     private var ci = 0
     private var pi = 0
@@ -82,6 +89,7 @@ class ReaderView(private val host: MainActivity) : View(host) {
             }
         }.start()
     }
+    private var turns = 0        // pages tournées depuis le lancement (diagnostic)
     private var lastDir = 1      // sens de la dernière page tournée
     private var firstShown = true
     var topInset = 0
@@ -93,7 +101,10 @@ class ReaderView(private val host: MainActivity) : View(host) {
     private val heldLc = arrayOfNulls<LaidChapter>(3)
     private val heldP = IntArray(3)
     private val jobs = arrayOfNulls<Job>(3)      // tracés en cours, par emplacement
-    private val free = ArrayList<Bitmap>(2)      // bitmaps réutilisables (plus affichés nulle part)
+    private val free = ArrayList<Bitmap>(1)      // bitmap réutilisable (plus affiché nulle part)
+    // Délestage : la page n'est pas à l'écran (accueil, app en arrière-plan). Seule l'image de la
+    // page courante est gardée ; rien n'est préparé d'avance ni mis de côté.
+    private var lean = false
     private val canvas = Canvas()                // réservé au fil [painter]
 
     private var animating = false
@@ -101,7 +112,7 @@ class ReaderView(private val host: MainActivity) : View(host) {
     private var animStart = 0L
     private val prepareR = Runnable { prepare() }
     private val prevR = Runnable {
-        if (ready && !animating && pendingPos == null) locate(-lastDir)?.let { request(1 - lastDir, it.lc, it.p) }
+        if (!lean && ready && !animating && pendingPos == null) locate(-lastDir)?.let { request(1 - lastDir, it.lc, it.p) }
     }
 
     // Nombre de pages par chapitre pour les réglages courants (0 = pas encore compté).
@@ -157,12 +168,18 @@ class ReaderView(private val host: MainActivity) : View(host) {
         // Position enregistrée avec ces mêmes réglages : c'est un début de page, que l'on peut
         // afficher sans attendre la composition de tout le chapitre.
         var quick = -1
-        val pk = Prefs.sp.getString("pk_${b.id}", null)?.split('|')
+        val pk = Prefs.pos.getString("pk_${b.id}", null)?.split('|')
         if (t != null && !Prefs.translate && pk != null && pk.size == 4 && pk[0] == tsKey &&
             pk[1] == b.spine.toString() && pk[2] == b.offset.toString()
         ) {
             quick = b.offset
             openPage = pk[3].toIntOrNull() ?: 0
+        } else if (t != null && !Prefs.translate && b.offset == 0) {
+            // Début de chapitre (livre jamais ouvert) : toujours un début de page, quels que
+            // soient les réglages. Dans un livre d'un seul très gros chapitre, la première page
+            // n'attend plus la composition de tout le texte.
+            quick = 0
+            openPage = 0
         }
         openT0 = System.nanoTime()
         exec.execute {
@@ -279,7 +296,7 @@ class ReaderView(private val host: MainActivity) : View(host) {
         val t = ts ?: return
         countsKey = "$tsKey,${b.size},n"
         val c = IntArray(n)
-        val saved = Prefs.sp.getString("pages_${b.id}", null)?.split('|')
+        val saved = Prefs.pages.getString("pages_${b.id}", null)?.split('|')
         if (saved != null && saved.size == 2 && saved[0] == countsKey) {
             val v = saved[1].split(',')
             if (v.size == n) for (i in 0 until n) c[i] = v[i].toIntOrNull() ?: 0
@@ -295,12 +312,16 @@ class ReaderView(private val host: MainActivity) : View(host) {
             try { Thread.sleep(1500) } catch (x: InterruptedException) {}
             val t0 = System.nanoTime()
             for (i in 0 until n) {
-                if (g != gen) return@Thread
+                // Le chapitre que le lecteur attend est déjà en cours de composition : son nombre
+                // de pages arrivera avec lui.
+                while (busy == i && g == gen && !detached) try { Thread.sleep(50) } catch (x: InterruptedException) {}
+                if (g != gen || detached) return@Thread
                 if (c[i] > 0) continue
                 val pages = try {
-                    t2.layoutChapter(i, parseChapter(e.read(e.spine[i]) ?: "", e.spine[i], fonts, e.styles()), e).pages.size
+                    val ch = parseChapter(e.read(e.spine[i]) ?: "", e.spine[i], fonts, e.styles())
+                    t2.layoutChapter(i, ch, e, stop = { g != gen || detached }).pages.size
                 } catch (x: Throwable) {
-                    if (g != gen) return@Thread
+                    if (g != gen || detached) return@Thread
                     1
                 }
                 post { if (g == gen && c[i] == 0) c[i] = pages }
@@ -308,7 +329,7 @@ class ReaderView(private val host: MainActivity) : View(host) {
             Perf.mark("count.all ($n chapitres)", t0)
             post {
                 if (g == gen) {
-                    Prefs.sp.edit().putString("pages_${b.id}", key + "|" + c.joinToString(",")).apply()
+                    Prefs.pages.edit().putString("pages_${b.id}", key + "|" + c.joinToString(",")).apply()
                     updateFooter()
                     if (!animating) present()
                 }
@@ -416,12 +437,14 @@ class ReaderView(private val host: MainActivity) : View(host) {
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
+        detached = false
         val f = IntentFilter(Intent.ACTION_TIME_TICK)
         if (Build.VERSION.SDK_INT >= 33) host.registerReceiver(tick, f, Context.RECEIVER_NOT_EXPORTED)
         else host.registerReceiver(tick, f)
     }
 
     override fun onDetachedFromWindow() {
+        detached = true
         host.unregisterReceiver(tick)
         super.onDetachedFromWindow()
     }
@@ -554,6 +577,9 @@ class ReaderView(private val host: MainActivity) : View(host) {
      * de page, cette page seule est d'abord composée, tracée et montrée.
      */
     private fun compose(e: Epub, t: Typesetter, i: Int, g: Int, pre: Chapter?, quick: Int) {
+        // Demande d'une génération passée (plusieurs crans d'un réglage enchaînés) : rien à faire.
+        if (g != gen) return
+        busy = i
         val lc = try {
             val ch = pre ?: run {
                 val html = Perf.time("chapter.read $i") { e.read(e.spine[i]) ?: "" }
@@ -576,9 +602,14 @@ class ReaderView(private val host: MainActivity) : View(host) {
                     try { shown.await(QUICK_WAIT, java.util.concurrent.TimeUnit.MILLISECONDS) } catch (x: InterruptedException) {}
                 }
             }
-            Perf.time("chapter.layout $i (${ch.blocks.size} blocs)") { t.layoutChapter(i, ch, e, true, done) }
+            Perf.time("chapter.layout $i (${ch.blocks.size} blocs)") { t.layoutChapter(i, ch, e, true, done) { g != gen } }
         } catch (x: Throwable) {
             LaidChapter(i, Chapter(ArrayList(), HashMap(), 0), arrayListOf(Page()))
+        }
+        if (g != gen) {
+            // Abandonné en route : personne n'attend ce résultat.
+            if (busy == i) busy = -1
+            return
         }
         post {
             if (g == gen) {
@@ -594,12 +625,44 @@ class ReaderView(private val host: MainActivity) : View(host) {
                     turn(d)
                 } else if (ready) prepare()
             }
+            if (busy == i) busy = -1
         }
+    }
+
+    /**
+     * La page n'est plus à l'écran : rend les images des pages voisines et celle gardée en
+     * réserve (les deux tiers de la mémoire d'images). [deep] : l'app est en arrière-plan, les
+     * chapitres voisins déjà composés sont rendus aussi. Tout revient seul avec [wake].
+     */
+    fun trim(deep: Boolean) {
+        if (!lean) {
+            lean = true
+            removeCallbacks(prepareR)
+            removeCallbacks(prevR)
+            if (animating) {
+                if (eink) wipe.finish() else { animating = false; invalidate() }
+            }
+            clearSlot(0)
+            clearSlot(2)
+            for (b in free) b.recycle()
+            free.clear()
+        }
+        if (deep && ready && pendingPos == null) {
+            chapters.keys.removeAll { it != ci }
+            parsed.keys.removeAll { it != ci }
+        }
+    }
+
+    /** La page revient à l'écran : les pages voisines sont de nouveau préparées. */
+    fun wake() {
+        if (!lean) return
+        lean = false
+        if (ready) post(prepareR)
     }
 
     /** Charge les chapitres voisins et pré-rend les pages adjacentes, hors animation. */
     private fun prepare() {
-        if (!ready || animating || pendingPos != null) return
+        if (lean || !ready || animating || pendingPos != null) return
         chapters.keys.removeAll { it < ci - 1 || it > ci + 1 }
         parsed.keys.removeAll { it < ci - 1 || it > ci + 1 }
         // D'abord dans le sens de la lecture.
@@ -614,7 +677,7 @@ class ReaderView(private val host: MainActivity) : View(host) {
 
     /** Lance le tracé de la page suivante dans le sens de la lecture. */
     private fun prerender() {
-        if (!ready || pendingPos != null) return
+        if (lean || !ready || pendingPos != null) return
         locate(lastDir)?.let { request(1 + lastDir, it.lc, it.p) }
     }
 
@@ -677,7 +740,11 @@ class ReaderView(private val host: MainActivity) : View(host) {
             post(prepareR)
         }
         savePosition()
-        if (Perf.on) Perf.log("turn $d : ${(System.nanoTime() - t0) / 1000} us" + if (waited) " (page tracée à la demande)" else "")
+        if (Perf.on) {
+            Perf.log("turn $d : ${(System.nanoTime() - t0) / 1000} us" + if (waited) " (page tracée à la demande)" else "")
+            // Suivi d'endurance : la mémoire toutes les 50 pages, une fois la page posée.
+            if (++turns % 50 == 0) postDelayed({ Perf.log("après $turns pages, ${Diag.memory()}") }, 1500)
+        }
     }
 
     // ---------------------------------------------------------------- tracé des pages
@@ -717,7 +784,8 @@ class ReaderView(private val host: MainActivity) : View(host) {
 
     /** Rend un bitmap qui n'a jamais été affiché. */
     private fun release(b: Bitmap) {
-        if (free.size < 2) free.add(b) else b.recycle()
+        // Une seule image en réserve : en régime établi, celle que la page quittée vient de rendre.
+        if (!lean && free.isEmpty() && !b.isRecycled) free.add(b) else b.recycle()
     }
 
     /**
@@ -839,7 +907,7 @@ class ReaderView(private val host: MainActivity) : View(host) {
         b.percent = percent(lc, pi)
         if (!saveDue) {
             saveDue = true
-            postDelayed(saveR, 400)
+            postDelayed(saveR, 1000)
         }
     }
 
@@ -849,9 +917,9 @@ class ReaderView(private val host: MainActivity) : View(host) {
         saveDue = false
         removeCallbacks(saveR)
         val b = book ?: return
-        Library.savePosition(b)
-        // Avec les réglages de composition : à la réouverture, la page s'affiche sans attendre le chapitre.
-        if (tsKey.isNotEmpty()) Prefs.sp.edit().putString("pk_${b.id}", "$tsKey|${b.spine}|${b.offset}|$pi").apply()
+        // Avec les réglages de composition : à la réouverture, la page s'affiche sans attendre le
+        // chapitre. Une seule écriture pour les deux.
+        Library.savePosition(b, if (tsKey.isNotEmpty()) "$tsKey|${b.spine}|${b.offset}|$pi" else null)
     }
 
     // ---------------------------------------------------------------- traduction
@@ -1110,6 +1178,9 @@ class ReaderView(private val host: MainActivity) : View(host) {
         return Shown(t, lc, p)
     }
 
+    /** Mode sélection sur le fond d'une feuille : voir [PageTouch.pickOrClose]. */
+    fun pickOrClose(v: View) = pageTouch.pickOrClose(v)
+
     /** Le geste en cours est pris ailleurs (appui long sur un mot) : ni balayage ni toucher à sa suite. */
     fun consumeTouch() {
         handled = true
@@ -1118,6 +1189,15 @@ class ReaderView(private val host: MainActivity) : View(host) {
     // ---------------------------------------------------------------- toucher
 
     override fun onTouchEvent(e: MotionEvent): Boolean {
+        // Choix d'un mot en cours (après un appui long) : le doigt désigne, son lever valide.
+        if (pageTouch.selecting) {
+            when (e.actionMasked) {
+                MotionEvent.ACTION_MOVE -> pageTouch.select(e.x, e.y)
+                MotionEvent.ACTION_UP -> pageTouch.finish()
+                MotionEvent.ACTION_CANCEL -> pageTouch.abort()
+            }
+            return true
+        }
         when (e.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
                 downX = e.x
@@ -1131,7 +1211,8 @@ class ReaderView(private val host: MainActivity) : View(host) {
                 if (t == null || e.y <= height - t.footerZone) {
                     val d = if (e.x > width * 0.75f) 1
                     else if (e.x < width * 0.20f && e.y < height / 3f) -1 else 0
-                    // Exception : sur un appel de note, le geste se décide au lever du doigt.
+                    // Exception : sur un appel de note, le geste se décide au lever du doigt. Les
+                    // mots de ces zones se choisissent en glissant depuis le centre (voir PageTouch).
                     if (d != 0 && !pageTouch.note(e.x, e.y)) {
                         handled = true
                         if (Perf.on) Perf.log("toucher → traitement : ${SystemClock.uptimeMillis() - e.eventTime} ms")
@@ -1162,7 +1243,7 @@ class ReaderView(private val host: MainActivity) : View(host) {
     /** Haut-gauche : page précédente. Centre et centre-haut : options. Pied de page : navigation. Ailleurs : page suivante. */
     private fun zone(x: Float, y: Float): Int {
         val t = ts
-        if (t != null && y > height - t.footerZone) return if (x > width - t.translateZone) TRANSLATE else if (x < t.searchZone) SEARCH else FOOTER
+        if (t != null && y > height - t.footerZone) return if (x > width - t.translateZone) TRANSLATE else if (x < t.searchZone) SEARCH else if (x < t.refreshZone) REFRESH else FOOTER
         val col = (x * 3 / width).toInt()
         val row = (y * 3 / height).toInt()
         return when {
@@ -1189,6 +1270,7 @@ class ReaderView(private val host: MainActivity) : View(host) {
             FOOTER -> host.showNav()
             TRANSLATE -> toggleTranslation()
             SEARCH -> host.showSearch()
+            REFRESH -> host.flashScreen()
             PREV -> turn(-1)
             MENU -> host.showOptions()
             else -> turn(1)
@@ -1207,6 +1289,7 @@ class ReaderView(private val host: MainActivity) : View(host) {
         private const val NEXT = 4
         private const val TRANSLATE = 5
         private const val SEARCH = 6
+        private const val REFRESH = 7
         private val EINK_DURATION = floatArrayOf(240f, 110f, 80f, 50f)
         private const val QUICK_WAIT = 400L
     }

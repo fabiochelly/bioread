@@ -15,7 +15,8 @@ android {
         versionCode = 1
         versionName = "0.1"
         // ML Kit embarque du code natif : on ne garde que les architectures utiles.
-        ndk { abiFilters += listOf("arm64-v8a", "armeabi-v7a") }
+        // 64 bits seulement : le moteur de traduction hors-ligne pèse 12 Mo de plus en 32 bits.
+        ndk { abiFilters += "arm64-v8a" }
     }
 
     // Clé de signature de l'app : keystore/keystore.properties (hors dépôt, à sauvegarder).
@@ -53,4 +54,6 @@ android {
 
 dependencies {
     implementation("com.google.mlkit:translate:17.0.3")
+    // Liseuses Onyx : leurs commandes d'écran (rafraîchissement complet) sont masquées aux apps.
+    implementation("org.lsposed.hiddenapibypass:hiddenapibypass:6.1")
 }

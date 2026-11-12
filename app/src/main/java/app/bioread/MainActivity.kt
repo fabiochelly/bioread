@@ -52,7 +52,15 @@ class MainActivity : Activity() {
     private var insetTop = 0
     var insetBottom = 0
         private set
-    private val coverCache = LruCache<String, Bitmap>(80)
+    // Vignettes de l'accueil, bornées en octets (et non en nombre) : 12 Mo sur liseuse, 24 sur smartphone.
+    private val coverMax = (if (Theme.eink) 12 else 24) * 1024 * 1024
+    private val coverCache = object : LruCache<String, Bitmap>(coverMax) {
+        override fun sizeOf(key: String, value: Bitmap) = value.allocationByteCount
+    }
+    // Sur liseuse (niveaux de gris), 16 bits par point suffisent : moitié moins de mémoire.
+    private val coverOpts = BitmapFactory.Options().apply {
+        if (Theme.eink) inPreferredConfig = Bitmap.Config.RGB_565
+    }
     private val coverExec = Executors.newSingleThreadExecutor()
 
     override fun onCreate(state: Bundle?) {
@@ -126,6 +134,7 @@ class MainActivity : Activity() {
         hideMenu()
         library?.let { root.removeView(it) }
         library = null
+        reader.wake()
         reader.visibility = View.VISIBLE
         immersive(true)
         // Le livre en cours reste chargé sous l'accueil : y revenir est instantané.
@@ -147,6 +156,7 @@ class MainActivity : Activity() {
         hideSearch()
         hideMark()
         reader.visibility = View.GONE
+        reader.trim(false)   // le livre reste chargé sous l'accueil, mais avec sa seule page courante
         immersive(false)
         renderLibrary()
         rescan()
@@ -171,6 +181,7 @@ class MainActivity : Activity() {
      * l'appareil est lu une fois, la clé enregistrée dans l'app, puis le fichier supprimé.
      */
     private fun importKey() {
+        Dict.install(this)   // dictionnaires déposés dans Download/ (bioread-dict-fr.bin…)
         try {
             if (!Library.hasAccess(this)) return
             @Suppress("DEPRECATION")
@@ -193,6 +204,36 @@ class MainActivity : Activity() {
         reader.flushPosition()
         Diag.flush()
         super.onPause()
+    }
+
+    /**
+     * Délestage. L'app n'est plus à l'écran (ou le système manque de mémoire) : tout ce qui se
+     * refait en quelques millisecondes est rendu — images des pages voisines, vignettes,
+     * recherche fermée, traducteur inutilisé. La page courante et la position restent en place.
+     */
+    override fun onTrimMemory(level: Int) {
+        super.onTrimMemory(level)
+        @Suppress("DEPRECATION")
+        val hidden = level >= TRIM_MEMORY_UI_HIDDEN
+        // Le système manque vraiment de mémoire (et non : l'app vient seulement de quitter l'écran).
+        @Suppress("DEPRECATION")
+        val low = level >= TRIM_MEMORY_BACKGROUND || level in TRIM_MEMORY_RUNNING_LOW until TRIM_MEMORY_UI_HIDDEN
+        if (hidden) {
+            reader.trim(true)
+            if (library == null) coverCache.evictAll() else coverCache.trimToSize(coverMax / 2)
+            Translator.trim()
+        }
+        if (low) {
+            coverCache.trimToSize(if (library == null) 0 else coverMax / 2)
+            // Résultats de recherche gardés pour une réouverture : rendus eux aussi.
+            search?.let { if (it.parent == null) { it.dispose(); search = null } }
+            Translator.trim()
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        if (library == null) reader.wake()
     }
 
     override fun onResume() {
@@ -283,6 +324,31 @@ class MainActivity : Activity() {
         s.hidden()
         root.removeView(s)
         if (library == null) immersive(true)   // le clavier a pu faire revenir les barres système
+    }
+
+    private var flash: View? = null
+
+    /**
+     * Rafraîchissement complet de l'écran à encre, à la demande : tout l'écran passe très
+     * brièvement au noir, puis la page revient. Chaque point bascule ainsi d'un extrême à
+     * l'autre, ce qui efface les traces laissées par les pages précédentes. Le mode d'écran de la liseuse
+     * n'est pas touché.
+     */
+    fun flashScreen() {
+        if (flash != null) return
+        // Liseuse Onyx : le vrai rafraîchissement complet du firmware, en une passe.
+        if (Epd.fullRefresh(root)) {
+            reader.wipe.invalidate()
+            for (i in 0 until reader.wipe.childCount) reader.wipe.getChildAt(i).invalidate()
+            return
+        }
+        val v = View(this)
+        v.setBackgroundColor(android.graphics.Color.BLACK)
+        v.isClickable = true
+        flash = v
+        root.addView(v, FrameLayout.LayoutParams(-1, -1))
+        // Un passage au noir aussi bref que l'écran le permet, puis la page directement.
+        v.postDelayed({ root.removeView(v); flash = null }, 110)
     }
 
     /** Trait sous le passage trouvé, sur la page du livre ; retiré au premier toucher. */
@@ -481,7 +547,7 @@ class MainActivity : Activity() {
         iv.setImageBitmap(cached)
         if (cached != null) return
         coverExec.execute {
-            val bmp = BitmapFactory.decodeFile(Library.coverFile(b).path) ?: return@execute
+            val bmp = BitmapFactory.decodeFile(Library.coverFile(b).path, coverOpts) ?: return@execute
             runOnUiThread {
                 coverCache.put(b.id, bmp)
                 if (iv.tag == b.id) iv.setImageBitmap(bmp)

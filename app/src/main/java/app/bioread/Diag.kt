@@ -52,12 +52,21 @@ object Diag {
         Thread { write() }.start()
     }
 
+    /** Mémoire du processus à cet instant : objets Java, mémoire native (images comprises), total réel. */
+    fun memory(): String {
+        val rt = Runtime.getRuntime()
+        val java = (rt.totalMemory() - rt.freeMemory()) shr 20
+        val native = android.os.Debug.getNativeHeapAllocatedSize() shr 20
+        return "mémoire : Java $java Mo, native $native Mo, totale ${android.os.Debug.getPss() shr 10} Mo"
+    }
+
     @Synchronized
     private fun write() {
         try {
             out?.writeText(
                 "Bioread — diagnostic du ${java.util.Date()}\n\n" + static +
-                    "\n== Mesures de la séance (ms depuis le lancement) ==\n" + Perf.dump()
+                    "\n== Mesures de la séance (ms depuis le lancement) ==\n" + Perf.dump() +
+                    "à l'écriture du rapport : " + memory() + "\n"
             )
             // Sans ce signalement, le fichier reste invisible par USB (MTP ne voit que l'index des médias).
             val f = out

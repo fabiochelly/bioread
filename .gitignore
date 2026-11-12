@@ -10,3 +10,5 @@ bookerly/
 app/src/main/assets/fonts/Bookerly-*.ttf
 # Copies de travail de la police Inter (seul InterVariable.ttf, dans les ressources, est utilisé).
 Inter/
+dict-out/
+__pycache__/

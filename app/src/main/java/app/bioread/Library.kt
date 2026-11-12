@@ -45,6 +45,8 @@ object Library {
     private val main = Handler(Looper.getMainLooper())
     private var scanning = false
     private var dirty = false
+    // Un livre vient d'être supprimé : l'index sur le stockage est à réécrire au prochain parcours.
+    @Volatile private var indexStale = false
     private val waiting = ArrayList<(Boolean) -> Unit>()
 
     private val SKIP = hashSetOf(
@@ -74,7 +76,11 @@ object Library {
         sort()
     }
 
-    private val collator = java.text.Collator.getInstance(java.util.Locale.FRENCH).apply { strength = java.text.Collator.PRIMARY }
+    // À la demande : le tri par dernière lecture (celui du lancement) ne s'en sert que pour
+    // départager deux livres ex æquo, et sa création coûte quelques millisecondes.
+    private val collator by lazy {
+        java.text.Collator.getInstance(java.util.Locale.FRENCH).apply { strength = java.text.Collator.PRIMARY }
+    }
 
     /** Nom de famille d'abord : « Jane Austen » se classe à A. */
     private fun authorKey(b: BookEntry): String {
@@ -106,14 +112,17 @@ object Library {
     fun isImported(b: BookEntry) = b.path.startsWith(own.path + "/")
 
     private fun loadPosition(b: BookEntry) {
-        val pos = Prefs.sp.getString("pos_${b.id}", null)?.split(',') ?: return
+        val pos = Prefs.pos.getString("pos_${b.id}", null)?.split(',') ?: return
         if (pos.size != 4) return
         b.spine = pos[0].toInt(); b.offset = pos[1].toInt(); b.percent = pos[2].toInt(); b.lastRead = pos[3].toLong()
     }
 
-    fun savePosition(b: BookEntry) {
+    /** [pageKey] : réglages de composition et page, pour la réouverture immédiate (voir ReaderView.open). */
+    fun savePosition(b: BookEntry, pageKey: String? = null) {
         b.lastRead = System.currentTimeMillis()
-        Prefs.sp.edit().putString("pos_${b.id}", "${b.spine},${b.offset},${b.percent},${b.lastRead}").apply()
+        val e = Prefs.pos.edit().putString("pos_${b.id}", "${b.spine},${b.offset},${b.percent},${b.lastRead}")
+        if (pageKey != null) e.putString("pk_${b.id}", pageKey)
+        e.apply()
     }
 
     /** Vrai si l'app peut parcourir le stockage partagé. */
@@ -135,7 +144,7 @@ object Library {
         val old = HashMap<String, BookEntry>()
         for (b in books) old[b.path] = b
         Thread {
-            val found = try { scanNow(app, old) } catch (e: Exception) { null }
+            val found = try { Perf.time("library.scan") { scanNow(app, old) } } catch (e: Exception) { null }
             main.post {
                 scanning = false
                 var changed = false
@@ -160,6 +169,8 @@ object Library {
     }
 
     private fun scanNow(c: Context, old: Map<String, BookEntry>): ArrayList<BookEntry> {
+        val stale = indexStale
+        indexStale = false
         val files = ArrayList<File>()
         // Les fichiers de l'appareil d'abord : en cas de doublon, c'est eux qu'on garde.
         if (hasAccess(c)) for (r in roots(c)) walk(r, 0, files)
@@ -174,6 +185,9 @@ object Library {
             // Un même livre présent à deux endroits n'apparaît qu'une fois.
             if (seen.add(e.id) && seen.add("${e.title}|${e.author}|${e.size}")) out.add(e)
         }
+        // Rien de nouveau, rien de disparu : l'index sur le stockage est déjà le bon. Ce parcours
+        // a lieu à chaque retour à l'accueil ; il ne doit pas réécrire un fichier à chaque fois.
+        if (!stale && indexFile.exists() && out.size == old.size && out.all { old[it.path] === it }) return out
         val arr = JSONArray()
         for (b in out) arr.put(
             JSONObject().put("id", b.id).put("path", b.path).put("title", b.title).put("author", b.author)
@@ -270,8 +284,10 @@ object Library {
 
     fun delete(b: BookEntry) {
         books.remove(b)
+        indexStale = true
         file(b).delete()
         coverFile(b).delete()
-        Prefs.sp.edit().remove("pos_${b.id}").apply()
+        Prefs.pos.edit().remove("pos_${b.id}").remove("pk_${b.id}").apply()
+        Prefs.pages.edit().remove("pages_${b.id}").apply()
     }
 }

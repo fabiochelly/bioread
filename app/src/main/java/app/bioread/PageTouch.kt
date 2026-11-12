@@ -3,6 +3,7 @@ package app.bioread
 import android.graphics.RectF
 import android.graphics.drawable.GradientDrawable
 import android.view.Gravity
+import android.view.View
 import android.view.ViewConfiguration
 import android.view.ViewGroup
 import android.widget.FrameLayout
@@ -225,13 +226,131 @@ class PageTouch(private val host: MainActivity, private val reader: ReaderView) 
         reader.removeCallbacks(longR)
     }
 
+    // ---------------------------------------------------------------- choix d'un mot
+
+    /**
+     * Choix d'un mot en cours : l'appui long l'a ouvert, le doigt est encore posé. Tant qu'il
+     * glisse, le mot sous le doigt est souligné et rappelé dans une étiquette au-dessus ; la
+     * feuille (définition, traduction) s'ouvre sur le mot choisi quand le doigt se lève. Les
+     * mots des bords, où un toucher tourne la page dès le contact, s'atteignent ainsi en posant
+     * le doigt plus au centre puis en glissant jusqu'à eux.
+     */
+    var selecting = false
+        private set
+    private var sel: WordHit? = null
+    private var selShown: Shown? = null
+    private var selLang = ""
+    private var bubble: TextView? = null
+    private var hinted = false   // bandeau déjà affiché pendant l'appui
+
     private fun longPress() {
         val s = reader.shownPage() ?: return     // page traduite ou en cours de chargement : rien
         if (py > reader.height - s.ts.footerZone) return
-        val lang = reader.book?.lang?.ifEmpty { "en" } ?: return
-        val w = try { s.ts.wordNear(s.page, px, py, lang, 10 * d) } catch (x: Exception) { null } ?: return
+        selLang = reader.book?.lang?.ifEmpty { "en" } ?: return
         reader.consumeTouch()
+        selecting = true
+        selShown = s
+        sel = null
+        hinted = false
+        select(px, py)
+        // Aucun mot sous le doigt : le bandeau du mode sélection s'affiche tout de suite, doigt
+        // encore posé, pour signaler que le mode est actif.
+        if (sel == null) {
+            hinted = true
+            host.showSheet(PickHint(host, reader))
+        }
+    }
+
+    /** Le doigt est en (x, y) : le mot qui s'y trouve devient le mot choisi. */
+    fun select(x: Float, y: Float) {
+        val s = selShown ?: return
+        val w = try { s.ts.wordNear(s.page, x, y, selLang, 14 * d) } catch (e: Exception) { null } ?: return
+        val old = sel
+        if (old != null && old.block === w.block && old.start == w.start && old.end == w.end) return
+        sel = w
+        val rects = s.ts.markRects(s.page, w.block.start + w.start, w.end - w.start)
+        if (rects.isEmpty()) return
+        host.showMark(MarkView(host, rects))
+        // Étiquette : le doigt cache le mot, elle le répète juste au-dessus (ou dessous, en haut de page).
+        val b = bubble ?: TextView(host).apply {
+            typeface = host.fonts.uiBold
+            textSize = 17f
+            setTextColor(Theme.bg)
+            setPadding((12 * d).toInt(), (6 * d).toInt(), (12 * d).toInt(), (7 * d).toInt())
+            background = GradientDrawable().apply { setColor(Theme.ui); cornerRadius = 8 * d }
+            maxLines = 1
+            bubble = this
+        }
+        b.text = w.block.text.subSequence(w.start, w.end).toString().replace("\u00AD", "")
+        b.measure(0, 0)
+        val r = rects[0]
+        val lp = FrameLayout.LayoutParams(-2, -2)
+        lp.leftMargin = ((r.left + r.right) / 2f - b.measuredWidth / 2f).toInt().coerceIn(0, maxOf(0, reader.width - b.measuredWidth))
+        val above = r.top - b.measuredHeight - 46 * d
+        lp.topMargin = (if (above >= reader.topInset) above else r.bottom + 46 * d).toInt()
+        if (b.parent == null) host.root.addView(b, lp) else b.layoutParams = lp
+    }
+
+    private fun endSelection() {
+        selecting = false
+        bubble?.let { host.root.removeView(it) }
+        bubble = null
+    }
+
+    /**
+     * Le doigt se lève : le mode sélection commence. La feuille s'ouvre sur le mot choisi, ou,
+     * si l'appui long n'était sur aucun mot, un bandeau invite à en toucher un.
+     */
+    fun finish() {
+        val w = sel
+        val s = selShown
+        endSelection()
+        sel = null
+        selShown = null
+        if (s == null || reader.shownPage()?.page !== s.page) return
+        if (w != null) open(s, w, selLang) else if (!hinted) host.showSheet(PickHint(host, reader))
+    }
+
+    private fun open(s: Shown, w: WordHit, lang: String) {
         host.showSheet(WordView(host, reader, s, w, lang))
+        // Carnet des mots consultés (voir WordLog) : le mot, son livre et sa phrase.
+        try {
+            val text = w.block.text.toString()
+            val span = Words.sentence(text, w.start, lang)
+            val clean = { t: String -> t.replace("\u00AD", "") }
+            val b = reader.book
+            WordLog.add(host, clean(text.substring(w.start, w.end)), lang, b?.title ?: "", b?.author ?: "", clean(text.substring(span[0], span[1])))
+        } catch (x: Exception) {
+        }
+    }
+
+    /**
+     * Mode sélection (une feuille de mot ou le bandeau est à l'écran) : un simple toucher en
+     * (x, y) choisit le mot qui s'y trouve, n'importe où sur la page — y compris dans les zones
+     * qui, en lecture, tournent la page dès le contact. Rend false s'il n'y a pas de mot là.
+     */
+    fun pick(x: Float, y: Float): Boolean {
+        val s = reader.shownPage() ?: return false
+        if (y > reader.height - s.ts.footerZone) return false
+        val lang = reader.book?.lang?.ifEmpty { "en" } ?: return false
+        val w = try { s.ts.wordNear(s.page, x, y, lang, 10 * d) } catch (e: Exception) { null } ?: return false
+        open(s, w, lang)
+        return true
+    }
+
+    /** Branche le mode sélection sur le fond [v] d'une feuille : toucher un mot le choisit, ailleurs referme. */
+    fun pickOrClose(v: View) {
+        v.setOnTouchListener { _, e ->
+            if (e.actionMasked == android.view.MotionEvent.ACTION_UP && !pick(e.x, e.y)) host.hideSheet()
+            true
+        }
+    }
+
+    /** Geste interrompu par le système. */
+    fun abort() {
+        endSelection()
+        sel = null
+        selShown = null
     }
 
     /** Toucher simple en (x, y) : vrai si un lien l'a pris. */
@@ -396,5 +515,25 @@ class PageTouch(private val host: MainActivity, private val reader: ReaderView) 
         const val LINK_SLOP = 6
         /** Pages tournées après un saut avant que la pastille de retour s'efface. */
         const val KEEP = 3
+    }
+}
+
+/**
+ * Bandeau du mode sélection, quand l'appui long n'a désigné aucun mot : toute la page attend
+ * qu'on touche un mot ; un toucher ailleurs (ou Retour) quitte le mode.
+ */
+class PickHint(host: MainActivity, reader: ReaderView) : FrameLayout(host) {
+    init {
+        val d = resources.displayMetrics.density
+        reader.pickOrClose(this)
+        addView(TextView(host).apply {
+            text = "Mode sélection : touchez un mot"
+            typeface = host.fonts.uiBold
+            textSize = 15f
+            gravity = Gravity.CENTER
+            setTextColor(Theme.bg)
+            setBackgroundColor(Theme.ui)
+            setPadding(0, (12 * d).toInt(), 0, (12 * d).toInt() + host.insetBottom)
+        }, LayoutParams(-1, -2, Gravity.BOTTOM))
     }
 }
