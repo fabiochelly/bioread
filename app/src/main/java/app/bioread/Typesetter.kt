@@ -149,6 +149,34 @@ class Typesetter(
         val natural = (fm.descent - fm.ascent) / 100f
         if (natural > 0.5f) (1.318f / natural).coerceIn(0.8f, 1.25f) else 1f
     }
+
+    // Traduction sous les mots difficiles (livre anglais, voir WordWise). Elle se loge sous les
+    // jambages de la ligne, dans l'interligne : on n'ajoute que ce qui manque pour qu'elle ne
+    // touche ni les jambages de son mot ni les hampes et accents de la ligne suivante.
+    private val glossPaint = if (WordWise.applies(lang)) WordWise.paint(f, textPx, density) else null
+    private val glossDrop: Float      // de la ligne de base du texte à celle de la traduction
+    private val glossAdd: Float       // interligne ajouté
+    private val glossBelow: Float     // de la ligne de base du texte au bas de la traduction (0 : sans traductions)
+    init {
+        val gp = glossPaint
+        if (gp == null) {
+            glossDrop = 0f
+            glossAdd = 0f
+            glossBelow = 0f
+        } else {
+            val body = TextPaint(Paint.ANTI_ALIAS_FLAG).apply { typeface = f.regular; textSize = textPx }
+            val r = Rect()
+            fun below(p: Paint, s: String): Int { p.getTextBounds(s, 0, s.length, r); return r.bottom }
+            fun above(p: Paint, s: String): Int { p.getTextBounds(s, 0, s.length, r); return -r.top }
+            // Collée au mot : le haut de la traduction à mi-hauteur des jambages (g, p, y), qui sont
+            // rares et qu'elle frôle à peine ; un peu d'air au-dessus des hampes de la ligne suivante.
+            glossDrop = below(body, "gjpqy") * 0.55f + above(gp, "hdlÉ")
+            val need = glossDrop + below(gp, "gjpqy") + textPx * 0.05f + above(body, "bdfhklÀÉ")
+            val fm = body.fontMetrics
+            glossAdd = maxOf(textPx * 0.06f, need - (fm.descent - fm.ascent) * mult)
+            glossBelow = glossDrop + below(gp, "gjpqy")
+        }
+    }
     val mx = (Prefs.margin * density).toInt()
     val top = (Prefs.margin * 0.6f * density + 14 * density).toInt() + topInset
     val bottom = (Prefs.margin * 0.4f * density + 30 * density).toInt()
@@ -205,15 +233,16 @@ class Typesetter(
         }
     }
 
-    private fun lineHeight(p: TextPaint): Int {
+    private fun lineHeight(p: TextPaint, tr: Boolean): Int {
         val fm = p.fontMetricsInt
-        return Math.round((fm.descent - fm.ascent) * mult)
+        return Math.round((fm.descent - fm.ascent) * mult + if (tr) 0f else glossAdd)
     }
 
     private fun layout(b: Block, scale: Float, tr: Boolean): StaticLayout {
         val head = b.kind == Block.HEAD
         val p = if (head) headPaint(b.level, scale, tr) else bodyPaint(scale, tr)
-        b.css?.let { return styled.layout(b, it, p, cw, mult) }
+        val add = if (tr) 0f else glossAdd
+        b.css?.let { return styled.layout(b, it, p, cw, mult, add) }
         val t = b.text
         val sb = StaticLayout.Builder.obtain(t, 0, t.length, p, cw).setIncludePad(false)
         if (head) {
@@ -222,7 +251,7 @@ class Typesetter(
                 .setHyphenationFrequency(Layout.HYPHENATION_FREQUENCY_NONE)
                 .setBreakStrategy(Layout.BREAK_STRATEGY_BALANCED)
         } else {
-            sb.setLineSpacing(0f, mult)
+            sb.setLineSpacing(add, mult)
                 .setBreakStrategy(Layout.BREAK_STRATEGY_HIGH_QUALITY)
                 .setHyphenationFrequency(Layout.HYPHENATION_FREQUENCY_NORMAL)
             when (b.align) {
@@ -329,7 +358,7 @@ class Typesetter(
         val ready = if (parallel && WORKERS > 0 && blocks.size >= 24) layoutAll(blocks, scale, tr, done, stop) else done
         val pages = ArrayList<Page>()
         var cur = Page()
-        val bodyLH = lineHeight(bodyPaint(scale, tr))
+        val bodyLH = lineHeight(bodyPaint(scale, tr), tr)
         var y = 0
         var after = 0   // marge basse du bloc précédent
 
@@ -381,7 +410,12 @@ class Typesetter(
             y += m
             for (line in from until n) {
                 val lh = l.getLineBottom(line) - l.getLineTop(line)
-                if (y + lh > ch && y > 0) {
+                // Avec les traductions sous les mots, une ligne occupe jusqu'au bas de sa traduction : en
+                // bas de page, elle passerait sinon sous le pied de page (surtout la dernière ligne d'un
+                // paragraphe, qui n'a pas d'interligne sous elle).
+                val need = if (glossBelow > 0f && !tr && b.kind == Block.PARA)
+                    maxOf(lh, l.getLineBaseline(line) - l.getLineTop(line) + glossBelow.toInt() + 1) else lh
+                if (y + need > ch && y > 0) {
                     if (line > from) cur.slices.add(Slice(l, from, line, sy, b))
                     close()
                     if (pages.size >= maxPages) break
@@ -431,45 +465,96 @@ class Typesetter(
         footPaint.textAlign = Paint.Align.RIGHT
         c.drawText(right, w - mx - iconSize - 10 * density, y, footPaint)
 
-        // Icône de traduction (globe) : au trait quand elle est coupée, pleine quand elle est active.
+        // Icônes au trait fin, de même hauteur apparente (r : demi-taille de la zone d'icône).
         val r = iconSize / 2f
-        val cx = w - mx - r
         val cy = h - bottom / 2f
+
+        // Icône de traduction (globe) : au trait quand elle est coupée, pleine quand elle est active.
+        iconPaint.strokeCap = Paint.Cap.BUTT
+        val gr = r * 0.86f
+        val cx = w - mx - gr - iconPaint.strokeWidth / 2f
         iconPaint.color = Theme.footIcon
         iconPaint.style = if (translating) Paint.Style.FILL_AND_STROKE else Paint.Style.STROKE
-        c.drawCircle(cx, cy, r, iconPaint)
+        c.drawCircle(cx, cy, gr, iconPaint)
         iconPaint.style = Paint.Style.STROKE
         if (translating) iconPaint.color = Theme.bg
-        oval.set(cx - r * 0.45f, cy - r, cx + r * 0.45f, cy + r)
+        oval.set(cx - gr * 0.45f, cy - gr, cx + gr * 0.45f, cy + gr)
         c.drawOval(oval, iconPaint)
-        c.drawLine(cx - r, cy, cx + r, cy, iconPaint)
+        c.drawLine(cx - gr, cy, cx + gr, cy, iconPaint)
 
-        // Loupe (recherche dans le livre), à gauche du pourcentage.
+        // Loupe (recherche dans le livre), à gauche du pourcentage : verre et manche centrés ensemble.
         iconPaint.color = Theme.footIcon
-        val lr = r * 0.66f
+        iconPaint.strokeCap = Paint.Cap.ROUND
+        val lr = r * 0.62f
+        val hl = r * 0.62f                       // longueur du manche
+        val k = 0.7071f
         val lx = mx + lr + iconPaint.strokeWidth / 2f
-        val ly = cy - (r - lr) * 0.6f
+        val ly = cy + (lr - lr * k - hl * k) / 2f
         c.drawCircle(lx, ly, lr, iconPaint)
-        c.drawLine(lx + lr * 0.71f, ly + lr * 0.71f, lx + lr * 0.71f + r * 0.62f, ly + lr * 0.71f + r * 0.62f, iconPaint)
+        c.drawLine(lx + lr * k, ly + lr * k, lx + (lr + hl) * k, ly + (lr + hl) * k, iconPaint)
 
-        // Rafraîchissement de l'écran (liseuse) : flèche circulaire, ouverte en haut à droite.
+        // Rafraîchissement de l'écran (liseuse), dessiné comme les icônes « rotate-right » de Font
+        // Awesome et « rotate-cw » de Lucide, sur une grille de 24 : un cercle de rayon 9 parcouru
+        // dans le sens des aiguilles d'une montre depuis la droite, qui se prolonge en haut à droite
+        // vers un coin ; la pointe est ce coin, deux traits à angle droit alignés sur les axes. Ainsi
+        // aucun des deux traits ne longe la courbe.
         if (Theme.eink) {
-            val rr = r * 0.78f
-            oval.set(refreshX - rr, cy - rr, refreshX + rr, cy + rr)
-            c.drawArc(oval, -20f, 300f, false, iconPaint)
-            // Pointe au bout de l'arc (à -80°), dans le sens de rotation.
-            val ax = refreshX + rr * 0.174f
-            val ay = cy - rr * 0.985f
+            val u = r * 0.72f / 9f                // une unité de la grille de 24
+            fun x(v: Float) = refreshX + (v - 12f) * u
+            fun y(v: Float) = cy + (v - 12f) * u
             arrow.rewind()
-            arrow.moveTo(ax - rr * 0.10f, ay - rr * 0.62f)
-            arrow.lineTo(ax + rr * 0.48f, ay + rr * 0.06f)
-            arrow.lineTo(ax - rr * 0.34f, ay + rr * 0.52f)
+            arrow.moveTo(x(21f), y(12f))
+            oval.set(x(3f), y(3f), x(21f), y(21f))
+            arrow.arcTo(oval, 0f, 270f, false)
+            arrow.cubicTo(x(14.52f), y(3f), x(16.93f), y(4f), x(18.74f), y(5.74f))
+            arrow.lineTo(x(21f), y(8f))
+            arrow.moveTo(x(21f), y(3f))
+            arrow.lineTo(x(21f), y(8f))
+            arrow.lineTo(x(16f), y(8f))
+            iconPaint.strokeJoin = Paint.Join.ROUND
             c.drawPath(arrow, iconPaint)
+            iconPaint.strokeJoin = Paint.Join.MITER
         }
     }
 
-    fun draw(c: Canvas, p: Page, epub: Epub?) {
+    /**
+     * Mot traduit (voir WordWise) sous le point (x, y) de la page [p] : le mot lui-même ou sa
+     * traduction, à [slop] pixels près. Null s'il n'y en a pas, ou si la page n'en porte pas.
+     */
+    fun glossAt(p: Page, x: Float, y: Float, slop: Float): WordHit? {
+        val gp = glossPaint ?: return null
+        val xx = x - mx
+        for (s in p.slices) {
+            val l = s.layout ?: continue
+            val m = s.block.ww ?: continue
+            if (m.level != Prefs.wwLevel || m.gloss.isEmpty()) continue
+            val dy = top + s.y - l.getLineTop(s.a)
+            for (line in s.a until s.b) {
+                val base = dy + l.getLineBaseline(line)
+                // Du haut des lettres au bas de la traduction.
+                if (y < base - textPx - slop || y > base + glossDrop + gp.descent() + slop) continue
+                val ls = l.getLineStart(line)
+                val le = l.getLineEnd(line)
+                for (k in m.gloss.indices) {
+                    val a = m.at[2 * k]
+                    val b = m.at[2 * k + 1]
+                    if (b <= ls || a >= le) continue
+                    val x0 = lineX(l, line, maxOf(a, ls))
+                    val x1 = lineX(l, line, minOf(b, le))
+                    val w = gp.measureText(m.gloss[k] ?: "")
+                    val c = (x0 + x1) / 2
+                    if (xx >= minOf(x0, c - w / 2) - slop && xx <= maxOf(x1, c + w / 2) + slop) return WordHit(s.block, a, b)
+                }
+            }
+        }
+        return null
+    }
+
+    /** [glosses] : faux pour une page traduite (sa mise en page n'est pas celle du livre). */
+    fun draw(c: Canvas, p: Page, epub: Epub?, glosses: Boolean = true) {
         c.drawColor(Theme.bg)
+        val gp = if (glosses) glossPaint else null
+        val level = Prefs.wwLevel
         for (s in p.slices) {
             val l = s.layout
             if (l == null) {
@@ -486,8 +571,18 @@ class Typesetter(
             }
             c.save()
             c.translate(mx.toFloat(), (top + s.y - t).toFloat())
-            c.clipRect(0, t - slack, cw, l.getLineBottom(s.b - 1))
+            // La dernière ligne d'un paragraphe n'a pas d'interligne : ses traductions débordent dessous.
+            val glossed = gp != null && s.block.kind == Block.PARA
+            var clip = l.getLineBottom(s.b - 1)
+            if (glossed) clip = maxOf(clip, l.getLineBaseline(s.b - 1) + glossBelow.toInt() + 2)
+            c.clipRect(0, t - slack, cw, clip)
             l.draw(c)
+            if (glossed) {
+                val b = s.block
+                val m = b.ww?.takeIf { it.level == level } ?: WordWise.marks(b.text, level).also { b.ww = it }
+                // Sous les jambages de la ligne, à la place de l'interligne ajouté.
+                WordWise.draw(c, l, s.a, s.b, m, gp!!, cw, glossDrop)
+            }
             c.restore()
         }
     }

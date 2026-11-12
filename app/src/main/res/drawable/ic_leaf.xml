@@ -2,18 +2,22 @@
     xmlns:aapt="http://schemas.android.com/aapt"
     android:width="108dp" android:height="108dp"
     android:viewportWidth="108" android:viewportHeight="108">
-    <!-- Feuille pleine en dégradé de verts (gris sombres sur encre électronique), nervures évidées. -->
-    <path android:strokeColor="#0B4D2C" android:strokeWidth="6" android:strokeLineCap="round" android:pathData="M27,83 L13,97" />
-    <path android:pathData="M88,19 C60,11 27,26 21,62 C20,70 21,78 25,85 C31,88 40,89 47,88 C83,83 97,48 88,19 Z">
-        <!-- Dégradé vert, du pétiole (profond) à la pointe (tendre). -->
-        <aapt:attr name="android:fillColor">
-            <gradient android:type="linear" android:startX="22" android:startY="88" android:endX="90" android:endY="18">
-                <item android:offset="0" android:color="#0B4D2C" />
-                <item android:offset="0.55" android:color="#1F9D55" />
-                <item android:offset="1" android:color="#63C132" />
-            </gradient>
-        </aapt:attr>
-    </path>
-    <path android:strokeColor="#FFFFFF" android:strokeWidth="4.6" android:strokeLineCap="round" android:pathData="M27,83 C42,64 60,44 79,28" />
-    <path android:strokeColor="#FFFFFF" android:strokeWidth="3.6" android:strokeLineCap="round" android:pathData="M43,63 L39,44 M56,49 L54,31 M46,60 L66,66 M59,46 L79,49" />
+    <!-- Icône de l'app : une feuille fine en dégradé d'orange (gris sur encre électronique), nervure
+         centrale claire ; la tige prolonge le limbe, d'un seul tenant. Icône classique sur fond
+         transparent : une icône adaptative au fond transparent s'affiche sur fond noir. -->
+    <group android:pivotX="54" android:pivotY="54" android:scaleX="0.94" android:scaleY="0.94"
+        android:translateX="0.5" android:translateY="-2">
+        <path android:pathData="M17.6,93.6 C21,90 25,86.4 28.4,82.6 C31.6,79 36,52 88,18 C87,48 66,74 38,82.4 C35.4,83.2 33.6,84.8 31.8,86.6 C28.6,89.8 24.6,93.4 20.4,96.6 C19.2,97.6 16.6,95 17.6,93.6 Z">
+            <aapt:attr name="android:fillColor">
+                <gradient android:type="linear" android:startX="19" android:startY="95" android:endX="88" android:endY="18">
+                    <item android:offset="0" android:color="#7C2D12" />
+                    <item android:offset="0.22" android:color="#9A3412" />
+                    <item android:offset="0.55" android:color="#EA580C" />
+                    <item android:offset="1" android:color="#FDBA74" />
+                </gradient>
+            </aapt:attr>
+        </path>
+        <path android:strokeColor="#FFF7E8" android:strokeWidth="2.4" android:strokeLineCap="round"
+            android:pathData="M31,81 C46,62 64,42 84,22" />
+    </group>
 </vector>

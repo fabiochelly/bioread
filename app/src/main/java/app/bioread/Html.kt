@@ -219,6 +219,7 @@ class Block(
     var links: ArrayList<Link>? = null   // liens portés par le texte, dans l'ordre (voir Links.kt)
     var hidden = false                   // note sortie du fil du texte : gardée à sa place, jamais mise en page
     var css: BlockStyle? = null          // mode « Fidèle au livre » : mise en forme voulue par le livre (voir Style.kt)
+    @Volatile var ww: WordWise.Marks? = null   // mots à traduire sous le texte, pour le dernier réglage employé
     val length get() = if (kind == IMG) 1 else text.length
 
     companion object {

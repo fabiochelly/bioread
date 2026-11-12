@@ -207,7 +207,7 @@ class PageTouch(private val host: MainActivity, private val reader: ReaderView) 
      */
     fun note(x: Float, y: Float): Boolean {
         val s = reader.shownPage() ?: return false
-        return s.ts.linkNear(s.page, x, y, EDGE_SLOP * d, -1f) != null
+        return s.ts.linkNear(s.page, x, y, EDGE_SLOP * d, -1f) != null || s.ts.glossAt(s.page, x, y, 4 * d) != null
     }
 
     /** Arme l'appui long (le contact n'a pas tourné la page). */
@@ -353,10 +353,15 @@ class PageTouch(private val host: MainActivity, private val reader: ReaderView) 
         selShown = null
     }
 
-    /** Toucher simple en (x, y) : vrai si un lien l'a pris. */
+    /** Toucher simple en (x, y) : vrai si un lien ou un mot traduit l'a pris. */
     fun tap(x: Float, y: Float): Boolean {
         val s = reader.shownPage() ?: return false
         if (y > reader.height - s.ts.footerZone) return false
+        // Mot traduit sous les lignes (ou sa traduction) : sa fiche, avec toutes ses traductions.
+        s.ts.glossAt(s.page, x, y, 4 * d)?.let { w ->
+            open(s, w, reader.book?.lang?.ifEmpty { "en" } ?: "en")
+            return true
+        }
         val h = s.ts.linkNear(s.page, x, y, NOTE_SLOP * d, LINK_SLOP * d) ?: return false
         follow(s, h.block, h.link)
         return true

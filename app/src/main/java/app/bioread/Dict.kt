@@ -19,7 +19,7 @@ import java.util.zip.Inflater
  * Chaque article porte aussi ses traductions par sens vers les autres langues de l'app.
  *
  * Rien n'est chargé en mémoire : le fichier est projeté (mmap), une recherche dichotomique sur
- * la première clé de chaque bloc désigne un bloc de 8 Ko, seul décompressé puis parcouru.
+ * la première clé de chaque bloc désigne un bloc de 4 Ko, seul décompressé puis parcouru.
  * Une forme fléchie mène à son lemme par les renvois du fichier (running → run), jamais par des
  * règles devinées. Le format est décrit en tête de tools/make_dict.py.
  */
@@ -54,11 +54,11 @@ object Dict {
     private class Link(val lemma: String, val pos: String, val label: String)
     private class Record(val entries: List<Entry>, val links: List<Link>)
 
-    private class Book(val map: ByteBuffer, val blocks: Int, val index: Int, val pool: Int, val credit: String)
+    private class Book(val map: ByteBuffer, val blocks: Int, val index: Int, val pool: Int, val zdict: ByteArray, val credit: String)
 
     private const val PREFIX = "bioread-dict-"
     private const val FRONT = "\u0001"
-    private const val MAGIC = "BIODICT2"   // le chiffre est la version du format
+    private const val MAGIC = "BIODICT3"   // le chiffre est la version du format
     private val main = Handler(Looper.getMainLooper())
     private var dir: File? = null
     private val books = HashMap<String, Book?>()
@@ -113,7 +113,7 @@ object Dict {
                         // En cas d'échec, l'original reste en place : nouvel essai au prochain lancement.
                         if (ok) {
                             copying.remove(lang)
-                            books.remove(lang)
+                            synchronized(Dict) { books.remove(lang) }   // book() tourne aussi sur le fil de tracé
                             host.toast("Dictionnaire ${name(lang)} installé")
                         }
                     }
@@ -130,6 +130,7 @@ object Dict {
     }
 
     /** Vrai si le dictionnaire installé pour [lang] est d'un format antérieur : il faut le remplacer. */
+    @Synchronized
     fun outdated(lang: String) = book(lang) == null && lang in old
 
     private fun book(lang: String): Book? {
@@ -137,7 +138,7 @@ object Dict {
         var b: Book? = null
         try {
             val f = File(dir ?: return null, "$lang.bin")
-            if (f.length() > 40) {
+            if (f.length() > 48) {
                 val map = RandomAccessFile(f, "r").use { it.channel.map(FileChannel.MapMode.READ_ONLY, 0, f.length()) }
                 map.order(ByteOrder.LITTLE_ENDIAN)
                 val magic = ByteArray(8) { map.get(it) }
@@ -147,7 +148,9 @@ object Dict {
                     val meta = ByteArray(map.getInt(28))
                     for (i in meta.indices) meta[i] = map.get(map.getInt(24) + i)
                     val j = JSONObject(String(meta, Charsets.UTF_8))
-                    b = Book(map, map.getInt(8), map.getInt(32), map.getInt(36), "${j.optString("source", "Wiktionary")} · ${j.optString("license", "CC BY-SA")}")
+                    val zdict = ByteArray(map.getInt(44))
+                    (map.duplicate().position(map.getInt(40)) as ByteBuffer).get(zdict)
+                    b = Book(map, map.getInt(8), map.getInt(32), map.getInt(36), zdict, "${j.optString("source", "Wiktionary")} · ${j.optString("license", "CC BY-SA")}")
                 }
             }
         } catch (e: Exception) {
@@ -177,6 +180,7 @@ object Dict {
      * Null : pas de dictionnaire installé pour [lang] (ou d'un ancien format, voir [outdated]).
      * Quelques dixièmes de milliseconde : s'appelle depuis le thread principal.
      */
+    @Synchronized   // aussi appelé par le fil de tracé des pages (voir WordWise.fallback)
     fun lookup(written: String, lang: String, start: Boolean, clipped: Boolean, target: String): Result? {
         val b = book(lang) ?: return null
         want = target
@@ -308,6 +312,8 @@ object Dict {
         (b.map.duplicate().position(from) as ByteBuffer).get(packed)
         val raw = ByteArray(b.map.getInt(at + 8))
         inf.reset()
+        // Flux deflate brut : le dictionnaire commun se donne avant les données (voir tools/make_dict.py).
+        if (b.zdict.isNotEmpty()) inf.setDictionary(b.zdict)
         inf.setInput(packed)
         var n = 0
         while (n < raw.size) {

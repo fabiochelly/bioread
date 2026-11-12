@@ -50,6 +50,8 @@ object Prefs {
     var sort = 0            // accueil : 0 = dernière lecture, 1 = titre, 2 = auteur
     var font = ""           // police du texte (identifiant de Fonts.FAMILIES ; vide = la première disponible)
     var faithful = false    // « Fidèle au livre » : la mise en forme voulue par l'éditeur (CSS) est respectée
+    var wordwise = false    // traduction sous les mots difficiles (livres anglais, voir WordWise)
+    var wwLevel = 8000      // vocabulaire du lecteur : les mots de rang supérieur sont traduits
 
     fun init(c: Context) {
         app = c.applicationContext
@@ -77,6 +79,8 @@ object Prefs {
         warm = sp.getInt("warm100", if (sp.contains("warm")) sp.getInt("warm", 3) * 20 else warm)
         faithful = sp.getBoolean("faithful", faithful)
         font = sp.getString("font", font)!!
+        wordwise = sp.getBoolean("wordwise", wordwise)
+        wwLevel = sp.getInt("wwLevel", wwLevel)
     }
 
     /** Une fois : sort du fichier des réglages ce que les versions précédentes y rangeaient par livre. */
@@ -121,6 +125,8 @@ object Prefs {
             .putInt("warm100", warm)
             .putBoolean("faithful", faithful)
             .putString("font", font)
+            .putBoolean("wordwise", wordwise)
+            .putInt("wwLevel", wwLevel)
             .apply()
     }
 }

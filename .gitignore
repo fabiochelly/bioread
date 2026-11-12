@@ -12,3 +12,6 @@ app/src/main/assets/fonts/Bookerly-*.ttf
 Inter/
 dict-out/
 __pycache__/
+
+# Copies de travail des agents (Claude Code)
+.claude/

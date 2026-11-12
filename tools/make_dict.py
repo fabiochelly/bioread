@@ -16,18 +16,27 @@ l'extraction (running → run, chevaux → cheval). Ni étymologies, ni exemples
 
 Format du fichier (entiers little-endian) — lu par Dict.kt, à garder synchronisé :
 
-    0   8   magie « BIODICT2 » (le chiffre est la version du format)
+    0   8   magie « BIODICT3 » (le chiffre est la version du format)
     8   4   nombre de blocs
     12  4   nombre de clés
     16  4   nombre d'entrées (mot + catégorie)
     20  4   nombre de renvois forme → lemme
     24  4   position des métadonnées (JSON UTF-8), 28 : leur longueur
     32  4   position de l'index, 36 : position des premières clés
+    40  4   position du dictionnaire de compression, 44 : sa longueur (32 Ko au plus)
     index   par bloc : position de sa première clé (relative), position du bloc dans le
             fichier, taille décompressée ; puis une sentinelle (fin du dernier bloc)
     clés    première clé de chaque bloc : longueur sur 2 octets, puis UTF-8
-    blocs   flux deflate bruts ; chacun est une suite d'articles triés par clé (ordre des
-            octets UTF-8) : clé, longueur de la valeur (varint), valeur
+    dico    dictionnaire prédéfini commun à tous les blocs (deflate, « preset dictionary »)
+    blocs   flux deflate bruts, compressés avec ce dictionnaire ; chacun est une suite
+            d'articles triés par clé (ordre des octets UTF-8) : clé, longueur de la valeur
+            (varint), valeur
+
+Blocs de 4 Ko : un bloc de 8 Ko se décompresse en deux fois plus de temps, et c'est l'essentiel
+d'une recherche. Le dictionnaire, des extraits d'articles pris au hasard, donne d'avance au
+compresseur les tournures qui reviennent dans tout le fichier (codes de langue, libellés,
+« Plural of ») ; sans lui, des blocs aussi petits se compresseraient mal. Mesuré sur l'anglais :
+46,4 Mo en blocs de 8 Ko sans dictionnaire, 42,6 Mo en blocs de 4 Ko avec.
 
 Une clé est le mot normalisé (voir norm). Sa valeur :
     varint n ; n entrées : mot, prononciation, varint g ; g groupes : code de catégorie,
@@ -43,6 +52,7 @@ import argparse
 import gzip
 import json
 import os
+import random
 import re
 import struct
 import sys
@@ -59,7 +69,8 @@ SOURCES = {
            "Wiktionnaire", "fr.wiktionary.org"),
 }
 LICENSE = "CC BY-SA 4.0"
-BLOCK = 8192           # taille visée d'un bloc avant compression (lecture : un seul bloc décompressé)
+BLOCK = 4096           # taille visée d'un bloc avant compression (lecture : un seul bloc décompressé)
+ZDICT = 32768          # dictionnaire de compression : la fenêtre entière de deflate
 MAX_GLOSS = 1200       # caractères : seules les définitions démesurées sont coupées
 MAX_SENSE = 90         # libellé du sens d'une traduction
 # Langues de traduction de l'app (LANGS dans Translate.kt).
@@ -373,17 +384,15 @@ class Builder:
         self.resolve()
         self.n_tr = 0
         keys = sorted(set(self.entries) | set(self.resolved), key=lambda x: x.encode("utf-8"))
-        blocks, firsts, raws = [], [], []
+        plain, firsts = [], []
         cur, first = bytearray(), None
         n_entries = n_links = n_keys = 0
 
         def flush():
             nonlocal cur, first
             if cur:
-                c = zlib.compressobj(9, zlib.DEFLATED, -15)
-                blocks.append(c.compress(bytes(cur)) + c.flush())
+                plain.append(bytes(cur))
                 firsts.append(first)
-                raws.append(len(cur))
             cur, first = bytearray(), None
 
         for k in keys:
@@ -401,6 +410,21 @@ class Builder:
                 flush()
         flush()
 
+        # Dictionnaire de compression : 64 extraits de 512 octets, pris au hasard dans les blocs
+        # (tirage fixe : deux fabrications donnent le même fichier). Essayé aussi : des débuts de
+        # blocs (des clés surtout, moins utile), des articles entiers, les n-grammes les plus
+        # fréquents ; les extraits pris au hasard font aussi bien ou mieux, bien plus simplement.
+        rnd = random.Random(1)
+        zdict = bytearray()
+        for raw in rnd.sample(plain, min(64, len(plain))):
+            at = rnd.randrange(max(1, len(raw) - 512))
+            zdict += raw[at:at + 512]
+        zdict = bytes(zdict[-ZDICT:])
+        blocks = []
+        for raw in plain:
+            c = zlib.compressobj(9, zlib.DEFLATED, -15, zdict=zdict)
+            blocks.append(c.compress(raw) + c.flush())
+
         meta = dict(meta, keys=n_keys, entries=n_entries, forms=n_links, translated=self.n_tr)
         mb = json.dumps(meta, ensure_ascii=False).encode("utf-8")
         pool = bytearray()
@@ -408,21 +432,24 @@ class Builder:
         for f in firsts:
             pool_offs.append(len(pool))
             pool += struct.pack("<H", len(f)) + f
-        meta_off = 40
+        meta_off = 48
         index_off = meta_off + len(mb)
         pool_off = index_off + 12 * (len(blocks) + 1)
-        pos = pool_off + len(pool)
+        zdict_off = pool_off + len(pool)
+        pos = zdict_off + len(zdict)
         index = bytearray()
         for i, b in enumerate(blocks):
-            index += struct.pack("<III", pool_offs[i], pos, raws[i])
+            index += struct.pack("<III", pool_offs[i], pos, len(plain[i]))
             pos += len(b)
         index += struct.pack("<III", len(pool), pos, 0)
         with open(path + ".part", "wb") as f:
-            f.write(b"BIODICT2")
-            f.write(struct.pack("<IIIIIIII", len(blocks), n_keys, n_entries, n_links, meta_off, len(mb), index_off, pool_off))
+            f.write(b"BIODICT3")
+            f.write(struct.pack("<IIIIIIIIII", len(blocks), n_keys, n_entries, n_links, meta_off, len(mb), index_off, pool_off,
+                                zdict_off, len(zdict)))
             f.write(mb)
             f.write(index)
             f.write(pool)
+            f.write(zdict)
             for b in blocks:
                 f.write(b)
         os.replace(path + ".part", path)

@@ -46,6 +46,29 @@ en garder moins).
 Déposez les fichiers `bioread-dict-*.bin` dans `Download/` de l'appareil : l'app les installe
 au lancement suivant (puis retire l'original). Le format est décrit en tête du script.
 
+## Traduction sous les mots difficiles
+
+Dans un livre anglais, l'option « Mots difficiles » (Options › Traduction) écrit en tout petit,
+sous chaque mot difficile, sa traduction française. Le curseur règle la taille du vocabulaire du
+lecteur (de 3 000 à 30 000 mots) ; un aperçu montre, dans le chapitre ouvert, les mots qui
+seront traduits et ceux qui sont supposés connus.
+
+Le classement des mots est livré dans l'app (`app/src/main/assets/wordwise-en-fr.bin`) et se
+refabrique avec :
+
+```
+uv run --with wordfreq --with openpyxl --with nltk tools/make_wordwise.py --check roman.txt
+```
+
+Il combine la fréquence (wordfreq, sous-titres SUBTLEX-US), le taux de connaissance mesuré chez
+des locuteurs non natifs (Brysbaert, Keuleers & Mandera 2020) et l'âge d'acquisition (Kuperman
+et al. 2012), par famille de mots (run, ran, running). Les mots transparents pour un francophone
+(melancholy, curious) ne sont pas traduits ; les faux amis (library, eventually) le sont. Le sens
+traduit est le plus courant d'après WordNet, et `tools/wordwise-fixes-fr.tsv` corrige à la main
+plus de 5 000 mots relus en contexte dans une vingtaine de romans récents. La
+méthode est décrite en tête du script. Les données de l'étude sur les non-natifs sont sous
+licence CC BY-NC-SA 4.0 : la table n'est utilisable qu'à des fins non commerciales.
+
 ## Bibliothèques tierces
 
 - `com.google.mlkit:translate` : traduction hors-ligne.

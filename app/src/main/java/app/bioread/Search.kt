@@ -228,7 +228,7 @@ fun Typesetter.markRects(p: Page, offset: Int, length: Int): ArrayList<RectF> {
  * du système donne la position avant justification : le blanc ajouté est réparti ici sur les
  * espaces qui précèdent, comme au tracé.
  */
-private fun lineX(l: Layout, line: Int, offset: Int): Float {
+internal fun lineX(l: Layout, line: Int, offset: Int): Float {
     val t = l.text
     val start = l.getLineStart(line)
     var end = l.getLineEnd(line)

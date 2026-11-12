@@ -70,6 +70,7 @@ class MainActivity : Activity() {
         fonts = Perf.time("start.fonts") { Fonts(this) }
         Perf.time("start.library") { Library.init(this) }
         Translator.init(this, fonts)
+        WordWise.init(this)
         importKey()
         Translator.box = { title, details -> if (title == null) hideMessage() else showMessage(title, details) }
         if (Build.VERSION.SDK_INT >= 30) window.setDecorFitsSystemWindows(false)

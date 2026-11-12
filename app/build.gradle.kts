@@ -46,6 +46,13 @@ android {
         }
     }
 
+    // Rangées sans compression dans l'APK, donc projetées en mémoire depuis le fichier (pages
+    // propres, partagées, que le système peut reprendre) au lieu d'être décompressées : les
+    // polices (environ 5,5 Mo de mémoire native épargnés) et la table des mots difficiles.
+    androidResources {
+        noCompress += listOf("ttf", "bin")
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17

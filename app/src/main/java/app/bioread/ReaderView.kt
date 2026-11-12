@@ -41,6 +41,26 @@ class ReaderView(private val host: MainActivity) : View(host) {
     private val density = resources.displayMetrics.density
     private val eink = Theme.eink
 
+    /**
+     * Format des images de page. Sur liseuse, RGB_565 : l'écran n'a que 16 niveaux de gris,
+     * le blanc et le noir y sont exacts, et une page pèse moitié moins (3 Mo au lieu de 6 en
+     * 1072 × 1448), en mémoire comme sur le processeur graphique. Sur smartphone, ARGB_8888 :
+     * en 565, le fond sable de la page s'écarterait de quelques niveaux de celui des panneaux.
+     */
+    private val pageConfig = if (eink) Bitmap.Config.RGB_565 else Bitmap.Config.ARGB_8888
+
+    /**
+     * Sur smartphone, une page finie est une image « matérielle » (Bitmap.Config.HARDWARE) :
+     * ses pixels n'existent qu'une fois, en mémoire graphique. Une image ordinaire y est en
+     * double : en mémoire native et, dès qu'elle a été affichée, en texture (10 Mo chacune en
+     * 1080 × 2340). Le fil [painter] trace dans une seule image ordinaire, [scratch], copiée
+     * ensuite. Pas sur liseuse : ses images 565 sont petites, et son affichage particulier
+     * n'a pas pu être essayé avec ces images. Pas avant Android 10 non plus : la copie s'y
+     * fait sur le fil de rendu du système, qu'elle arrêterait en plein glissement.
+     */
+    private val hwPages = !eink && Build.VERSION.SDK_INT >= 29
+    private var scratch: Bitmap? = null          // réservé au fil [painter]
+
     var book: BookEntry? = null
         private set
     var epub: Epub? = null
@@ -95,12 +115,26 @@ class ReaderView(private val host: MainActivity) : View(host) {
     var topInset = 0
         private set
 
-    // 0 = précédente, 1 = courante, 2 = suivante. Un bitmap rangé ici contient une page finie.
-    private val bmp = arrayOfNulls<Bitmap>(3)
-    private val held = arrayOfNulls<Page>(3)
-    private val heldLc = arrayOfNulls<LaidChapter>(3)
-    private val heldP = IntArray(3)
-    private val jobs = arrayOfNulls<Job>(3)      // tracés en cours, par emplacement
+    // 0 = précédente, 1 = courante, 2 = suivante, 3 ([AHEAD]) = celle d'après dans le sens de la
+    // lecture (voir [ahead]). Un bitmap rangé ici contient une page finie.
+    private val bmp = arrayOfNulls<Bitmap>(4)
+    private val held = arrayOfNulls<Page>(4)
+    private val heldLc = arrayOfNulls<LaidChapter>(4)
+    private val heldP = IntArray(4)
+    private val jobs = arrayOfNulls<Job>(4)      // tracés en cours, par emplacement
+
+    /**
+     * Deux pages d'avance (la suivante et celle d'après) au lieu d'une : une page tournée est
+     * alors déjà tracée même si l'on tape plus vite que le fil [painter] ne trace. Réservé à la
+     * liseuse : son processeur est lent (le tracé y dure plusieurs dizaines de millisecondes)
+     * et ses images de page, en RGB_565, sont petites — quatre y pèsent moins que les trois
+     * images ARGB d'avant. Sur smartphone, la page suivante est prête quelques millisecondes
+     * après le tour, bien avant qu'un doigt puisse tourner la suivante : une quatrième image
+     * de 10 Mo n'y servirait à rien.
+     */
+    private val ahead = eink
+    // Moment du dernier tour de page (diagnostic : délai avant que la page d'après soit prête).
+    private var turnNs = 0L
     private val free = ArrayList<Bitmap>(1)      // bitmap réutilisable (plus affiché nulle part)
     // Délestage : la page n'est pas à l'écran (accueil, app en arrière-plan). Seule l'image de la
     // page courante est gardée ; rien n'est préparé d'avance ni mis de côté.
@@ -109,7 +143,14 @@ class ReaderView(private val host: MainActivity) : View(host) {
 
     private var animating = false
     private var animDir = 0
-    private var animStart = 0L
+    private var animStart = 0L   // ns, heure d'image (voir [slideR])
+    private var slideNs = 0L
+    // Glissement (smartphone) : chaque image note son heure puis demande à être redessinée ;
+    // [onDraw] place les pages d'après cette heure.
+    private val slideR = Choreographer.FrameCallback { ns -> slideNs = ns; invalidate() }
+    // Durée d'une image d'écran (ms), d'après la fréquence annoncée par l'écran.
+    @Suppress("DEPRECATION")
+    private val frameMs = 1000f / (host.windowManager.defaultDisplay.refreshRate.takeIf { it >= 30f } ?: 60f)
     private val prepareR = Runnable { prepare() }
     private val prevR = Runnable {
         if (!lean && ready && !animating && pendingPos == null) locate(-lastDir)?.let { request(1 - lastDir, it.lc, it.p) }
@@ -145,7 +186,8 @@ class ReaderView(private val host: MainActivity) : View(host) {
     /** Géométrie et réglages dont dépend la composition. */
     private fun layoutKey(w: Int, h: Int, top: Int) =
         "$w,$h,$top,${Prefs.fontSize},${Prefs.lineSpacing},${Prefs.margin}," +
-            "${Prefs.weight},${Prefs.spacing},${Prefs.stretch},${Prefs.sharp},${fonts.family.id}" + if (Prefs.faithful) ",css" else ""
+            "${Prefs.weight},${Prefs.spacing},${Prefs.stretch},${Prefs.sharp},${fonts.family.id}" + (if (Prefs.faithful) ",css" else "") +
+            if (Prefs.wordwise) ",ww" else ""
 
     private fun setTypesetter(w: Int, h: Int, top: Int, lang: String) {
         ts = Typesetter(fonts, w, h, top, density, lang)
@@ -154,6 +196,7 @@ class ReaderView(private val host: MainActivity) : View(host) {
 
     fun open(b: BookEntry) {
         close()
+        WordWise.forgetNames()
         book = b
         val g = gen
         val file = Library.file(b)
@@ -229,7 +272,7 @@ class ReaderView(private val host: MainActivity) : View(host) {
         pendingTurn = 0
         openOff = -1
         partial = null
-        for (s in 0..2) clearSlot(s)
+        for (s in bmp.indices) clearSlot(s)
         if (eink) wipe.showAll() else invalidate()
     }
 
@@ -271,7 +314,7 @@ class ReaderView(private val host: MainActivity) : View(host) {
             val off = chapters[ci]!!.pages.getOrNull(pi)?.start ?: 0
             pendingPos = { it.pageFor(off) }
         }
-        for (s in 0..2) clearSlot(s)
+        for (s in bmp.indices) clearSlot(s)
         // Plus aucune vue ne doit référencer les images rendues.
         if (eink) wipe.showAll() else invalidate()
         if (ts == null && epub == null) return   // ouverture en cours : elle composera à cette taille
@@ -490,13 +533,33 @@ class ReaderView(private val host: MainActivity) : View(host) {
         if (!ready || partial != null) return
         if (eink) wipe.finish()
         animating = false
-        clearSlot(0)
-        clearSlot(2)
+        clearAround()
         chapters[ci]?.let { renderNow(1, it, pi, true) }
         updateFooter()
         present()
         post(prepareR)
     }
+
+    /**
+     * Le vocabulaire du lecteur a changé (traduction sous les mots difficiles) : la mise en page
+     * reste la même, seules les pages sont retracées, la courante d'abord.
+     */
+    fun glossChanged() {
+        if (!ready || partial != null) return
+        if (eink) wipe.finish()
+        animating = false
+        clearSlot(0)
+        clearSlot(2)
+        chapters[ci]?.let { renderNow(1, it, pi, true) }
+        present()
+        post(prepareR)
+    }
+
+    /** Le chapitre affiché (aperçu du réglage des mots difficiles), ou null. */
+    fun shownChapter(): LaidChapter? = if (ready && partial == null) chapters[ci] else null
+
+    /** Le livre ouvert reçoit-il les traductions sous les mots difficiles ? */
+    fun glossable(): Boolean = book?.let { WordWise.applies(it.lang) } ?: false
 
     private fun show(c: Int, pos: (LaidChapter) -> Int) {
         pageTouch.jumped()
@@ -529,8 +592,7 @@ class ReaderView(private val host: MainActivity) : View(host) {
             if (l != footLeft || c != footCenter) present()
         } else {
             ready = true
-            clearSlot(0)
-            clearSlot(2)
+            clearAround()
             renderNow(1, lc, pi, true)
             updateFooter()
             present()
@@ -548,7 +610,7 @@ class ReaderView(private val host: MainActivity) : View(host) {
             quickShown?.countDown()
             return
         }
-        for (s in 0..2) clearSlot(s)
+        for (s in bmp.indices) clearSlot(s)
         // Tracée avant que la fenêtre existe : l'envoi au processeur graphique est à redemander.
         b.prepareToDraw()
         bmp[1] = b
@@ -585,12 +647,14 @@ class ReaderView(private val host: MainActivity) : View(host) {
                 val html = Perf.time("chapter.read $i") { e.read(e.spine[i]) ?: "" }
                 Perf.time("chapter.parse $i (${html.length} car.)") { parseChapter(html, e.spine[i], fonts, e.styles()) }
             }
+            // Noms propres du chapitre (Eve) : jamais traduits, même quand ils ouvrent une phrase.
+            if (book?.let { WordWise.applies(it.lang) } == true) WordWise.learnNames(ch.blocks)
             var done: Array<StaticLayout?>? = null
             if (quick >= 0) {
                 done = arrayOfNulls(ch.blocks.size)
                 val page = Perf.time("page.quick $i") { t.quickPage(ch, quick, e, done) }
                 if (page != null) {
-                    val b = Bitmap.createBitmap(t.w, t.h, Bitmap.Config.ARGB_8888)
+                    val b = Bitmap.createBitmap(t.w, t.h, pageConfig)
                     Perf.time("page.render (d'avance)") { t.draw(Canvas(b), page, e) }
                     val shown = CountDownLatch(1)
                     post {
@@ -623,7 +687,11 @@ class ReaderView(private val host: MainActivity) : View(host) {
                     val d = pendingTurn
                     pendingTurn = 0
                     turn(d)
-                } else if (ready) prepare()
+                } else if (ready) {
+                    // Pendant une animation, [prepare] attendrait sa fin : les pages qui
+                    // dépendent de ce chapitre se tracent tout de suite.
+                    if (animating) prerender() else prepare()
+                }
             }
             if (busy == i) busy = -1
         }
@@ -642,10 +710,10 @@ class ReaderView(private val host: MainActivity) : View(host) {
             if (animating) {
                 if (eink) wipe.finish() else { animating = false; invalidate() }
             }
-            clearSlot(0)
-            clearSlot(2)
+            clearAround()
             for (b in free) b.recycle()
             free.clear()
+            if (hwPages) painter.execute { scratch?.recycle(); scratch = null }
         }
         if (deep && ready && pendingPos == null) {
             chapters.keys.removeAll { it != ci }
@@ -663,6 +731,10 @@ class ReaderView(private val host: MainActivity) : View(host) {
     /** Charge les chapitres voisins et pré-rend les pages adjacentes, hors animation. */
     private fun prepare() {
         if (lean || !ready || animating || pendingPos != null) return
+        // Pages voisines tracées pendant l'animation qui vient de finir : envoyées maintenant au
+        // processeur graphique (sans effet si elles y sont déjà).
+        bmp[0]?.prepareToDraw()
+        bmp[2]?.prepareToDraw()
         chapters.keys.removeAll { it < ci - 1 || it > ci + 1 }
         parsed.keys.removeAll { it < ci - 1 || it > ci + 1 }
         // D'abord dans le sens de la lecture.
@@ -675,18 +747,28 @@ class ReaderView(private val host: MainActivity) : View(host) {
         postDelayed(prevR, 600)
     }
 
-    /** Lance le tracé de la page suivante dans le sens de la lecture. */
+    /**
+     * Lance le tracé de la page suivante dans le sens de la lecture, puis (voir [ahead]) de
+     * celle d'après : le fil [painter] les prend dans cet ordre.
+     */
     private fun prerender() {
         if (lean || !ready || pendingPos != null) return
+        // Le chapitre suivant, s'il manque, se compose dès maintenant : quand les pages tournent
+        // en rafale, chaque tour interrompt l'animation du précédent et [prepare] n'est jamais
+        // appelé ; au bout du chapitre, la page attendrait sa composition puis son tracé.
+        load(ci + lastDir)
         locate(lastDir)?.let { request(1 + lastDir, it.lc, it.p) }
+        if (ahead) locate(2 * lastDir)?.let { request(AHEAD, it.lc, it.p) }
     }
 
+    /** La page à [d] pages de la courante (|d| ≤ 2), dans ce chapitre ou un voisin déjà composé. */
     private fun locate(d: Int): Loc? {
         val lc = chapters[ci] ?: return null
         val p = pi + d
         if (p >= 0 && p < lc.pages.size) return Loc(lc, p)
         val o = chapters[ci + if (p < 0) -1 else 1] ?: return null
-        return Loc(o, if (p < 0) o.pages.size - 1 else 0)
+        val q = if (p < 0) o.pages.size + p else p - lc.pages.size
+        return if (q >= 0 && q < o.pages.size) Loc(o, q) else null
     }
 
     // ---------------------------------------------------------------- pages
@@ -722,22 +804,38 @@ class ReaderView(private val host: MainActivity) : View(host) {
         bmp[slot] = null; held[slot] = null; heldLc[slot] = null; jobs[slot] = null
         ci = loc.lc.index
         pi = loc.p
+        if (ahead) {
+            // La page d'après, tracée (ou en cours de tracé) d'avance dans ce sens, devient la
+            // suivante ; dans l'autre sens, elle est trop loin et son image est rendue.
+            val nx = if (d == lastDir) locate(d) else null
+            val np = nx?.let { it.lc.pages[it.p] }
+            if (np != null && (held[AHEAD] === np || jobs[AHEAD]?.page === np)) {
+                bmp[slot] = bmp[AHEAD]; held[slot] = held[AHEAD]; heldLc[slot] = heldLc[AHEAD]; heldP[slot] = heldP[AHEAD]; jobs[slot] = jobs[AHEAD]
+                bmp[AHEAD] = null; held[AHEAD] = null; heldLc[AHEAD] = null; jobs[AHEAD] = null
+            } else clearSlot(AHEAD)
+        }
         lastDir = d
+        if (Perf.on) turnNs = System.nanoTime()
         pageTouch.turned()
         updateFooter()
         if (Prefs.anim) {
             animating = true
             animDir = d
             animStart = 0
-            if (eink) {
-                wipe.start(d)
-                // La page d'après se trace pendant le balayage, deux images plus tard : le
-                // bitmap libéré n'est alors plus référencé par l'affichage.
-                frames(2) { prerender() }
-            } else invalidate()
+            if (eink) wipe.start(d) else {
+                slideNs = 0
+                choreographer.removeFrameCallback(slideR)
+                choreographer.postFrameCallback(slideR)
+            }
+            // La page d'après se trace pendant l'animation (glissement ou balayage), sans en
+            // attendre la fin, deux images plus tard : le bitmap libéré n'est alors plus
+            // référencé par l'affichage. Son envoi au processeur graphique attend, lui, la fin
+            // de l'animation (voir [landed]).
+            frames(2) { prerender() }
         } else {
             present()
-            post(prepareR)
+            // Même délai : la page d'après reprend l'image libérée au lieu d'en créer une.
+            frames(2) { prepare() }
         }
         savePosition()
         if (Perf.on) {
@@ -752,40 +850,57 @@ class ReaderView(private val host: MainActivity) : View(host) {
     /** Tracé d'une page dans un bitmap, exécuté sur [painter]. */
     private inner class Job(
         val page: Page, val shown: Page, val lc: LaidChapter, val p: Int,
-        val t: Typesetter, val e: Epub?, val b: Bitmap,
+        val t: Typesetter, val e: Epub?, private val target: Bitmap?,
     ) : Runnable {
         val done = CountDownLatch(1)
         var taken = false   // thread principal : bitmap déjà rangé ou rendu
+        // L'image finie : [target], ou la copie matérielle de [scratch] (voir [hwPages]).
+        @Volatile var b: Bitmap? = null
 
         override fun run() {
             try {
-                Perf.time("page.render") {
-                    canvas.setBitmap(b)
-                    t.draw(canvas, shown, e)
-                    canvas.setBitmap(null)
+                val dst = target ?: scratchFor(t)
+                try {
+                    Perf.time("page.render") {
+                        canvas.setBitmap(dst)
+                        t.draw(canvas, shown, e, shown === page)
+                        canvas.setBitmap(null)
+                    }
+                } catch (x: Throwable) {
+                    try { canvas.setBitmap(null) } catch (y: Throwable) {}
                 }
-                // Envoi anticipé de l'image au processeur graphique : la page tournée n'a plus à l'attendre.
-                b.prepareToDraw()
-            } catch (x: Throwable) {
+                b = if (target != null) target else {
+                    // Copie impossible (mémoire graphique épuisée) : l'image ordinaire est
+                    // cédée telle quelle, une autre servira au prochain tracé.
+                    Perf.time("page.copy") { try { dst.copy(Bitmap.Config.HARDWARE, false) } catch (x: Throwable) { null } }
+                        ?: dst.also { scratch = null }
+                }
             } finally {
                 done.countDown()
             }
         }
     }
 
+    /** L'image de travail du fil [painter], à la taille des pages. */
+    private fun scratchFor(t: Typesetter): Bitmap {
+        scratch?.let { if (!it.isRecycled && it.width == t.w && it.height == t.h) return it else it.recycle() }
+        return Bitmap.createBitmap(t.w, t.h, pageConfig).also { scratch = it }
+    }
+
     private fun obtain(t: Typesetter): Bitmap {
         while (free.isNotEmpty()) {
             val b = free.removeAt(free.size - 1)
-            if (!b.isRecycled && b.width == t.w && b.height == t.h) return b
+            if (!b.isRecycled && b.width == t.w && b.height == t.h && b.config == pageConfig) return b
             b.recycle()
         }
-        return Bitmap.createBitmap(t.w, t.h, Bitmap.Config.ARGB_8888)
+        return Bitmap.createBitmap(t.w, t.h, pageConfig)
     }
 
     /** Rend un bitmap qui n'a jamais été affiché. */
     private fun release(b: Bitmap) {
         // Une seule image en réserve : en régime établi, celle que la page quittée vient de rendre.
-        if (!lean && free.isEmpty() && !b.isRecycled) free.add(b) else b.recycle()
+        // Les images matérielles ne se redessinent pas : elles sont rendues tout de suite.
+        if (!lean && !hwPages && free.isEmpty() && !b.isRecycled) free.add(b) else b.recycle()
     }
 
     /**
@@ -801,6 +916,11 @@ class ReaderView(private val host: MainActivity) : View(host) {
     /** Exécute [f] au début de la [n]-ième image à venir. */
     private fun frames(n: Int, f: () -> Unit) {
         choreographer.postFrameCallback { if (n <= 1) f() else frames(n - 1, f) }
+    }
+
+    /** Rend les images de toutes les pages sauf la courante. */
+    private fun clearAround() {
+        for (s in bmp.indices) if (s != 1) clearSlot(s)
     }
 
     private fun clearSlot(s: Int) {
@@ -825,7 +945,7 @@ class ReaderView(private val host: MainActivity) : View(host) {
         // Demandée avant le tracé : la réponse du traducteur peut arriver immédiatement (cache).
         if (Prefs.translate && page.tr == null) requestTranslation(lc, page)
         val shown = if (Prefs.translate) page.tr ?: page else page
-        val j = Job(page, shown, lc, p, t, epub, obtain(t))
+        val j = Job(page, shown, lc, p, t, epub, if (hwPages) null else obtain(t))
         jobs[slot] = j
         painter.execute {
             j.run()
@@ -838,24 +958,37 @@ class ReaderView(private val host: MainActivity) : View(host) {
     private fun landed(j: Job) {
         if (j.taken) return
         val s = jobs.indexOf(j)
-        if (s < 0) {
-            // Plus attendu : la page a été tournée ou recomposée entre-temps.
+        if (s < 0 || j.b == null) {
+            // Plus attendu (la page a été tournée ou recomposée entre-temps), ou tracé manqué.
             j.taken = true
-            release(j.b)
+            if (s >= 0) jobs[s] = null
+            j.b?.let { release(it) }
             return
         }
         install(s, j)
         if (s == 1) {
             updateFooter()
             present()
-        } else if (animating && !eink) invalidate()
+            return
+        }
+        if (Perf.on && turnNs != 0L && (s == 1 + lastDir || s == AHEAD)) {
+            val what = if (s == AHEAD) "page d'après" else "page suivante"
+            Perf.log("$what prête ${(System.nanoTime() - turnNs) / 1000} us après le tour")
+        }
+        // Envoi anticipé de l'image au processeur graphique, pour que la page tournée n'ait pas
+        // à l'attendre ; pendant une animation, il lui prendrait une image : il attend sa fin
+        // (voir [prepare]).
+        if (animating) {
+            if (!eink) invalidate()
+        } else if (s != AHEAD) j.b?.prepareToDraw()
     }
 
     private fun install(s: Int, j: Job) {
         j.taken = true
         jobs[s] = null
-        // L'image remplacée peut encore être sous un balayage en cours.
-        if (eink && animating && bmp[s] != null) wipe.finish()
+        // L'image remplacée peut encore être sous un balayage en cours (pas celle d'après :
+        // elle n'est jamais affichée).
+        if (eink && animating && s != AHEAD && bmp[s] != null) wipe.finish()
         retire(bmp[s])
         bmp[s] = j.b
         held[s] = j.page
@@ -867,7 +1000,7 @@ class ReaderView(private val host: MainActivity) : View(host) {
     private fun renderNow(slot: Int, lc: LaidChapter, p: Int, force: Boolean) {
         val j = request(slot, lc, p, force) ?: return
         try { j.done.await() } catch (x: InterruptedException) {}
-        if (!j.taken && jobs[slot] === j) install(slot, j)
+        if (!j.taken && jobs[slot] === j && j.b != null) install(slot, j)
     }
 
     /** Montre la page courante telle quelle, sans animation. */
@@ -960,7 +1093,7 @@ class ReaderView(private val host: MainActivity) : View(host) {
                 }
                 // Les emplacements qui montrent ou attendent cette page sont retracés ; l'ancienne
                 // image reste affichée jusqu'à l'arrivée de la nouvelle.
-                for (s in 0..2) {
+                for (s in bmp.indices) {
                     if (held[s] === page) request(s, heldLc[s]!!, heldP[s], true)
                     else jobs[s]?.let { if (it.page === page) request(s, it.lc, it.p, true) }
                 }
@@ -979,10 +1112,13 @@ class ReaderView(private val host: MainActivity) : View(host) {
             return
         }
         if (animating) {
-            val now = SystemClock.uptimeMillis()
-            if (animStart == 0L) animStart = now - 16
+            // Heure de l'image (le signal de l'écran, voir [slideR]), et non celle du tracé : le
+            // glissement avance alors du même pas à chaque image, quel que soit le retard du
+            // thread principal à dessiner. La première image montre déjà une image d'avance.
+            val now = if (slideNs != 0L) slideNs else System.nanoTime()
+            if (animStart == 0L) animStart = now - (frameMs * 1e6f).toLong()
             val old = bmp[1 - animDir]
-            val t = (now - animStart) / Prefs.slideMs
+            val t = (now - animStart) / 1e6f / Prefs.slideMs
             if (t < 1f && old != null) {
                 val k = 1f - (1f - t) * (1f - t)
                 val dx = (k * width).toInt().toFloat()
@@ -994,7 +1130,7 @@ class ReaderView(private val host: MainActivity) : View(host) {
                     c.drawBitmap(cur, dx - width, 0f, null)
                 }
                 drawFooter(c)
-                postInvalidateOnAnimation()
+                choreographer.postFrameCallback(slideR)
                 return
             }
             animating = false
@@ -1022,11 +1158,9 @@ class ReaderView(private val host: MainActivity) : View(host) {
     inner class WipeLayer : ViewGroup(host) {
         private var shown = 0
         private var dir = 1
-        private var interval = 0f     // ms entre deux bandes
+        private var interval = 0f     // ms entre deux bandes : un nombre entier d'images
         private var startNs = 0L      // image qui a montré la première bande
         private var running = false
-        @Suppress("DEPRECATION")
-        private val frameMs = 1000f / (host.windowManager.defaultDisplay.refreshRate.takeIf { it >= 30f } ?: 60f)
         private val tickR = Choreographer.FrameCallback { ns -> tick(ns) }
 
         private fun ensure(n: Int) {
@@ -1037,7 +1171,9 @@ class ReaderView(private val host: MainActivity) : View(host) {
 
         fun start(d: Int) {
             val n = Prefs.wipeSteps
-            interval = Prefs.wipeMs / n
+            // Le même nombre d'images entre deux bandes, du début à la fin. Un intervalle qui
+            // tombe entre deux (27,5 ms à 60 Hz) donnait des pas inégaux : 2, 1 puis 2 images.
+            interval = maxOf(1, Math.round(Prefs.wipeMs / n / frameMs)) * frameMs
             ensure(n)
             dir = d
             shown = 0
@@ -1292,5 +1428,6 @@ class ReaderView(private val host: MainActivity) : View(host) {
         private const val REFRESH = 7
         private val EINK_DURATION = floatArrayOf(240f, 110f, 80f, 50f)
         private const val QUICK_WAIT = 400L
+        private const val AHEAD = 3      // emplacement de la page d'après la suivante
     }
 }

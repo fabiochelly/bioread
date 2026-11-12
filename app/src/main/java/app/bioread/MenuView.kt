@@ -399,6 +399,7 @@ class MenuView(private val host: MainActivity, private val reader: ReaderView, i
         row.addView(language, LinearLayout.LayoutParams(-2, -1).apply { leftMargin = dp(10) })
         row.addView(key, LinearLayout.LayoutParams(dp(44), -1).apply { leftMargin = dp(10) })
         panel.addView(row, LinearLayout.LayoutParams(-1, dp(44)))
+        words()
 
         // --- Page
         val paceLabel = label("", true, 13f)
@@ -456,6 +457,79 @@ class MenuView(private val host: MainActivity, private val reader: ReaderView, i
             panel.addView(bar, LinearLayout.LayoutParams(-1, -2))
             panel.addView(status)
         }
+    }
+
+    /**
+     * Traduction sous les mots difficiles (livres anglais) : une bascule, et le vocabulaire du
+     * lecteur sur un curseur, de 3 000 à 30 000 mots connus (échelle logarithmique). Sous le
+     * curseur, le nombre de mots du chapitre ouvert qui seront traduits à ce réglage.
+     */
+    private fun words() {
+        val head = LinearLayout(host)
+        head.gravity = Gravity.CENTER_VERTICAL
+        head.setPadding(0, dp(14), 0, dp(4))
+        val level = label("", true, 13f).apply { gravity = Gravity.END }
+        head.addView(label("MOTS DIFFICILES", true, 11.5f).apply { letterSpacing = 0.12f })
+        head.addView(level, LinearLayout.LayoutParams(0, -2, 1f).apply { leftMargin = dp(12) })
+        val bar = PageSlider(host)
+        val count = label("", false, 12.5f)
+        fun visible(on: Boolean) {
+            bar.visibility = if (on) VISIBLE else GONE
+            count.visibility = if (on) VISIBLE else GONE
+            level.visibility = if (on) VISIBLE else INVISIBLE
+        }
+        head.addView(Switch(Prefs.wordwise) { on ->
+            Prefs.wordwise = on
+            Prefs.save()
+            visible(on)
+            if (on && reader.book != null && !reader.glossable()) host.toast("Pour les livres en anglais, traduits en français")
+            reader.reflow()   // l'interligne change
+        }, LinearLayout.LayoutParams(-2, -2).apply { leftMargin = dp(12) })
+        panel.addView(head)
+
+        // Mots du chapitre ouvert qui ont une traduction : leur rang, une fois par occurrence.
+        val ranks = ArrayList<Int>()
+        val lc = reader.shownChapter()
+        if (lc != null && reader.book?.let { it.lang.startsWith("en") && Prefs.target == "fr" } == true) {
+            val re = Regex("[A-Za-z][A-Za-z'’-]*[A-Za-z]")
+            val seen = HashMap<String, Int>()
+            for (b in lc.chapter.blocks) {
+                if (b.kind != Block.PARA) continue
+                for (m in re.findAll(b.text)) {
+                    val w = m.value
+                    if (w[0].isUpperCase()) continue   // noms propres et débuts de phrase : le décompte s'en passe
+                    val r = seen.getOrPut(w) { WordWise.preview(w)?.first ?: 0 }
+                    if (r > 0) ranks.add(r)
+                }
+            }
+        }
+        val min = WordWise.MIN.toDouble()
+        val span = Math.log10(WordWise.MAX / min)
+        fun levelOf(v: Int) = (Math.round(min * Math.pow(10.0, span * v / 100) / 500) * 500).toInt()
+        fun show(n: Int) {
+            level.text = "${String.format("%,d", n).replace(',', ' ')} mots connus – ${WordWise.cefr(n)}"
+            count.text = if (lc == null) "" else when (val k = ranks.count { it > n }) {
+                0 -> "Aucun mot traduit dans ce chapitre"
+                1 -> "1 mot traduit dans ce chapitre"
+                else -> "$k mots traduits dans ce chapitre"
+            }
+        }
+        bar.max = 100
+        bar.progress = Math.round(Math.log10(Prefs.wwLevel / min) / span * 100).toInt().coerceIn(0, 100)
+        bar.tint = Theme.tint(IconButton.GLOBE)
+        bar.pad = 12 * d
+        bar.onChange = { v, _ ->
+            Prefs.wwLevel = levelOf(v)
+            show(Prefs.wwLevel)
+        }
+        bar.onStop = {
+            Prefs.save()
+            reader.glossChanged()
+        }
+        panel.addView(bar, LinearLayout.LayoutParams(-1, -2))
+        panel.addView(count)
+        show(Prefs.wwLevel)
+        visible(Prefs.wordwise)
     }
 
     private fun setEngine(i: Int) {

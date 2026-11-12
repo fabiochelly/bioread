@@ -633,7 +633,7 @@ class Styled {
     }
 
     /** [base] : peinture du texte courant (ou du titre) à cette échelle ; [cw] : largeur du texte. */
-    fun layout(b: Block, st: BlockStyle, base: TextPaint, cw: Int, mult: Float): StaticLayout {
+    fun layout(b: Block, st: BlockStyle, base: TextPaint, cw: Int, mult: Float, add: Float = 0f): StaticLayout {
         if (b.kind == Block.HEAD) {
             val t = b.text
             val center = if (st.align < 0) b.level <= 2 else st.align == 1
@@ -659,7 +659,7 @@ class Styled {
             t = sp
         }
         val sb = StaticLayout.Builder.obtain(t, 0, t.length, p, cw).setIncludePad(false)
-            .setLineSpacing(0f, mult)
+            .setLineSpacing(add, mult)
             .setBreakStrategy(Layout.BREAK_STRATEGY_HIGH_QUALITY)
             .setHyphenationFrequency(if (st.noHyphen) Layout.HYPHENATION_FREQUENCY_NONE else Layout.HYPHENATION_FREQUENCY_NORMAL)
         when (st.align) {

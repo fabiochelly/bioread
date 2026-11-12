@@ -1,0 +1,5363 @@
+# Corrections faites à la main de la table des mots difficiles (anglais → français), lues par
+# tools/make_wordwise.py. Une ligne : forme anglaise, catégorie (noun, verb, adj, adv, prep),
+# traduction ; « - » : jamais traduit (mot transparent, trop facile, nom propre, faute de frappe).
+# Une correction notée sur une forme vaut pour toutes les formes de son mot (assessed → assess).
+# Établies sur une vingtaine de romans récents (plus de 20 000 pages), en jugeant le sens le plus courant aujourd'hui.
+aback	adv	pris de court
+abacus	noun	boulier
+abandonment	noun	-
+abashed	adj	penaud
+abate	verb	s'apaiser
+abide	verb	supporter
+abided	verb	respecter
+abiding	verb	respecter
+abo	adj	-
+abort	verb	annuler
+abound	verb	-
+abruptly	adv	brusquement
+absconded	verb	s'enfuir
+absorbing	adj	-
+abstruse	adj	obscur
+abuzz	adj	en effervescence
+abysmal	adj	lamentable
+acclimation	noun	-
+accommodate	verb	accueillir
+accommodating	adj	arrangeant
+accompany	verb	-
+accompanying	verb	-
+accost	verb	aborder
+accosting	verb	aborder
+accouterments	noun	attirail
+accuracy	noun	précision
+accurate	adj	précis
+accursed	adj	maudit
+accusing	adj	accusateur
+accusingly	adv	d'un air accusateur
+accustomed	adj	habitué
+acerbic	adj	-
+achievement	noun	exploit
+achievements	noun	exploit
+achy	adj	endolori
+acidic	adj	-
+acknowledgment	noun	reconnaissance
+acknowledgments	noun	reconnaissance
+acquaint	verb	se familiariser
+acquaintance	noun	connaissance
+acquaintances	noun	connaissance
+acquainted	verb	connaître
+acquiesced	verb	-
+acquire	verb	-
+acquired	verb	acquérir
+actionable	adj	exploitable
+acumen	noun	flair
+adaptive	adj	-
+addled	adj	embrouillé
+adequately	adv	correctement
+adherence	noun	respect
+adjoining	adj	voisin
+admirers	noun	-
+admonish	verb	réprimander
+admonishment	noun	réprimande
+ado	noun	tralala
+adorably	adv	-
+adoringly	adv	avec adoration
+adorned	verb	orner
+adornments	noun	ornement
+adulthood	noun	âge adulte
+advent	noun	avènement
+adversarial	adj	hostile
+advertise	verb	faire de la pub
+advisement	noun	réflexion
+adviser	noun	conseiller
+advisers	noun	conseiller
+aerial	adj	aérien
+affable	adj	-
+affirmatory	adj	-
+affluent	adj	aisé
+afire	adj	en feu
+aflame	adj	en flammes
+afoot	adv	en cours
+aftereffect	noun	contrecoup
+aftereffects	noun	contrecoup
+afterimage	noun	image rémanente
+aftermath	noun	contrecoup
+agenda	noun	programme
+aggravatingly	adv	de façon agaçante
+aggravation	noun	exaspération
+aggressiveness	noun	-
+aggrieved	adj	offensé
+aggro	noun	agressivité
+agonized	adj	tourmenté
+agonizing	adj	atroce
+agonizingly	adv	atrocement
+agoraphobic	adj	-
+agreeableness	noun	amabilité
+aide	noun	assistant
+ail	verb	tourmenter
+airborne	adj	en vol
+airbrushed	verb	aérographier
+airily	adv	d'un ton léger
+airplane	noun	-
+airplanes	noun	-
+airway	noun	voies respiratoires
+akimbo	adj	mains sur les hanches
+akin	adj	semblable
+ala	noun	-
+alacrity	noun	empressement
+ale	noun	bière
+alerts	noun	-
+alight	adj	en feu
+alighted	verb	se poser
+all-encompassing	adj	global
+alleviated	verb	soulager
+alleyway	noun	ruelle
+allotment	noun	part
+allotments	noun	parcelle
+allowance	noun	allocation
+alltime	adj	de tous les temps
+alluded	verb	faire allusion
+alluding	verb	faire allusion
+allure	noun	charme
+alluring	adj	séduisant
+almond-shaped	adj	en amande
+aloud	adv	à voix haute
+alter	verb	modifier
+altered	verb	modifier
+altering	verb	modifier
+alumni	noun	ancien élève
+ambidextrous	adj	-
+ambiguous	adj	-
+ambling	verb	flâner
+ambrosia	noun	-
+ambushed	verb	tendre une embuscade
+amenable	adj	disposé
+amia	noun	-
+amicably	adv	à l'amiable
+amid	prep	au milieu de
+amidst	prep	au milieu de
+anachronistic	adj	-
+analogous	adj	-
+analysis	noun	-
+androgynous	adj	-
+angelically	adv	comme un ange
+angling	verb	chercher à obtenir
+angst	noun	angoisse
+anguish	noun	angoisse
+animalistic	adj	bestial
+animate	verb	animer
+animatedly	adv	avec animation
+anklets	noun	bracelet de cheville
+annihilating	adj	dévastateur
+annoy	verb	agacer
+annoyance	noun	agacement
+annoyed	adj	agacé
+anodized	verb	-
+anointing	verb	oindre
+anonymous	adj	-
+anonymously	adv	-
+anti-semitic	adj	-
+antiaging	adj	-
+antics	noun	frasques
+antiquated	adj	désuet
+antlered	adj	cornu
+anytime	adv	n'importe quand
+apathetically	adv	-
+apolog	noun	-
+apologetically	adv	en s'excusant
+app	noun	appli
+appalled	adj	consterné
+appalling	adj	épouvantable
+apparel	noun	vêtement
+appearance	noun	apparence
+appliances	noun	appareil ménager
+appoint	verb	nommer
+appointed	verb	nommer
+appraisal	noun	évaluation
+appraise	verb	jauger
+appraised	verb	évaluer
+appraising	verb	jauger
+appreciations	noun	gratitude
+appreciatively	adv	d'un air approbateur
+apprehensive	adj	inquiet
+apprehensively	adv	avec inquiétude
+apprised	verb	informer
+approximate	adj	-
+approximately	adv	environ
+apps	noun	appli
+arbalests	noun	arbalète
+arced	verb	décrire un arc
+archipelago	noun	-
+archival	adj	d'archives
+archway	noun	arche
+arcs	noun	-
+ardently	adv	ardemment
+arduously	adv	péniblement
+arenas	noun	-
+arguably	adv	sans doute
+argumentatively	adv	d'un ton querelleur
+armament	noun	-
+armor-clad	adj	blindé
+armory	noun	arsenal
+armour	noun	armure
+arose	verb	survenir
+arousal	noun	excitation
+arouse	verb	éveiller
+arousing	verb	éveiller
+arrayed	verb	déployer
+arraying	verb	déployer
+arrhythmia	noun	-
+arrowheads	noun	pointe de flèche
+ars	noun	-
+artificers	noun	artisan
+artistic	adj	-
+ascendance	noun	ascension
+ascent	noun	ascension
+ascertain	verb	déterminer
+ash-grey	adj	gris cendre
+ashen	adj	blême
+aside	adv	de côté
+aspiring	adj	en herbe
+assertively	adv	avec assurance
+assess	verb	évaluer
+assessed	verb	évaluer
+assessing	verb	évaluer
+asset	noun	atout
+assets	noun	atout
+assignee	noun	personne désignée
+assuage	verb	apaiser
+assuaging	verb	apaiser
+astounded	verb	stupéfier
+astounding	adj	stupéfiant
+astronomically	adv	énormément
+astute	adj	perspicace
+asura	noun	-
+athleisure	noun	tenue de sport
+atomized	verb	pulvériser
+atomizing	verb	pulvériser
+atop	prep	au sommet de
+atrocious	adj	-
+attainment	noun	accomplissement
+attainments	noun	accomplissement
+attendant	noun	préposé
+attendants	noun	préposé
+attire	noun	tenue
+attractiveness	noun	charme
+attuned	adj	en phase
+attunes	verb	s'harmoniser
+atypically	adv	anormalement
+auburn	adj	-
+auctioned	verb	vendre aux enchères
+audibly	adv	-
+augmentation	noun	-
+augmentations	noun	-
+authoritative	adj	autoritaire
+automated	adj	-
+autonomously	adv	-
+avail	noun	succès
+averse	adj	réticent
+avian	adj	d'oiseau
+avoidable	adj	-
+awe	noun	admiration
+awe-inspiring	adj	impressionnant
+awed	adj	impressionné
+awkward	adj	gênant
+awkwardness	noun	gêne
+awning	noun	auvent
+awnings	noun	auvent
+babbles	verb	babiller
+babbling	verb	jacasser
+bachelorette	noun	future mariée
+backdrop	noun	toile de fond
+backflip	noun	salto arrière
+backhanded	adj	ambigu
+backhanding	verb	frapper du revers
+backpacked	verb	voyager sac au dos
+backpedaled	verb	reculer
+backrooms	noun	coulisses
+backside	noun	derrière
+backstabbers	noun	traître
+backstage	noun	coulisses
+backstory	noun	passé
+backup	noun	renfort
+backups	noun	renfort
+backwards	adv	en arrière
+bad-tempered	adj	grincheux
+badass	adj	qui en jette
+badge	noun	insigne
+badgering	verb	harceler
+baffle	verb	déconcerter
+bailed	verb	se tirer
+bajillion	noun	milliard
+balding	adj	dégarni
+balked	verb	rechigner
+balking	verb	rechigner
+ballooned	verb	gonfler
+ballooning	verb	gonfler
+bandwidth	noun	bande passante
+bane	noun	fléau
+bankrupt	adj	ruiné
+bantered	verb	plaisanter
+barbarously	adv	sauvagement
+barbequed	adj	grillé
+barbs	noun	pointe
+barefaced	adj	éhonté
+barefooted	adj	pieds nus
+barehanded	adv	à mains nues
+barfed	verb	vomir
+bargain	noun	marché
+bargained	verb	négocier
+bargaining	noun	négociation
+barge	noun	péniche
+barges	noun	péniche
+barging	verb	faire irruption
+barnacles	noun	balane
+barrack	noun	baraquement
+barrelling	verb	foncer
+barren	adj	aride
+barrets	noun	-
+bash	verb	cogner
+bashing	verb	cogner
+basin	noun	bassine
+bask	verb	se prélasser
+bast	noun	-
+bated	adj	retenu
+bathe	verb	se baigner
+baton	noun	matraque
+batons	noun	matraque
+batshit	adj	taré
+battered	adj	cabossé
+battering	verb	marteler
+batting	verb	battre
+battle-axe	noun	hache de guerre
+battleships	noun	cuirassé
+bawling	verb	brailler
+bayonet	noun	-
+bayonets	noun	-
+beaker	noun	bécher
+beams	noun	poutre
+bearable	adj	supportable
+bearings	noun	repère
+bearskin	noun	peau d'ours
+beastmaster	noun	dompteur
+bedfellows	noun	allié
+bedlam	noun	chaos
+bedraggled	adj	dépenaillé
+bedrocks	noun	socle
+beeline	noun	ligne droite
+befall	verb	arriver à
+befallen	verb	arriver à
+befell	verb	arriver à
+beforehand	adv	à l'avance
+befriend	verb	se lier d'amitié
+befriended	verb	se lier d'amitié
+befriending	verb	se lier d'amitié
+befuddled	adj	perplexe
+beggar	noun	mendiant
+beggars	noun	mendiant
+begrudging	adj	réticent
+beguilement	noun	envoûtement
+beguiling	adj	envoûtant
+behalf	noun	au nom de
+behemoths	noun	mastodonte
+behold	verb	contempler
+belay	verb	annuler
+belayed	verb	annuler
+believable	adj	crédible
+belittled	verb	rabaisser
+belittling	verb	rabaisser
+bellow	noun	beuglement
+bellowed	verb	hurler
+bellowing	verb	hurler
+bellows	noun	beuglement
+belongings	noun	affaires
+beloved	adj	bien-aimé
+belting	verb	chanter à tue-tête
+bemused	adj	perplexe
+bemusement	noun	perplexité
+benchmark	noun	référence
+bended	adj	plié
+benevolently	adv	avec bienveillance
+bequeathed	verb	léguer
+berating	verb	réprimander
+bereaved	adj	endeuillé
+berserkers	noun	-
+beseech	verb	implorer
+beset	verb	assaillir
+besetting	verb	assaillir
+beside	prep	à côté de
+bespoke	adj	sur mesure
+bestow	verb	accorder
+bestowed	verb	accorder
+bestowing	verb	accorder
+bevy	noun	ribambelle
+beware	verb	se méfier
+bewildered	adj	déconcerté
+bewilderedly	adv	d'un air perplexe
+bewildering	adj	déroutant
+bewilderment	noun	perplexité
+bewitching	adj	envoûtant
+biases	noun	préjugé
+bickering	verb	se chamailler
+bidding	noun	ordre
+bided	verb	attendre
+bigwig	noun	gros bonnet
+bigwigs	noun	gros bonnet
+billow	verb	tourbillonner
+billowed	verb	tourbillonner
+billowing	verb	gonfler
+binder	noun	classeur
+binding	adj	contraignant
+bindings	noun	lien
+binds	verb	lier
+binoculars	noun	jumelles
+bipeds	noun	-
+birdcage	noun	cage à oiseaux
+birdie	noun	petit oiseau
+birdsong	noun	chant d'oiseaux
+bisected	verb	couper en deux
+bizarreness	noun	-
+blabbering	verb	jacasser
+blabbing	verb	jaser
+blanched	verb	blêmir
+bland	adj	fade
+blandest	adj	fade
+blandness	noun	fadeur
+blanketed	adj	recouvert
+blast	noun	explosion
+blasted	adj	maudit
+blaster	noun	pistolet laser
+blatant	adj	flagrant
+blatantly	adv	ouvertement
+blaze	noun	brasier
+blazed	verb	flamboyer
+bleakly	adv	sombrement
+bleakness	noun	désolation
+bleary-eyed	adj	aux yeux bouffis
+bleating	verb	bêler
+bleeder	noun	saignement
+blemished	adj	entaché
+blemishes	noun	imperfection
+blemishing	verb	ternir
+blend	verb	se fondre
+blended	verb	se fondre
+blessings	noun	bénédiction
+blighted	adj	ravagé
+blimp	noun	dirigeable
+blink	noun	clin d'œil
+blinked	verb	cligner des yeux
+blinking	verb	cligner des yeux
+blistered	verb	cloquer
+blistering	adj	cinglant
+blob	noun	masse informe
+blobs	noun	masse informe
+blockages	noun	-
+blogger	noun	-
+bloodshot	adj	injecté de sang
+bloodstains	noun	tache de sang
+bloodstream	noun	circulation sanguine
+bloomed	verb	s'épanouir
+blooms	noun	fleur
+blotted	verb	effacer
+blowout	noun	éclatement
+bludgeoned	verb	matraquer
+blue-collar	adj	ouvrier
+blue-grey	adj	gris-bleu
+blueish	adj	bleuté
+bluff	noun	-
+bluffs	noun	-
+bluish	adj	bleuté
+bluish-purple	adj	violet bleuté
+bluntly	adv	sans détour
+blurred	verb	brouiller
+blurring	noun	flou
+blurs	noun	flou
+bluster	noun	fanfaronnade
+blustered	verb	fanfaronner
+bo	noun	-
+boa	noun	-
+boar	noun	sanglier
+bobbled	verb	sautiller
+bobsled	noun	-
+bodysuit	noun	combinaison
+bodysuits	noun	combinaison
+bog	noun	marais
+boggle	verb	sidérer
+boggled	verb	sidérer
+bold	adj	audacieux
+bolder	adj	audacieux
+bolster	verb	renforcer
+bolt	noun	verrou
+bolted	verb	détaler
+bolting	verb	détaler
+bombardments	noun	-
+bomber	noun	bombardier
+bombers	noun	bombardier
+boner	noun	trique
+boniness	noun	maigreur
+bonkers	adj	dingue
+bookshelf	noun	étagère
+bookshelves	noun	étagère
+boon	noun	bienfait
+boons	noun	bienfait
+boosted	verb	renforcer
+booster	noun	propulseur
+booth	noun	cabine
+bootleg	noun	contrefaçon
+bootstraps	noun	tirant de botte
+booty	noun	fesses
+booze	noun	alcool
+boozy	adj	arrosé
+bopped	verb	se trémousser
+borderline	adj	limite
+bot	noun	-
+bottleneck	noun	goulot d'étranglement
+boundary	noun	limite
+bounty	noun	prime
+bowels	noun	entrailles
+bowstring	noun	corde d'arc
+boyish	adj	juvénile
+brace	verb	se préparer
+bracing	verb	se préparer
+bracketed	verb	encadrer
+braided	verb	tresser
+brainpower	noun	matière grise
+brandish	verb	brandir
+brandy	noun	cognac
+brash	adj	impétueux
+brat	noun	sale gosse
+brawny	adj	costaud
+braying	verb	braire
+brazen	adj	effronté
+breach	verb	percer
+breached	verb	percer
+breaching	verb	percer
+breadth	noun	largeur
+breadwinner	noun	soutien de famille
+breakdown	noun	effondrement
+breakers	noun	brisant
+bred	verb	élever
+breed	noun	race
+breeding	noun	élevage
+breezed	verb	passer sans peine
+breezily	adv	avec désinvolture
+breezy	adj	décontracté
+brew	verb	préparer
+brewed	verb	préparer
+brewing	verb	se préparer
+briefcase	noun	mallette
+briefings	noun	-
+brightening	verb	s'éclairer
+brimming	verb	déborder
+brimstone	noun	soufre
+brisk	adj	vif
+bristle	noun	poil
+broach	verb	aborder
+broadcaster	noun	présentateur
+broadcasters	noun	présentateur
+broaden	verb	élargir
+broadened	verb	s'élargir
+brokered	verb	négocier
+broody	adj	ténébreux
+bros	noun	pote
+brothel	noun	maison close
+brothels	noun	maison close
+brow	noun	front
+brownish-orange	adj	orange brunâtre
+bruising	noun	contusion
+brusquely	adv	-
+brutish	adj	brutal
+buck	noun	dollar
+buckle	verb	fléchir
+buckled	verb	fléchir
+bucks	noun	dollar
+budding	adj	naissant
+buff	noun	bonus
+buffed	verb	renforcer
+buffering	noun	chargement
+buffs	noun	bonus
+bugger	noun	bougre
+buggies	noun	voiturette
+buggy	noun	voiturette
+bulky	adj	volumineux
+bulletproof	adj	pare-balles
+bullheaded	adj	têtu
+bum	noun	derrière
+bummed	adj	déçu
+bummer	noun	poisse
+bumpier	adj	cahoteux
+bumpy	adj	cahoteux
+bums	noun	clochard
+bun	noun	chignon
+bundle	noun	paquet
+bundled	verb	regrouper
+bunkering	verb	se retrancher
+bunking	verb	loger
+buns	noun	petit pain
+buoyancy	noun	flottabilité
+buoyed	verb	soutenir
+burbling	verb	gargouiller
+burden	noun	fardeau
+burdened	verb	accabler
+burdening	verb	accabler
+burgeoning	adj	en plein essor
+burly	adj	costaud
+burner	noun	brûleur
+burners	noun	brûleur
+burping	verb	roter
+burrowed	verb	creuser
+bursts	noun	éclat
+bushy	adj	broussailleux
+bust	noun	fiasco
+bustling	adj	animé
+butchered	verb	massacrer
+butchering	verb	massacrer
+butler	noun	majordome
+butt	noun	derrière
+butted	verb	s'immiscer
+butterfly	noun	-
+butting	verb	se heurter
+bygone	adj	révolu
+bygones	noun	passé
+bystander	noun	spectateur
+bystanders	noun	spectateur
+cacao	noun	-
+cackle	noun	ricanement
+cackled	verb	ricaner
+cackling	verb	ricaner
+cacophonous	adj	-
+cads	noun	goujat
+cagey	adj	évasif
+cahoots	noun	de mèche
+caitiff	noun	lâche
+cal	noun	-
+calculatingly	adv	avec calcul
+calendar	noun	-
+calf	noun	mollet
+callous	adj	insensible
+callously	adv	froidement
+calluses	noun	callosité
+camcorder	noun	caméscope
+camo	noun	camouflage
+camouflage	noun	-
+camouflaged	verb	-
+camouflaging	verb	-
+campsite	noun	campement
+campsites	noun	campement
+candidly	adv	franchement
+candlestick	noun	bougeoir
+candlesticks	noun	bougeoir
+cannibalize	verb	-
+cannonade	noun	-
+cannoned	verb	être projeté
+cannons	noun	-
+canoodling	verb	se bécoter
+cant	noun	-
+cantankerous	adj	acariâtre
+capacious	adj	spacieux
+capitulate	verb	-
+capitulated	verb	-
+capping	verb	coiffer
+captivating	adj	-
+carbonized	verb	-
+careen	verb	embarder
+careened	verb	foncer
+caressing	verb	-
+carnivorous	adj	-
+carriage	noun	calèche
+carrier	noun	transporteur
+carriers	noun	transporteur
+carrots	noun	-
+cartoon	noun	dessin animé
+cartoons	noun	dessin animé
+carved	verb	sculpter
+carvings	noun	sculpture
+casket	noun	cercueil
+caster	noun	lanceur de sorts
+castigate	verb	fustiger
+castigation	noun	réprimande
+casual	adj	décontracté
+casualty	noun	victime
+catastrophically	adv	-
+catcalls	noun	sifflet
+catchall	noun	fourre-tout
+categorically	adv	-
+cater	verb	satisfaire
+catering	noun	traiteur
+caterwauling	verb	brailler
+catspaw	noun	pantin
+caution	noun	prudence
+cautions	noun	mise en garde
+cautiously	adv	prudemment
+caveat	noun	réserve
+caveats	noun	réserve
+cavity	noun	-
+ceaselessly	adv	sans cesse
+cezve	noun	cafetière turque
+chaff	noun	paille
+chaffs	noun	leurre
+chairwoman	noun	présidente
+chaise	noun	chaise longue
+chalky	adj	crayeux
+challenger	noun	adversaire
+champing	verb	ronger son frein
+championships	noun	championnat
+champs	noun	-
+champs	verb	-
+chancery	noun	-
+changeability	noun	variabilité
+changelings	noun	changelin
+chaotically	adv	de façon chaotique
+chaperoned	verb	escorter
+chaperones	noun	accompagnateur
+charitable	adj	-
+charitably	adv	-
+chasm	noun	gouffre
+chasms	noun	gouffre
+chastise	verb	réprimander
+chastised	verb	réprimander
+chastising	verb	réprimander
+chatter	noun	bavardage
+chauffeuring	verb	conduire
+checkers	noun	jeu de dames
+cheep	verb	pépier
+cheerily	adv	gaiement
+cherished	adj	chéri
+chestnut	adj	châtain
+chewy	adj	élastique
+chickenshit	noun	trouillard
+chieftains	noun	chef de clan
+childish	adj	puéril
+childproofed	verb	sécuriser
+chink	noun	faille
+chipmunk	noun	tamia
+chipper	adj	guilleret
+chit	noun	bavardage
+chit-chat	noun	bavardage
+chitinous	adj	-
+chock-full	adj	bourré
+chokehold	noun	étranglement
+chokeholds	noun	étranglement
+chomped	verb	croquer
+choosers	noun	-
+chop	verb	hacher
+chopper	noun	hélico
+chore	noun	corvée
+chorused	verb	répondre en chœur
+chorusing	verb	répondre en chœur
+chubby	adj	potelé
+chuck-full	adj	bourré
+chucked	verb	balancer
+chuckle	noun	petit rire
+chuckled	verb	rire doucement
+chuckling	verb	rire doucement
+chuff	noun	souffle
+chugged	verb	descendre
+chugging	verb	descendre
+chunk	noun	morceau
+chunky	adj	massif
+churn	verb	brasser
+churned	verb	remuer
+churning	verb	remuer
+cinematic	adj	-
+cinnamon	noun	cannelle
+cipher	noun	code
+ciphers	noun	code
+circuited	verb	court-circuiter
+circuitous	adj	détourné
+circulating	adj	-
+circumstantial	adj	indirect
+circus	noun	-
+cis	adj	-
+clacked	verb	claquer
+clad	adj	vêtu
+clamorous	adj	bruyant
+clang	noun	bruit métallique
+clangor	noun	fracas
+clanked	verb	cliqueter
+clansmen	noun	membre du clan
+clash	noun	affrontement
+clatter	noun	fracas
+clause	noun	-
+clauses	noun	-
+cleaners	noun	agent d'entretien
+clearance	noun	autorisation
+cleavage	noun	décolleté
+cleave	verb	fendre
+cleaved	verb	fendre
+clench	verb	serrer
+cleric	noun	prêtre
+clerics	noun	prêtre
+clerk	noun	employé
+clever	adj	malin
+clinched	verb	décrocher
+cling	verb	s'accrocher
+clinging	verb	s'accrocher
+cloak	noun	cape
+cloaked	verb	envelopper
+cloaks	noun	cape
+clobber	verb	tabasser
+clobbering	verb	tabasser
+clockworks	noun	mécanisme
+clomped	verb	marcher lourdement
+clomping	verb	marcher lourdement
+close-knit	adj	soudé
+closure	noun	apaisement
+cloudiness	noun	trouble
+clout	noun	influence
+clubhouse	noun	local du club
+clumsy	adj	maladroit
+clunk	noun	bruit sourd
+clustered	verb	se regrouper
+clutch	verb	agripper
+clutched	verb	agripper
+clutches	noun	griffe
+clutching	verb	agripper
+clutter	noun	fouillis
+co-opted	verb	s'approprier
+coalesce	verb	fusionner
+coalesced	verb	fusionner
+coalescing	verb	se rassembler
+coals	noun	braise
+coarctation	noun	-
+coattails	noun	pan de veste
+cobwebs	noun	toile d'araignée
+cock	noun	bite
+cock-a-doodle-doo	noun	-
+cocked	verb	incliner
+cocks	noun	bite
+coercing	verb	contraindre
+coexisting	verb	-
+cog	noun	rouage
+cognition	noun	-
+coinage	noun	monnaie
+coitus	noun	-
+coldhearted	adj	sans cœur
+coli	noun	-
+collapses	verb	s'effondrer
+collectible	adj	de collection
+colluded	verb	comploter
+comatose	adj	-
+combusted	verb	s'embraser
+comeback	noun	retour
+commendation	noun	éloge
+commerce	noun	-
+commodity	noun	denrée
+commonalities	noun	point commun
+commonality	noun	point commun
+commoners	noun	roturier
+communally	adv	collectivement
+compact	adj	-
+compelling	adj	convaincant
+compensating	verb	compenser
+competitiveness	noun	-
+complacent	adj	trop confiant
+complected	adj	au teint
+complex	adj	-
+complicit	adj	-
+complied	verb	obéir
+complying	verb	obéir
+component	noun	-
+components	noun	-
+comport	verb	se comporter
+comported	verb	se comporter
+composedly	adv	posément
+composure	noun	sang-froid
+compounded	verb	aggraver
+compounding	verb	aggraver
+comprehended	verb	comprendre
+comprehensively	adv	complètement
+compromise	noun	compromis
+conceited	adj	vaniteux
+concisely	adv	-
+conclusively	adv	de façon concluante
+concoct	verb	-
+concurrent	adj	simultané
+concurring	verb	approuver
+concussed	adj	sonné
+concussion	noun	commotion cérébrale
+condolences	noun	-
+condone	verb	cautionner
+condoning	verb	cautionner
+conduit	noun	-
+conduits	noun	-
+confidants	noun	confident
+confide	verb	se confier
+confident	adj	sûr de soi
+confidently	adv	avec assurance
+confides	verb	se confier
+confiding	verb	se confier
+confined	adj	-
+congealing	verb	se figer
+congested	adj	encombré
+congregating	verb	se rassembler
+congruent	adj	cohérent
+conjoining	verb	joindre
+conjurer	noun	magicien
+connive	verb	manigancer
+conniving	adj	fourbe
+conscripting	verb	enrôler
+considerate	adj	attentionné
+considerately	adv	avec égards
+consist	verb	se composer
+consisted	verb	consister
+consisting	verb	consister
+consists	verb	se composer
+consonance	noun	harmonie
+consorted	verb	fréquenter
+conspicuous	adj	voyant
+conspiracy	noun	complot
+constrain	verb	restreindre
+constrained	verb	restreindre
+constraining	verb	restreindre
+constricting	verb	se resserrer
+construed	verb	interpréter
+contemptuously	adv	avec mépris
+contend	verb	lutter
+contestant	noun	candidat
+contestants	noun	candidat
+continuous	adj	-
+continuously	adv	-
+contour	noun	-
+contoured	verb	se découper
+contours	noun	-
+contractor	noun	prestataire
+contractors	noun	prestataire
+contraptions	noun	engin
+contrastingly	adv	par contraste
+conundrum	noun	casse-tête
+convalescence	noun	-
+conveniently	adv	opportunément
+conversationalist	noun	causeur
+conversion	noun	-
+convert	noun	converti
+converts	noun	converti
+conveyance	noun	véhicule
+convoluted	adj	alambiqué
+convulsion	noun	-
+coolheaded	adj	posé
+coordinate	verb	-
+coordinated	verb	-
+coordinates	noun	-
+coordinating	verb	-
+cootie	noun	pou
+coping	verb	faire face
+copse	noun	bosquet
+corded	adj	noueux
+corkscrewed	verb	vriller
+cornerstone	noun	pierre angulaire
+cornerstones	noun	pierre angulaire
+corpse-like	adj	cadavérique
+corpselike	adj	cadavérique
+corralled	verb	parquer
+corrals	noun	enclos
+correspondingly	adv	en conséquence
+corroborates	verb	-
+corrode	verb	ronger
+corroded	verb	ronger
+corroding	verb	ronger
+corrugated	adj	ondulé
+corrupted	adj	-
+corrupting	verb	-
+corruptive	adj	corrupteur
+cotton	noun	-
+counseling	noun	soutien psychologique
+counselling	noun	soutien psychologique
+countdown	noun	compte à rebours
+countdowns	noun	compte à rebours
+counter-productive	adj	-
+counteract	verb	contrer
+counterfeit	adj	faux
+counterintuitive	adj	-
+countermeasure	noun	-
+countermeasures	noun	-
+counteroffensive	noun	-
+counterproductive	adj	-
+counterstrike	noun	contre-attaque
+countertops	noun	plan de travail
+coupon	noun	-
+coupons	noun	-
+covet	verb	convoiter
+covetous	adj	avide
+cowardly	adj	lâche
+cowered	verb	se recroqueviller
+cowering	verb	se recroqueviller
+cowl	noun	capuchon
+coy	adj	faussement timide
+coyly	adv	avec coquetterie
+coziness	noun	confort douillet
+crackdown	noun	répression
+crackle	verb	crépiter
+crackled	verb	crépiter
+crackling	verb	crépiter
+crackpot	noun	cinglé
+craftmanship	noun	savoir-faire
+crag	noun	escarpement
+crags	noun	escarpement
+cramped	adj	exigu
+craning	verb	tendre
+cravat	noun	foulard
+crave	verb	avoir très envie de
+craved	verb	avoir très envie de
+craven	adj	lâche
+craving	verb	avoir très envie de
+cravings	noun	envie
+crawler	noun	-
+crawlers	noun	-
+crayon	noun	crayon de cire
+creak	verb	grincer
+creaky	adj	grinçant
+creasing	verb	plisser
+credentials	noun	accréditation
+creepy	adj	flippant
+crescendo	noun	-
+crested	verb	atteindre le sommet
+crestfallen	adj	dépité
+cretinous	adj	crétin
+crevice	noun	fissure
+crevices	noun	fissure
+cringe-worthy	adj	gênant
+cringed	verb	grimacer
+crinkled	verb	plisser
+crinkling	verb	plisser
+crippling	adj	paralysant
+crisply	adv	nettement
+criss	noun	-
+criteria	noun	-
+criticisms	noun	-
+criticize	verb	-
+criticizing	verb	-
+critique	verb	critiquer
+critiqued	verb	critiquer
+critiquing	verb	critiquer
+croak	verb	croasser
+croaked	verb	croasser
+crocodilian	noun	crocodilien
+crocodilians	noun	crocodilien
+crony	noun	acolyte
+crook	noun	escroc
+crooked	adj	de travers
+crookedly	adv	de travers
+crookedness	noun	aspect tordu
+crooned	verb	fredonner
+cropped	verb	couper court
+crops	noun	culture
+crossbeam	noun	traverse
+crosslegged	adj	en tailleur
+crouch	verb	s'accroupir
+crouched	verb	s'accroupir
+crucifixion	noun	-
+crude	adj	grossier
+crudely	adv	grossièrement
+cruelties	noun	-
+crumbling	verb	s'effriter
+crumple	verb	s'affaisser
+crumpling	verb	s'affaisser
+crupper	noun	croupière
+cryptic	adj	énigmatique
+cubic	adj	-
+cubs	noun	petit
+cue	noun	signal
+cuirass	noun	-
+cuirasses	noun	-
+culling	verb	éliminer
+culls	verb	éliminer
+culmination	noun	point culminant
+culpable	adj	-
+cultists	noun	adepte
+cumbersome	adj	encombrant
+cunts	noun	connard
+cupboard	noun	placard
+cupping	verb	prendre dans ses mains
+curb	noun	trottoir
+curbed	verb	freiner
+curios	noun	bibelot
+curl	verb	s'enrouler
+curled	verb	s'enrouler
+curriculum	noun	programme
+cursive	adj	-
+curt	adj	sec
+curtly	adv	sèchement
+curveball	noun	coup imprévu
+curved	adj	incurvé
+curving	verb	s'incurver
+cusp	noun	seuil
+custom	adj	sur mesure
+cutlery	noun	couverts
+cutlet	noun	escalope
+cutter	noun	outil de coupe
+cutters	noun	outil de coupe
+cutthroat	adj	impitoyable
+cuz	adv	parce que
+cycle	noun	-
+cycled	verb	alterner
+cycles	noun	-
+cycling	verb	alterner
+dab	noun	touche
+dabbles	verb	toucher à
+dagger-like	adj	en forme de dague
+damnable	adj	maudit
+damndest	noun	tout son possible
+damnedest	noun	tout son possible
+dampened	verb	atténuer
+dampeners	noun	amortisseur
+dampening	verb	atténuer
+dancer	noun	-
+dancers	noun	-
+dapper	adj	élégant
+dark-grey	adj	gris foncé
+darkened	verb	s'assombrir
+darkening	verb	s'assombrir
+darn	adj	fichu
+dart	noun	fléchette
+darting	verb	filer
+darts	noun	fléchette
+dash	noun	course
+dashboard	noun	tableau de bord
+dashingly	adv	avec élégance
+daunted	verb	intimider
+daunting	adj	intimidant
+dauntless	adj	intrépide
+dawdling	verb	traîner
+daydreaming	verb	rêvasser
+daylight	noun	lumière du jour
+daze	noun	hébétude
+dazed	adj	hébété
+dazedly	adv	l'air hébété
+deadbeat	noun	bon à rien
+deadfall	noun	bois mort
+deadpan	adj	impassible
+deafened	verb	assourdir
+dealings	noun	relations
+debase	verb	avilir
+debaucherous	adj	débauché
+debilitate	verb	affaiblir
+debilitated	adj	affaibli
+debilitating	adj	invalidant
+debunked	verb	réfuter
+debuted	verb	faire ses débuts
+decay	noun	pourriture
+deceased	adj	décédé
+deceptively	adv	faussement
+deceptiveness	noun	caractère trompeur
+decisiveness	noun	esprit de décision
+decommissioned	verb	mettre hors service
+decommissioning	verb	mettre hors service
+dedication	noun	dévouement
+deed	noun	acte
+deemed	verb	juger
+deepened	verb	s'approfondir
+deerskin	noun	peau de cerf
+defecting	verb	faire défection
+defendable	adj	-
+defendant	noun	accusé
+defer	verb	s'en remettre à
+deferential	adj	respectueux
+deferred	verb	reporter
+deficits	noun	-
+defilement	noun	souillure
+defiler	noun	profanateur
+definable	adj	-
+define	verb	-
+defined	verb	-
+defining	adj	déterminant
+deflected	verb	dévier
+deflection	noun	déviation
+deformity	noun	difformité
+defying	verb	défier
+dejected	adj	abattu
+dejectedly	adv	d'un air abattu
+deliberateness	noun	caractère délibéré
+delicacies	noun	mets délicat
+deliciousness	noun	délice
+deliriously	adv	follement
+delude	verb	se leurrer
+deluded	adj	dans l'illusion
+deluding	verb	se leurrer
+delved	verb	fouiller
+dematerialize	verb	-
+dematerialized	verb	-
+demeaning	adj	humiliant
+demented	adj	-
+demesne	noun	domaine
+demigod	noun	-
+demise	noun	disparition
+demonically	adv	diaboliquement
+demoralize	verb	-
+den	noun	repaire
+denial	noun	déni
+denials	noun	dénégation
+denizens	noun	habitant
+denoted	verb	indiquer
+density	noun	-
+dented	verb	cabosser
+depleted	verb	épuiser
+deposing	verb	destituer
+depositions	noun	-
+depowering	verb	perdre sa puissance
+depraved	adj	-
+depreciating	verb	déprécier
+derisive	adj	moqueur
+descend	verb	-
+descended	verb	-
+descender	noun	descendeur
+descending	verb	descendre
+desensitized	verb	-
+desiccated	adj	desséché
+designation	noun	-
+desolately	adv	tristement
+despairingly	adv	avec désespoir
+desperado	noun	hors-la-loi
+despicably	adv	ignoblement
+despondence	noun	abattement
+despondent	adj	découragé
+despondently	adv	d'un air abattu
+detached	adj	-
+deter	verb	dissuader
+deterred	verb	dissuader
+detract	verb	nuire
+detracted	verb	nuire
+detrimental	adj	néfaste
+devastating	adj	-
+devastatingly	adv	terriblement
+devilry	noun	malice
+devious	adj	sournois
+devolving	verb	régresser
+devour	verb	-
+devoured	verb	-
+devouring	verb	-
+devout	adj	pieux
+diehard	adj	inconditionnel
+diffused	verb	-
+diffusing	verb	dissiper
+dignified	adj	digne
+digress	verb	s'écarter du sujet
+dilapidated	adj	délabré
+dilated	verb	-
+dilly-dallying	verb	traîner
+diluted	verb	-
+dim	adj	faible
+dim-witted	adj	bête
+dimmer	adj	plus faible
+dimmest	adj	faible
+dimples	noun	fossette
+din	noun	vacarme
+ding-dong	noun	-
+dinged	verb	cabosser
+dingy	adj	miteux
+dinnerware	noun	vaisselle
+dipshit	noun	abruti
+dipshits	noun	abruti
+dire	adj	grave
+directory	noun	répertoire
+direst	adj	terrible
+dirtying	verb	salir
+disabilities	noun	handicap
+disable	verb	désactiver
+disabled	verb	désactiver
+disabling	adj	incapacitant
+disallow	verb	interdire
+disallowing	verb	interdire
+disapprovingly	adv	d'un air réprobateur
+disaster	noun	-
+disastrously	adv	-
+disbanded	verb	dissoudre
+disbelieving	adj	incrédule
+disbelievingly	adv	d'un air incrédule
+discarded	verb	jeter
+discharged	verb	libérer
+disclosed	verb	révéler
+disco	noun	-
+discombobulated	adj	déboussolé
+discomfited	verb	décontenancer
+discomfort	noun	gêne
+disconcerted	adj	-
+discontentedly	adv	avec mécontentement
+discount	noun	réduction
+discounting	verb	écarter
+discourtesy	noun	impolitesse
+discrepancy	noun	écart
+disenfranchised	adj	marginalisé
+disengaging	verb	se dégager
+disgruntlement	noun	mécontentement
+disguised	verb	déguiser
+disguising	verb	dissimuler
+disheartened	adj	découragé
+disheveled	adj	débraillé
+dishonorable	adj	déshonorant
+dishonorably	adv	de façon déshonorante
+dishwashing	noun	vaisselle
+disinclined	adj	peu enclin
+disintegrate	verb	-
+disintegrated	verb	-
+disintegrating	verb	se désintégrer
+disjointedly	adv	de façon décousue
+disliking	verb	ne pas aimer
+dismayed	adj	consterné
+dismissal	noun	renvoi
+dismissive	adj	dédaigneux
+dismissively	adv	dédaigneusement
+dismount	verb	mettre pied à terre
+dismounted	verb	mettre pied à terre
+disorder	noun	trouble
+disorganized	adj	-
+dispassion	noun	détachement
+dispassionate	adj	détaché
+dispatcher	noun	répartiteur
+dispatching	verb	envoyer
+dispel	verb	dissiper
+dispelled	verb	dissiper
+dispirited	adj	découragé
+display	noun	affichage
+displays	noun	affichage
+displeasure	noun	mécontentement
+disquieting	adj	troublant
+disrobed	verb	se déshabiller
+disruptions	noun	perturbation
+dissent	noun	désaccord
+dissing	verb	dénigrer
+distastefully	adv	avec dégoût
+distended	adj	distendu
+distinguish	verb	-
+distinguished	adj	-
+distractedly	adv	distraitement
+distraught	adj	désemparé
+distressed	adj	bouleversé
+distressing	adj	angoissant
+distressingly	adv	fâcheusement
+distrusting	adj	méfiant
+disturbed	adj	perturbé
+disturbingly	adv	de façon troublante
+divider	noun	cloison
+divine	adj	-
+diviner	noun	devin
+divines	verb	deviner
+dizzy	adj	étourdi
+do-gooder	noun	bon samaritain
+do-gooders	noun	bon samaritain
+dock	verb	s'amarrer
+docked	verb	s'amarrer
+docket	noun	ordre du jour
+docking	verb	s'amarrer
+docks	noun	quai
+dodged	verb	esquiver
+dodges	verb	esquiver
+dodging	verb	esquiver
+doers	noun	homme d'action
+dogfight	noun	combat aérien
+dogmatically	adv	-
+dole	verb	distribuer
+doleful	adj	lugubre
+dolorous	adj	douloureux
+dome-shaped	adj	en forme de dôme
+donar	noun	-
+donate	verb	faire un don
+donated	verb	faire un don
+donating	verb	faire un don
+donning	verb	enfiler
+donut	noun	-
+doomed	adj	condamné
+dooms	verb	condamner
+doomsday	noun	fin du monde
+doorframe	noun	encadrement de porte
+doorhandle	noun	poignée
+doorknob	noun	poignée de porte
+doorsteps	noun	pas de la porte
+doorway	noun	embrasure
+dope	noun	drogue
+doppelgangers	noun	sosie
+doting	adj	attentionné
+dotted	adj	parsemé
+doublet	noun	pourpoint
+dour	adj	renfrogné
+douse	verb	arroser
+doused	verb	arroser
+dousing	verb	arroser
+downhill	adv	en descente
+downpour	noun	averse
+downright	adv	carrément
+downstairs	adv	-
+downstream	adj	en aval
+downstroke	noun	coup vers le bas
+downtime	noun	temps mort
+downtrodden	adj	opprimé
+dozer	noun	bulldozer
+drab	adj	terne
+drafter	noun	rédacteur
+dragonslayer	noun	tueur de dragons
+drained	adj	vidé
+draining	adj	épuisant
+drainpipe	noun	gouttière
+drake	noun	dragon
+drakes	noun	dragon
+draping	verb	draper
+drastically	adv	radicalement
+drawl	noun	accent traînant
+drawled	verb	traîner la voix
+dread	noun	effroi
+dreadful	adj	affreux
+dreads	noun	-
+dredge	verb	exhumer
+dredging	verb	exhumer
+drenched	verb	tremper
+drenching	verb	tremper
+dresser	noun	commode
+dribble	verb	dégouliner
+drifts	noun	congère
+drip	noun	goutte
+dripped	verb	dégouliner
+dripping	verb	dégouliner
+drips	verb	dégouliner
+drone	noun	-
+drones	noun	-
+drooled	verb	baver
+drooling	verb	baver
+droop	verb	s'affaisser
+droplet	noun	gouttelette
+droplets	noun	gouttelette
+dropout	noun	décrocheur
+dropouts	noun	décrocheur
+drowsily	adv	d'un air endormi
+drubbing	verb	marteler
+drudge	noun	bête de somme
+drumhead	noun	peau de tambour
+dubbed	verb	surnommer
+dubiously	adv	d'un air dubitatif
+dud	noun	fiasco
+duel	verb	se battre en duel
+duelist	noun	-
+dull	adj	terne
+dulled	verb	émousser
+dullness	noun	monotonie
+dully	adv	d'un ton morne
+dumpling	noun	boulette
+dumplings	noun	ravioli
+duo	noun	-
+dusky	adj	sombre
+dustiness	noun	poussière
+dutchman	noun	Hollandais
+dutifully	adv	consciencieusement
+dwarfed	verb	éclipser
+dwarfing	verb	éclipser
+dweeb	noun	ringard
+dwelled	verb	demeurer
+dwelling	verb	s'attarder
+dwellings	noun	habitation
+dwells	verb	demeurer
+dwindling	adj	décroissant
+dy	noun	-
+eager	adj	impatient
+eagerly	adv	avec empressement
+eagerness	noun	empressement
+earnest	adj	sérieux
+earnings	noun	revenu
+earpiece	noun	oreillette
+earthbound	adj	terrestre
+earthworks	noun	remblai
+ease	noun	aisance
+eased	verb	apaiser
+easing	verb	apaiser
+easternmost	adj	le plus à l'est
+easygoing	adj	facile à vivre
+eavesdropping	verb	écouter aux portes
+ebb	verb	refluer
+ebbed	verb	refluer
+ecstatic	adj	ravi
+edema	noun	-
+editor	noun	éditeur
+educated	adj	instruit
+educational	adj	-
+eerie	adj	inquiétant
+ef	noun	-
+efficiency	noun	efficacité
+ego	noun	-
+eldritch	adj	surnaturel
+elector	noun	électeur
+electricity	noun	-
+ell	noun	-
+elongated	adj	allongé
+eluding	verb	échapper
+elusive	adj	insaisissable
+emaciation	noun	maigreur extrême
+embankment	noun	remblai
+embattled	adj	assiégé
+embedded	verb	enfoncer
+embedding	verb	intégrer
+embellishing	verb	enjoliver
+emblazoned	verb	orner
+emboldened	verb	enhardir
+emboldening	verb	enhardir
+embolism	noun	-
+embossed	adj	en relief
+embrace	verb	étreindre
+embroil	verb	entraîner
+embroiled	verb	empêtrer
+embroiling	verb	entraîner
+embryonic	adj	-
+emerging	adj	-
+emotionlessness	noun	impassibilité
+emphatically	adv	avec insistance
+employment	noun	emploi
+empower	verb	renforcer
+empowered	verb	renforcer
+empowering	adj	galvanisant
+empowerment	noun	renforcement
+empowers	verb	renforcer
+en	noun	-
+enacted	verb	mettre en œuvre
+enamored	adj	épris
+encase	verb	enfermer
+encased	verb	envelopper
+encasing	verb	envelopper
+enchantingly	adv	merveilleusement
+encirclement	noun	-
+encircling	verb	encercler
+enclosed	verb	entourer
+enclosing	verb	entourer
+encompass	verb	englober
+encompassed	verb	englober
+encompassing	verb	englober
+encumbered	verb	entraver
+encumbering	verb	entraver
+endangering	verb	mettre en danger
+endear	verb	rendre attachant
+endearingly	adv	adorablement
+endeavor	noun	entreprise
+endeavored	verb	s'efforcer
+endeavoring	verb	s'efforcer
+endgame	noun	fin de partie
+endorse	verb	cautionner
+endorsement	noun	aval
+enduring	adj	durable
+energetically	adv	-
+enforce	verb	faire respecter
+enforced	verb	faire respecter
+enforcement	noun	forces de l'ordre
+enforcer	noun	homme de main
+enforcers	noun	homme de main
+enforcing	verb	faire respecter
+engagements	noun	-
+engorged	adj	gorgé
+engrossing	adj	captivant
+engulfed	verb	engloutir
+enhance	verb	améliorer
+enhanced	verb	améliorer
+enhances	verb	améliorer
+enhancing	verb	améliorer
+enjoining	verb	ordonner
+enlightened	adj	éclairé
+enlist	verb	s'engager
+enlisted	verb	enrôler
+enlivened	adj	animé
+ennui	noun	-
+enraptured	adj	captivé
+ensconced	verb	installer
+enshroud	verb	envelopper
+enshrouding	verb	envelopper
+ensue	verb	s'ensuivre
+ent	noun	-
+entails	verb	impliquer
+entangle	verb	emmêler
+entangled	verb	emmêler
+entanglement	noun	enchevêtrement
+entanglements	noun	liaison
+entangling	verb	emmêler
+entertainers	noun	artiste
+enthused	adj	enthousiaste
+enthusiastic	adj	-
+enticing	adj	alléchant
+entitled	verb	avoir droit
+entitlement	noun	droit
+entombed	verb	ensevelir
+entranceway	noun	entrée
+entreat	verb	supplier
+entreated	verb	supplier
+entreating	verb	supplier
+entryway	noun	entrée
+enunciating	verb	articuler
+enviously	adv	avec envie
+envisioning	verb	imaginer
+epiphany	noun	révélation
+epitome	noun	incarnation
+epoch	noun	-
+epochs	noun	-
+equalizer	noun	égalisateur
+equilibrium	noun	-
+eradicators	noun	exterminateur
+eras	noun	-
+erected	verb	dresser
+erroneous	adj	-
+erupting	verb	éclater
+escalation	noun	-
+essential	adj	-
+establishment	noun	-
+establishments	noun	-
+esteem	noun	-
+esteemed	adj	respecté
+estranged	adj	brouillé
+eta	noun	-
+etching	noun	gravure
+evanescent	adj	-
+evergreens	noun	conifère
+everpresent	adj	omniprésent
+everyday	adj	quotidien
+evict	verb	expulser
+evicted	verb	expulser
+evildoers	noun	malfaiteur
+eviscerate	verb	éventrer
+evisceration	noun	éventration
+evocative	adj	-
+evolve	verb	-
+evolved	verb	évoluer
+evolves	verb	-
+evolving	verb	-
+exaggeratedly	adv	-
+exaltation	noun	-
+examinations	noun	-
+examiners	noun	-
+exams	noun	-
+exceeding	verb	dépasser
+excelled	verb	-
+excruciating	adj	atroce
+excruciatingly	adv	atrocement
+exfoliated	verb	-
+exfoliating	adj	exfoliant
+exhilarated	adj	euphorique
+exorbitantly	adv	démesurément
+expectancies	noun	espérance
+expectant	adj	dans l'expectative
+expectantly	adv	dans l'attente
+expendable	adj	sacrifiable
+explainers	noun	explication
+expletives	noun	juron
+explorers	noun	-
+explosively	adv	de façon explosive
+exports	noun	-
+exposé	noun	révélation
+expound	verb	développer
+expressionless	adj	inexpressif
+extendable	adj	extensible
+extensive	adj	vaste
+extent	noun	ampleur
+extenuating	adj	atténuant
+extinct	adj	disparu
+extract	verb	-
+extracted	verb	-
+extracting	verb	-
+extracurriculars	noun	activité périscolaire
+extraneous	adj	superflu
+extravagantly	adv	avec extravagance
+exuded	verb	dégager
+eyehole	noun	trou pour l'œil
+eyelid	noun	paupière
+facet	noun	-
+faceted	adj	à facettes
+facsimiles	noun	copie
+factor	verb	prendre en compte
+factored	verb	prendre en compte
+factoring	verb	prendre en compte
+factual	adj	-
+failsafe	noun	dispositif de sécurité
+fallacy	noun	idée fausse
+fallback	noun	solution de repli
+falsehoods	noun	mensonge
+familiarizing	verb	se familiariser
+fanciful	adj	fantaisiste
+fanged	adj	à crocs
+far-fetched	adj	tiré par les cheveux
+fares	noun	tarif
+faring	verb	s'en sortir
+farmhouse	noun	ferme
+farmsteads	noun	ferme
+fastener	noun	attache
+fatalist	noun	-
+fated	adj	destiné
+fauna	noun	-
+fawned	verb	s'extasier
+faxing	verb	-
+fazed	verb	déconcerter
+fealty	noun	allégeance
+fearsome	adj	redoutable
+fearsomely	adv	redoutablement
+feast	noun	festin
+feasted	verb	se régaler
+feasting	verb	se régaler
+featherless	adj	sans plumes
+feathery	adj	duveteux
+feckless	adj	incapable
+feedback	noun	retour
+feeder	noun	mangeoire
+feinted	verb	feinter
+feinting	verb	feinter
+feints	noun	feinte
+feisty	adj	fougueux
+fellowship	noun	camaraderie
+femme	noun	-
+fend	verb	se débrouiller
+fending	verb	repousser
+feral	adj	sauvage
+ferociously	adv	férocement
+ferociousness	noun	férocité
+ferocity	noun	-
+fessed	verb	avouer
+fessing	verb	avouer
+festered	verb	s'envenimer
+fetal	adj	-
+fetch	verb	aller chercher
+fetching	verb	aller chercher
+fiber	noun	-
+fibers	noun	-
+fiddled	verb	tripoter
+fiddling	verb	tripoter
+fidget	verb	gigoter
+fiercely	adv	farouchement
+fierceness	noun	férocité
+figment	noun	fruit de l'imagination
+figuratively	adv	au figuré
+figureheads	noun	figure de proue
+filter	noun	-
+finagling	verb	magouiller
+financial	adj	-
+financially	adv	-
+finders	noun	découvreur
+fineable	adj	passible d'amende
+fingertip	noun	bout du doigt
+finicky	adj	tatillon
+firelight	noun	lueur du feu
+fireplace	noun	cheminée
+fireworks	noun	feu d'artifice
+fishier	adj	louche
+fistfight	noun	bagarre
+fistfighting	verb	se bagarrer
+fistfights	noun	bagarre
+fixate	verb	faire une fixation
+fixers	noun	intermédiaire
+fixtures	noun	installation
+fizzle	verb	tourner court
+fizzled	verb	s'éteindre
+flabbergasted	adj	sidéré
+flak	noun	DCA
+flakes	noun	flocon
+flamboyantly	adv	avec panache
+flamers	noun	lance-flammes
+flamethrower	noun	lance-flammes
+flamethrowers	noun	lance-flammes
+flap	noun	rabat
+flaps	noun	rabat
+flare	noun	éclat
+flared	verb	s'embraser
+flaring	verb	s'embraser
+flashily	adv	de façon voyante
+flashy	adj	tape-à-l'œil
+flatbeds	noun	camion plateau
+flattening	verb	aplatir
+flaunting	verb	exhiber
+flavor	noun	saveur
+flavored	adj	aromatisé
+flavors	noun	saveur
+flavourful	adj	savoureux
+flaw	noun	défaut
+flawed	adj	imparfait
+flawless	adj	impeccable
+flawlessness	noun	perfection
+flaxen	adj	blond pâle
+flecks	noun	particule
+fledgling	adj	débutant
+fleshy	adj	charnu
+flexibly	adv	avec souplesse
+flexing	verb	contracter
+flicked	verb	jeter vivement
+flickering	adj	vacillant
+flinch	verb	tressaillir
+flinched	verb	tressaillir
+flip-flopped	verb	se retourner
+flippant	adj	désinvolte
+flippantly	adv	avec désinvolture
+flipper	noun	nageoire
+flippers	noun	nageoire
+flipside	noun	revers
+flirtatious	adj	charmeur
+flock	noun	nuée
+flocks	noun	nuée
+floorboards	noun	latte de plancher
+flopped	verb	s'affaler
+flopping	verb	s'affaler
+floppy	adj	mou
+flora	noun	-
+flotilla	noun	-
+flotillas	noun	-
+floundered	verb	patauger
+floundering	verb	patauger
+flourish	noun	grand geste
+flourishing	verb	prospérer
+flubbed	verb	rater
+fluent	adj	courant
+fluffed	verb	gonfler
+fluster	verb	troubler
+flustered	verb	troubler
+flyers	noun	prospectus
+foam	noun	mousse
+foaming	verb	écumer
+fodder	noun	chair à canon
+fogged	adj	embué
+fogies	noun	vieux schnock
+foil	noun	papier alu
+foist	verb	imposer
+foisted	verb	imposer
+follower	noun	adepte
+followers	noun	adepte
+font	noun	source
+fonts	noun	police
+foolhardiness	noun	témérité
+footage	noun	enregistrement
+foothills	noun	contreforts
+footprints	noun	empreinte de pas
+footsteps	noun	pas
+forefront	noun	premier plan
+foregone	verb	renoncer à
+foremother	noun	aïeule
+foremothers	noun	aïeule
+forerunner	noun	précurseur
+foresight	noun	prévoyance
+forewarning	noun	avertissement
+forge	verb	forger
+forged	verb	forger
+forgers	noun	faussaire
+forging	verb	forger
+forgo	verb	renoncer à
+forgone	verb	renoncer à
+forkhead	noun	-
+forklift	noun	chariot élévateur
+forlorn	adj	triste
+forlornly	adv	tristement
+formula	noun	-
+formulas	noun	-
+fortieth	adj	-
+fortified	verb	-
+fortuitous	adj	providentiel
+fortunate	adj	chanceux
+fortunately	adv	-
+fortune	noun	-
+fortuneteller	noun	voyant
+foster	adj	d'accueil
+foul	adj	infect
+fracturing	verb	se fissurer
+fragrant	adj	parfumé
+frailness	noun	fragilité
+framework	noun	cadre
+frantic	adj	affolé
+frantically	adv	frénétiquement
+fray	noun	mêlée
+frayed	verb	s'effilocher
+fraying	verb	s'effilocher
+freaking	adj	foutu
+freckled	adj	taché de rousseur
+freebie	noun	cadeau
+freeload	verb	vivre aux crochets
+frenetically	adv	-
+frenzied	adj	frénétique
+frequents	verb	-
+freshened	verb	se rafraîchir
+freshening	verb	se rafraîchir
+freshmen	noun	étudiant de 1re année
+freshwater	noun	eau douce
+fret	verb	s'inquiéter
+fretful	adj	inquiet
+fright	noun	frayeur
+frightfully	adv	terriblement
+frigidly	adv	glacialement
+frilly	adj	à volants
+frivolities	noun	frivolité
+frontline	adj	de première ligne
+frosted	verb	givrer
+frostiness	noun	froideur
+frosting	noun	glaçage
+frosty	adj	glacial
+frothed	verb	mousser
+frothing	verb	écumer
+froward	adj	indocile
+frown	verb	froncer les sourcils
+frowned	verb	froncer les sourcils
+frowning	verb	froncer les sourcils
+frowns	noun	froncement de sourcils
+fruition	noun	aboutissement
+frustrating	adj	-
+frying	verb	faire frire
+fucker	noun	enfoiré
+fuckers	noun	enfoiré
+fudge	verb	truquer
+fudged	verb	arranger
+fulfill	verb	accomplir
+fulfilled	verb	accomplir
+fulfilling	verb	accomplir
+fumbled	verb	tâtonner
+fumes	noun	émanation
+functional	adj	-
+fundamentals	noun	base
+funk	noun	déprime
+funnel-shaped	adj	en entonnoir
+furnace	noun	fournaise
+furnaces	noun	fournaise
+furnishings	noun	mobilier
+furred	adj	à fourrure
+furrowed	verb	froncer
+furrowing	verb	froncer
+furtively	adv	-
+fuse	noun	mèche
+fused	verb	souder
+fuses	verb	souder
+fusillade	noun	-
+fusing	verb	fusionner
+fuss	noun	chichi
+fussed	verb	s'agiter
+fussiness	noun	maniaquerie
+fussing	verb	s'agiter
+fussy	adj	tatillon
+fuzzed	verb	se brouiller
+gaggles	noun	bande
+gait	noun	démarche
+galactic	adj	-
+gallant	adj	chevaleresque
+gallantly	adv	galamment
+galley	noun	cuisine de bord
+gallivanting	verb	vadrouiller
+gallows	noun	potence
+galore	adj	à foison
+gangway	noun	passerelle
+gap-toothed	adj	aux dents écartées
+gaped	verb	rester bouche bée
+garb	noun	tenue
+garish	adj	criard
+garrisoned	verb	mettre en garnison
+garrote	verb	étrangler
+garrotte	noun	garrot
+gashing	verb	entailler
+gasped	verb	haleter
+gasps	noun	cri étouffé
+gatherings	noun	réunion
+gaudy	adj	tape-à-l'œil
+gauge	verb	jauger
+gauged	verb	jauger
+gauges	noun	jauge
+gauntleted	adj	ganté
+gauntness	noun	maigreur
+gawk	verb	regarder bouche bée
+gazed	verb	contempler
+gel	noun	-
+gelid	adj	glacial
+gelled	verb	gominer
+gels	noun	-
+gen	noun	génération
+genesis	noun	-
+genially	adv	cordialement
+genteel	adj	distingué
+gentle	adj	doux
+gently	adv	doucement
+geologists	noun	-
+gesticulating	verb	-
+gestured	verb	faire signe
+gesturing	verb	faire signe
+getaway	noun	fuite
+getaways	noun	escapade
+getup	noun	tenue
+getups	noun	accoutrement
+geysered	verb	jaillir
+ghastly	adj	épouvantable
+gibbered	verb	baragouiner
+gibberish	noun	charabia
+giddily	adv	gaiement
+giddiness	noun	euphorie
+giddy	adj	euphorique
+gigabyte	noun	-
+gigabytes	noun	-
+gigantic	adj	-
+giggle	verb	glousser
+giggled	verb	glousser
+giggling	verb	glousser
+gilded	adj	doré
+gimp	noun	boiteux
+gingerbread	noun	pain d'épice
+gingered	verb	-
+gingerly	adv	avec précaution
+gingerphobia	noun	-
+gingers	noun	roux
+girding	verb	se préparer
+girdle	noun	ceinture
+girdled	verb	ceindre
+girth	noun	circonférence
+giver	noun	donneur
+glamorous	adj	séduisant
+glamour	noun	-
+glare	noun	regard noir
+glared	verb	fusiller du regard
+glaring	adj	flagrant
+glaringly	adv	de façon flagrante
+glassy	adj	vitreux
+glazed	adj	vitreux
+gleam	noun	lueur
+glee	noun	jubilation
+gleeful	adj	joyeux
+glimmered	verb	luire
+glimmering	verb	luire
+glints	noun	éclat
+glitch	noun	bug
+glitches	noun	bug
+glitter	noun	paillette
+glittered	verb	scintiller
+gloatingly	adv	d'un air triomphant
+globs	noun	boule
+glumly	adv	d'un air morose
+gnarl	noun	nœud
+gnash	verb	grincer des dents
+gnashed	verb	grincer des dents
+gnashing	verb	grincer des dents
+gnomish	adj	de gnome
+goad	verb	provoquer
+goaded	verb	provoquer
+gobble	verb	engloutir
+gobbled	verb	engloutir
+gobbling	verb	engloutir
+goddamn	adj	foutu
+goddang	adj	foutu
+goner	noun	fichu
+goners	noun	fichu
+goo	noun	substance gluante
+goodies	noun	bonus
+goof	verb	faire l'idiot
+goofy	adj	loufoque
+gore	noun	sang et tripes
+gorged	verb	se gaver
+gorging	verb	se gaver
+gossip	noun	commérage
+gossiped	verb	jaser
+gossiping	noun	commérage
+gossips	noun	commère
+gouged	verb	arracher
+gouging	verb	creuser
+gout	noun	jet
+grabbers	noun	pince
+grader	noun	élève
+gram	noun	-
+grandaughter	noun	-
+grandiloquence	noun	-
+grandiloquent	adj	-
+grape	noun	raisin
+grapevine	noun	bouche-à-oreille
+grappling	verb	lutter
+grasp	noun	prise
+grasshopper	noun	sauterelle
+grassroots	adj	de terrain
+grates	verb	agacer
+grating	adj	grinçant
+gravel	noun	gravier
+gravelly	adj	rocailleux
+gravestone	noun	pierre tombale
+gravy	noun	sauce
+grazed	verb	érafler
+grazing	verb	érafler
+greave	noun	jambière
+greaves	noun	jambière
+greed	noun	cupidité
+greenery	noun	verdure
+greeting	noun	salutation
+grey	adj	-
+grey-black	adj	gris-noir
+grey-green	adj	gris-vert
+grey-haired	adj	aux cheveux gris
+greying	verb	grisonner
+grief	noun	chagrin
+grievance	noun	plainte
+grievances	noun	grief
+grieve	verb	pleurer
+grieved	verb	pleurer
+grieving	verb	pleurer
+grimly	adv	d'un air sombre
+grimness	noun	gravité
+grind	verb	broyer
+grinder	noun	broyeur
+griping	verb	râler
+grisly	adj	macabre
+grit	noun	cran
+gritted	verb	serrer
+gritty	adj	granuleux
+gro	noun	-
+groans	noun	gémissement
+groggily	adv	dans le brouillard
+groin	noun	aine
+groomed	verb	toiletter
+groomer	noun	toiletteur
+grooming	verb	toiletter
+grooved	adj	rainuré
+groundwork	noun	base
+growler	noun	grogneur
+growling	verb	grogner
+grudgingly	adv	à contrecœur
+gruffly	adv	d'un ton bourru
+grumble	noun	grognement
+grumbled	verb	grommeler
+grumbles	verb	grommeler
+grumbling	verb	grommeler
+grumblings	noun	ronchonnement
+grumpily	adv	d'un air grognon
+guardians	noun	gardien
+guck	noun	gadoue
+guerrilla	noun	-
+guidance	noun	conseil
+guilt-ridden	adj	rongé de remords
+gula	noun	-
+gulls	noun	mouette
+gummed	adj	gommé
+gummy	adj	gluant
+gunny	noun	-
+gunpowder	noun	poudre à canon
+gurgle	verb	gargouiller
+gurgled	verb	gargouiller
+gurglers	noun	-
+gurgling	verb	gargouiller
+gust	noun	rafale
+gut	noun	ventre
+guts	noun	tripes
+gutted	verb	éventrer
+gutter	noun	caniveau
+guttering	verb	vaciller
+gutting	verb	éventrer
+guzzling	verb	engloutir
+gynecologist	noun	-
+gyrating	verb	se trémousser
+gyrations	noun	déhanchement
+gyro	noun	gyroscope
+ha-ha	noun	-
+hack	noun	piratage
+hacked	verb	pirater
+hacking	verb	pirater
+hackles	noun	poil de la nuque
+haft	noun	manche
+hail	noun	grêle
+hailstorm	noun	averse de grêle
+haircut	noun	coupe de cheveux
+hale	adj	vigoureux
+half-assed	adj	bâclé
+half-crazed	adj	à moitié fou
+half-elf	noun	-
+half-pint	noun	demi-portion
+halfbreed	noun	sang-mêlé
+halfhearted	adj	sans conviction
+hallowed	adj	sacré
+hallway	noun	couloir
+halt	verb	s'arrêter
+halted	verb	s'arrêter
+haltingly	adv	en hésitant
+hamper	verb	entraver
+handbag	noun	-
+handgun	noun	pistolet
+handheld	adj	à main
+handhold	noun	prise
+handily	adv	facilement
+handmade	adj	fait main
+handmaiden	noun	servante
+handmaidens	noun	servante
+handrest	noun	accoudoir
+handsy	adj	aux mains baladeuses
+handwriting	noun	écriture
+hap	noun	hasard
+haphazard	adj	désordonné
+harbor	noun	port
+hardship	noun	épreuve
+hardware	noun	matériel
+harkening	verb	rappeler
+harnessed	verb	exploiter
+harnessing	verb	exploiter
+harpies	noun	-
+harpo	noun	-
+harpooned	verb	harponner
+harpoons	noun	harpon
+harried	adj	débordé
+harrowing	adj	atroce
+harsh	adj	dur
+harshly	adv	durement
+harshness	noun	dureté
+hassle	noun	tracas
+hastening	verb	hâter
+hastily	adv	à la hâte
+hatchling	noun	nouveau-né
+haughty	adj	hautain
+haunches	noun	arrière-train
+hausen	noun	-
+haven	noun	refuge
+haw	noun	-
+hawks	noun	faucon
+haystack	noun	meule de foin
+haywire	adj	détraqué
+hazard	verb	risquer
+hazily	adv	confusément
+headache-inducing	adj	à donner la migraine
+headdress	noun	coiffe
+headlock	noun	clé de cou
+headshot	noun	tir à la tête
+healable	adj	guérissable
+heaped	verb	entasser
+heaping	verb	entasser
+hearse	noun	corbillard
+heartbeat	noun	battement de cœur
+heartbreak	noun	chagrin d'amour
+heartbreaker	noun	bourreau des cœurs
+heartily	adv	de bon cœur
+heartland	noun	cœur du pays
+heartthrob	noun	idole
+heater	noun	chauffage
+heaters	noun	radiateur
+heckler	noun	chahuteur
+hectic	adj	mouvementé
+hectically	adv	frénétiquement
+heeby-jeebies	noun	chair de poule
+heed	verb	tenir compte de
+heedlessly	adv	sans réfléchir
+heeled	adj	à talons
+hefted	verb	soulever
+hegemon	noun	puissance dominante
+heightened	verb	intensifier
+heirloom	noun	héritage
+heirlooms	noun	héritage
+hellhound	noun	chien de l'enfer
+hellishly	adv	atrocement
+helm	noun	casque
+helmed	verb	diriger
+helms	noun	heaume
+hemiplegic	noun	-
+hemmed	verb	encercler
+hence	adv	d'où
+heptagon	noun	-
+hesitantly	adv	avec hésitation
+hex	noun	maléfice
+hideous	adj	-
+high-heeled	adj	à talons hauts
+high-octane	adj	survolté
+hillside	noun	flanc de colline
+hitch	noun	accroc
+hitches	noun	accroc
+hitchhiker	noun	auto-stoppeur
+hive	noun	ruche
+hoarfrost	noun	givre
+hoarsely	adv	d'une voix rauque
+hob	noun	plaque de cuisson
+holder	noun	support
+holders	noun	support
+holdup	noun	retard
+holograph	noun	hologramme
+holsters	noun	étui
+homegrown	adj	local
+homemade	adj	fait maison
+homeschooled	verb	instruire à domicile
+homey	adj	douillet
+homogenous	adj	-
+hon	noun	chéri
+honchos	noun	gros bonnet
+hoodlum	noun	voyou
+hoodlums	noun	voyou
+hoodwink	verb	duper
+hooker	noun	prostituée
+hooky	noun	école buissonnière
+hoops	noun	cerceau
+hoot	noun	huée
+hooved	adj	à sabots
+hop	verb	sauter
+hopped	verb	sauter
+hopping	verb	sauter
+hops	noun	saut
+horny	adj	excité
+horrified	adj	-
+horrifying	adj	effroyable
+hounding	verb	harceler
+housewife	noun	femme au foyer
+housewives	noun	femme au foyer
+hover	verb	flotter
+hovered	verb	flotter
+hovering	verb	flotter
+howbe	adv	-
+howdah	noun	palanquin
+howls	noun	hurlement
+hp	noun	-
+hub	noun	centre
+huggable	adj	câlin
+huggles	noun	-
+humbled	verb	humilier
+humbling	verb	humilier
+humiliating	adj	-
+humor	verb	faire plaisir à
+humorless	adj	sans humour
+humorlessly	adv	sans humour
+humorous	adj	drôle
+humorously	adv	avec humour
+humped	adj	bombé
+humping	verb	s'accoupler
+hunch	noun	intuition
+hunches	noun	intuition
+hungered	verb	avoir soif de
+hungering	verb	avoir soif de
+hungers	verb	avoir soif de
+hunkering	verb	se terrer
+hunky-dory	adj	au poil
+hush	verb	faire taire
+hushed	verb	faire taire
+husk	noun	enveloppe
+huskiness	noun	raucité
+hustle	verb	se dépêcher
+hut	noun	cabane
+hydroponic	adj	-
+hydroponics	noun	-
+hype	noun	battage
+hypnotically	adv	de façon hypnotique
+icicle	noun	glaçon
+icicles	noun	stalactite de glace
+icily	adv	d'un ton glacial
+icky	adj	dégoûtant
+idiotic	adj	-
+idle	adj	inactif
+idled	verb	paresser
+idling	verb	tourner au ralenti
+idly	adv	distraitement
+iffy	adj	douteux
+ill-conceived	adj	mal conçu
+ill-fated	adj	funeste
+illegal	adj	-
+illusionary	adj	illusoire
+illusionists	noun	-
+illustrious	adj	-
+immaculately	adv	impeccablement
+immanent	adj	-
+immature	adj	-
+immeasurably	adv	infiniment
+imminently	adv	sous peu
+immortalize	verb	-
+immovable	adj	inébranlable
+immune	adj	immunisé
+impairing	verb	altérer
+imparted	verb	transmettre
+imparts	verb	transmettre
+impassioned	adj	passionné
+impassively	adv	-
+impediment	noun	obstacle
+imperfect	adj	-
+imperiously	adv	-
+impersonating	verb	se faire passer pour
+impinge	verb	empiéter
+impishly	adv	malicieusement
+implements	noun	outil
+imploringly	adv	d'un air suppliant
+implying	verb	sous-entendre
+import	noun	portée
+imposing	adj	-
+imposingly	adv	de façon imposante
+impractical	adj	peu pratique
+impressive	adj	-
+imprinted	verb	graver
+imprinting	verb	graver
+impulses	noun	pulsion
+inadequacy	noun	insuffisance
+inadvertently	adv	sans le vouloir
+inaudibly	adv	tout bas
+inauspicious	adj	de mauvais augure
+incarnated	verb	incarner
+incentive	noun	incitation
+incidentally	adv	au fait
+incoherently	adv	de façon incohérente
+incomprehension	noun	-
+incongruous	adj	-
+inconsequentially	adv	sans importance
+inconsiderate	adj	indélicat
+incredulous	adj	-
+incredulously	adv	-
+incurred	verb	encourir
+indebted	adj	redevable
+indelibly	adv	à jamais
+indent	noun	creux
+independently	adv	-
+independents	noun	-
+indescribable	adj	-
+indictment	noun	accusation
+indifferently	adv	avec indifférence
+indignantly	adv	avec indignation
+indisposed	adj	-
+indubitable	adj	-
+induce	verb	provoquer
+induced	verb	provoquer
+inducing	verb	provoquer
+indulge	verb	se livrer à
+inebriated	adj	ivre
+ineffective	adj	inefficace
+ineffectual	adj	inefficace
+ineffectually	adv	en vain
+ineptitude	noun	incompétence
+inexpertly	adv	maladroitement
+inexpressive	adj	-
+inexpressiveness	noun	-
+infatuation	noun	engouement
+infectious	adj	contagieux
+infernally	adv	terriblement
+inferno	noun	brasier
+infest	verb	-
+infesting	verb	infester
+infinitely	adv	-
+infuses	verb	insuffler
+inglorious	adj	peu glorieux
+ingloriously	adv	sans gloire
+ingraining	verb	ancrer
+ingrate	noun	ingrat
+ingratiate	verb	se faire bien voir
+inherently	adv	intrinsèquement
+inheritor	noun	héritier
+inheritors	noun	héritier
+inky-black	adj	noir d'encre
+inlaw	noun	belle-famille
+innards	noun	entrailles
+innermost	adj	le plus profond
+inoperable	adj	hors service
+inopportune	adj	-
+inpatient	noun	hospitalisé
+inputting	verb	saisir
+inquire	verb	se renseigner
+inquiries	noun	demande
+inquisitively	adv	d'un air curieux
+insensitive	adj	sans tact
+insets	noun	incrustation
+insidiousness	noun	perfidie
+insight	noun	perspicacité
+insights	noun	perspicacité
+insincerely	adv	sans sincérité
+insistently	adv	avec insistance
+insolently	adv	avec insolence
+installments	noun	mensualité
+instantaneous	adj	-
+instigate	verb	déclencher
+institute	verb	instaurer
+instituting	verb	instaurer
+instructed	verb	ordonner
+instrument	noun	-
+instruments	noun	-
+insubstantial	adj	immatériel
+insurgents	noun	-
+intake	noun	inspiration
+integral	adj	essentiel
+inter	verb	-
+interact	verb	interagir
+interacted	verb	-
+interacting	verb	-
+interacts	verb	interagir
+interfere	verb	se mêler
+interference	noun	-
+interlocked	verb	entrelacer
+interlocking	verb	entrelacer
+interminable	adj	-
+intermingling	verb	se mêler
+intermission	noun	entracte
+interposing	verb	s'interposer
+interspersed	verb	parsemer
+interspersing	verb	parsemer
+interwoven	adj	entrelacé
+intimate	adj	-
+intimately	adv	-
+intoned	verb	déclamer
+intoxicating	adj	enivrant
+intricacy	noun	complexité
+intricate	adj	complexe
+intriguing	adj	-
+intrinsically	adv	-
+inventories	noun	-
+inventory	noun	-
+inverted	verb	-
+investor	noun	-
+inviolable	adj	-
+involuntarily	adv	-
+inwardly	adv	intérieurement
+ion	noun	-
+irksome	adj	agaçant
+iron-grey	adj	gris fer
+ironclad	adj	en béton
+irredeemable	adj	irrécupérable
+irrelevance	noun	insignifiance
+irrelevant	adj	sans importance
+irreverent	adj	-
+irrigating	verb	-
+irritably	adv	avec irritation
+irritants	noun	-
+irritated	adj	agacé
+irritatingly	adv	de façon agaçante
+ish	adv	environ
+isms	noun	-
+itched	verb	démanger
+itching	verb	démanger
+jab	verb	donner un coup sec
+jabs	noun	pique
+jackass	noun	abruti
+jaded	adj	blasé
+jagged	adj	déchiqueté
+janitor	noun	agent d'entretien
+jar	noun	bocal
+jargon	noun	-
+jawbone	noun	mâchoire
+jeg	noun	-
+jerky	adj	saccadé
+jester	noun	bouffon
+jettisoned	verb	larguer
+jettisoning	verb	larguer
+jig	noun	gigue
+jigsaw	noun	puzzle
+jockeyed	verb	manœuvrer
+jogged	verb	trottiner
+jogging	verb	trottiner
+jolt	noun	secousse
+jolts	noun	secousse
+joshing	verb	blaguer
+jot	verb	noter
+jotted	verb	noter
+jotting	verb	noter
+jubilantly	adv	avec jubilation
+judgemental	adj	critique
+jumble	noun	fouillis
+jumbled	adj	embrouillé
+jumper	noun	sauteur
+juncture	noun	stade
+ka	noun	-
+kabob	noun	brochette
+kangaroo	noun	-
+kangaroos	noun	-
+keen-eyed	adj	à l'œil vif
+keeper	noun	gardien
+keepers	noun	gardien
+keg	noun	fût
+kernel	noun	noyau
+ketch	noun	-
+ketches	noun	-
+keyboard	noun	-
+kiddo	noun	gamin
+kiddos	noun	gamin
+kindling	noun	petit bois
+kindred	adj	apparenté
+kinks	noun	défaut
+kite	noun	cerf-volant
+kited	verb	attirer
+klicks	noun	kilomètre
+knack	noun	don
+knave	noun	fripon
+kneecapped	verb	briser les genoux
+kneecapping	verb	briser les genoux
+knob	noun	bouton
+knockoff	noun	contrefaçon
+knolls	noun	monticule
+knowledgeable	adj	bien informé
+knuckle	noun	jointure
+knuckled	verb	-
+knuckles	noun	jointure
+lace	noun	dentelle
+lacerated	verb	-
+laces	noun	lacet
+lackadaisical	adj	nonchalant
+lacquered	verb	-
+laded	adj	chargé
+laden	adj	chargé
+ladle	noun	louche
+lads	noun	gars
+lag	noun	décalage
+lagging	verb	traîner
+lags	verb	traîner
+laidback	adj	décontracté
+lame	adj	nul
+lamia	noun	lamie
+laminated	verb	plastifier
+lamplight	noun	lueur de la lampe
+lancers	noun	lancier
+landlord	noun	propriétaire
+languid	adj	alangui
+languidly	adv	langoureusement
+lank	adj	plat
+lapdog	noun	toutou
+lapse	noun	défaillance
+lascivious	adj	-
+lash	noun	coup de fouet
+lashings	noun	coup de fouet
+lassoed	verb	prendre au lasso
+laughingstock	noun	risée
+lavishly	adv	somptueusement
+lawns	noun	pelouse
+lawyering	noun	travail d'avocat
+layering	verb	superposer
+laze	verb	paresser
+leaky	adj	qui fuit
+lean	verb	se pencher
+leaned	verb	se pencher
+leaning	verb	se pencher
+lease	verb	louer
+leased	verb	louer
+leases	noun	bail
+leashed	verb	mettre en laisse
+leatherwork	noun	maroquinerie
+leathery	adj	tanné
+lecture	noun	cours
+lectured	verb	sermonner
+lecturer	noun	conférencier
+lecturers	noun	conférencier
+lectures	noun	cours
+lecturing	verb	sermonner
+leeching	verb	parasiter
+leered	verb	lorgner
+leeway	noun	marge
+legacy	noun	héritage
+leggings	noun	-
+legionnaire	noun	-
+legit	adj	réglo
+legitimacy	noun	-
+legitimize	verb	-
+legitimizes	verb	-
+lemon	noun	-
+lemonade	noun	-
+lengthened	verb	s'allonger
+lengthening	verb	s'allonger
+lengthier	adj	plus long
+lessened	verb	diminuer
+lettering	noun	inscription
+leverage	verb	exploiter
+leveraged	verb	exploiter
+levied	verb	imposer
+levity	noun	légèreté
+lexis	noun	lexique
+liability	noun	risque
+liberating	adj	-
+lid	noun	couvercle
+lids	noun	paupière
+lifeblood	noun	force vitale
+lifeboat	noun	canot de sauvetage
+lifesaver	noun	planche de salut
+lightbulbs	noun	ampoule
+lighthearted	adj	léger
+lightheartedly	adv	gaiement
+lightweight	adj	léger
+likeable	adj	sympathique
+likelihood	noun	probabilité
+lilt	noun	accent chantant
+limbed	adj	à membres
+limber	adj	souple
+lime	noun	citron vert
+limp	adj	mou
+limply	adv	mollement
+linchpin	noun	clé de voûte
+lineage	noun	lignée
+linen	noun	lin
+linens	noun	linge
+liner	noun	paquebot
+ling	noun	-
+linger	verb	s'attarder
+lingered	verb	s'attarder
+lingerers	noun	retardataire
+lingering	verb	s'attarder
+lint	noun	peluche
+liquified	adj	liquéfié
+liquor	noun	alcool
+literary	adj	-
+literate	adj	alphabétisé
+lithe	adj	souple
+litter	verb	joncher
+littered	verb	joncher
+littering	verb	jeter des détritus
+lividly	adv	furieusement
+loa	noun	-
+loaders	noun	manutentionnaire
+loathing	noun	dégoût
+lobbed	verb	lancer en cloche
+lobbing	verb	lancer en cloche
+lockbox	noun	coffret
+locker	noun	casier
+lockers	noun	casier
+lockjaw	noun	tétanos
+lodged	verb	se coincer
+lodging	noun	logement
+loftiest	adj	élevé
+lofty	adj	élevé
+loiter	verb	traîner
+loitered	verb	traîner
+loitering	verb	traîner
+lolled	verb	pendre
+lolling	verb	pendre
+lols	noun	-
+lonesomely	adv	seul
+longbow	noun	arc long
+longish	adj	assez long
+loo	noun	WC
+lookouts	noun	guetteur
+loomed	verb	se dresser
+looming	verb	se dresser
+looped	verb	faire une boucle
+loophole	noun	faille
+looping	verb	tourner en boucle
+loopy	adj	dans les vapes
+loot	noun	butin
+lop-sided	adj	de travers
+lopped	verb	trancher
+lopsided	adj	de travers
+lordship	noun	seigneurie
+lore	noun	légende
+loudmouth	noun	grande gueule
+loungewear	noun	tenue d'intérieur
+lousy	adj	minable
+lovable	adj	adorable
+lovebirds	noun	tourtereau
+lover	noun	amant
+lovers	noun	amant
+lovey	adj	roucoulant
+low-resolution	adj	-
+lowlife	noun	vaurien
+lowlifes	noun	vaurien
+loyalty	noun	-
+lucid	adj	-
+lug	verb	trimballer
+lull	noun	accalmie
+lulled	verb	bercer
+lumbered	verb	avancer lourdement
+luminaries	noun	sommité
+lump	noun	boule
+lunar	adj	-
+lunged	verb	se jeter
+lurid	adj	sordide
+lurked	verb	rôder
+lurks	verb	se tapir
+lust	noun	désir
+lusterless	adj	terne
+lustrous	adj	lustré
+luxuriate	verb	se prélasser
+luxurious	adj	-
+luxuriously	adv	-
+lynchpin	noun	clé de voûte
+maces	noun	masse d'armes
+maddened	adj	enragé
+mag	noun	chargeur
+maglev	noun	-
+magnanimous	adj	-
+magnanimously	adv	-
+magnification	noun	grossissement
+magnified	verb	amplifier
+magnitude	noun	ampleur
+magnitudes	noun	ordre de grandeur
+mainstream	adj	grand public
+majestic	adj	-
+majestically	adv	-
+makeup	noun	maquillage
+malevolent	adj	malveillant
+malfunction	noun	panne
+malfunctioned	verb	tomber en panne
+malfunctioning	verb	tomber en panne
+malign	adj	malveillant
+malignant	adj	malfaisant
+malignity	noun	malveillance
+malts	noun	-
+man-eater	noun	mangeur d'hommes
+mana	noun	-
+manageable	adj	gérable
+management	noun	gestion
+mandated	verb	imposer
+maneating	adj	mangeur d'hommes
+maneuver	noun	-
+maneuvered	verb	-
+maneuvers	noun	-
+mangle	verb	déchiqueter
+mangling	verb	déchiqueter
+mangoes	noun	mangue
+manic	adj	frénétique
+manifold	adj	multiple
+manipulative	adj	-
+manlier	adj	plus viril
+manmade	adj	artificiel
+manned	verb	occuper
+manufacturing	noun	fabrication
+marbling	noun	marbrure
+marital	adj	conjugal
+marquee	noun	enseigne
+martyrdom	noun	-
+marveled	verb	s'émerveiller
+marvelous	adj	-
+marvelously	adv	-
+masquerading	verb	se faire passer pour
+massage	verb	-
+massaging	verb	-
+materializing	verb	-
+maturely	adv	avec maturité
+maulers	noun	-
+mauling	verb	déchiqueter
+mauls	noun	masse d'armes
+meandering	adj	sinueux
+measurably	adv	sensiblement
+meat-eaters	noun	carnivore
+meatus	noun	-
+meaty	adj	charnu
+mechanical	adj	-
+mechanically	adv	-
+mechanics	noun	mécanique
+mechanised	adj	-
+mechanized	verb	-
+medallion	noun	-
+medic	noun	secouriste
+meek	adj	docile
+meekest	adj	doux
+meekly	adv	docilement
+meekness	noun	docilité
+megaphone	noun	-
+melded	verb	fusionner
+melding	verb	fusionner
+melds	verb	fusionner
+mellow	adj	doux
+mellowed	verb	s'adoucir
+melodiously	adv	mélodieusement
+memoirs	noun	-
+memorabilia	noun	souvenir
+menacingly	adv	de façon menaçante
+mendacious	adj	mensonger
+mender	noun	réparateur
+merchandise	noun	-
+merciful	adj	clément
+mercifully	adv	heureusement
+merest	adj	moindre
+mesh	noun	treillis
+meshed	verb	s'imbriquer
+mesmerism	noun	hypnose
+mesmerized	verb	fasciner
+mesmerizing	adj	fascinant
+messenger	noun	-
+messengers	noun	-
+messily	adv	salement
+messiness	noun	désordre
+metadata	noun	-
+metastasizing	verb	se propager
+meticulousness	noun	minutie
+mettle	noun	trempe
+mew	noun	miaou
+mewling	verb	geindre
+mews	verb	miauler
+mezzanine	noun	-
+miasma	noun	-
+microsecond	noun	-
+microseconds	noun	-
+microwave	noun	micro-ondes
+microwaved	verb	passer au micro-ondes
+middleaged	adj	d'âge mûr
+miffed	adj	vexé
+milder	adj	doux
+mildest	adj	léger
+mildly	adv	légèrement
+milestone	noun	étape
+milestones	noun	étape
+militia	noun	-
+mill	noun	moulin
+milled	verb	aller et venir
+milling	verb	grouiller
+mingled	verb	se mêler
+minimal	adj	minime
+minimalistic	adj	-
+minion	noun	sbire
+mint	noun	menthe
+mints	noun	pastille de menthe
+mire	noun	bourbier
+mirthless	adj	sans joie
+misadventures	noun	mésaventure
+misaligns	verb	mal aligner
+misbegotten	adj	misérable
+mischievousness	noun	espièglerie
+misconduct	noun	faute
+miscreant	noun	vaurien
+misdemeanor	noun	délit
+misdirect	verb	tromper
+misfired	verb	rater
+misfortunate	adj	malheureux
+misgivings	noun	appréhension
+misguide	verb	tromper
+misguided	adj	malavisé
+mishaps	noun	mésaventure
+mishear	verb	mal entendre
+misinterpreting	verb	mal interpréter
+misjudge	verb	mal juger
+misjudged	verb	mal juger
+misleading	adj	trompeur
+misled	verb	induire en erreur
+mismatch	noun	décalage
+misquote	verb	citer de travers
+misread	verb	mal interpréter
+misremembered	verb	mal se souvenir
+misshapen	adj	difforme
+missile	noun	-
+missiles	noun	-
+misspeak	verb	mal s'exprimer
+misspoke	verb	mal s'exprimer
+mist	noun	brume
+misting	verb	s'embuer
+mistrust	verb	se méfier de
+misuse	noun	mauvais usage
+misusing	verb	mal utiliser
+mitigate	verb	atténuer
+mock	verb	se moquer de
+mockingly	adv	d'un ton moqueur
+moderate	adj	-
+moderately	adv	-
+mods	noun	-
+mold	noun	moisissure
+mole	noun	taupe
+moles	noun	taupe
+mollies	noun	-
+momentous	adj	mémorable
+moneymaking	noun	profit
+mongo	noun	-
+monitor	verb	surveiller
+mono	noun	-
+monotonous	adj	-
+monotonously	adv	-
+moo	noun	-
+moody	adj	maussade
+moor	verb	amarrer
+moored	verb	amarrer
+mooring	noun	amarrage
+moose	noun	élan
+moot	adj	sans objet
+moped	noun	mobylette
+moping	verb	broyer du noir
+mopping	verb	éponger
+morals	noun	morale
+morons	noun	crétin
+moroseness	noun	-
+mortared	verb	cimenter
+mortified	adj	mort de honte
+mortifying	adj	humiliant
+moseyed	verb	se balader
+motes	noun	particule
+moths	noun	papillon de nuit
+mottled	adj	marbré
+mound	noun	monticule
+mourn	verb	pleurer
+mourned	verb	pleurer
+mourner	noun	endeuillé
+mournful	adj	lugubre
+mournfully	adv	tristement
+mousy	adj	terne
+mouthing	verb	articuler en silence
+mow	verb	faucher
+mowed	verb	faucher
+mowing	verb	faucher
+muddies	verb	brouiller
+muddled	verb	embrouiller
+muffle	verb	étouffer
+muffled	adj	étouffé
+mullet	noun	coupe mulet
+mullets	noun	coupe mulet
+multi-level	adj	-
+multi-user	adj	-
+multistory	adj	à étages
+multitask	verb	-
+mumblings	noun	marmonnement
+munch	verb	croquer
+munched	verb	croquer
+munching	verb	croquer
+mundane	adj	banal
+munition	noun	munition
+murk	noun	obscurité
+murky	adj	trouble
+murmuration	noun	nuée
+murmurations	noun	nuée
+mussed	verb	ébouriffer
+mussing	verb	ébouriffer
+mustached	adj	moustachu
+muster	verb	rassembler
+mute	verb	couper le son
+mutiny	noun	mutinerie
+mutterings	noun	marmonnement
+mystically	adv	-
+mystifying	adj	déroutant
+nag	verb	harceler
+nagged	verb	harceler
+naive	adj	-
+nannies	noun	nounou
+nanny	noun	nounou
+nanosecond	noun	-
+narcissistic	adj	-
+native	adj	natal
+natives	noun	autochtone
+naughtily	adv	malicieusement
+naughty	adj	vilain
+nauseated	adj	nauséeux
+nauseous	adj	nauséeux
+navigate	verb	s'orienter
+navigating	verb	s'orienter
+naïve	adj	-
+neat	adj	soigné
+neatly	adv	soigneusement
+necessitate	verb	-
+needy	adj	collant
+negate	verb	annuler
+negated	verb	annuler
+negligence	noun	-
+neighbours	noun	-
+neighed	verb	hennir
+nerdier	adj	intello
+nest	noun	nid
+nestled	verb	se nicher
+netting	noun	filet
+neutral	adj	-
+neutrally	adv	-
+neutrals	noun	-
+neverending	adj	interminable
+newbie	noun	débutant
+newbies	noun	débutant
+newcomer	noun	nouveau venu
+newlywed	noun	jeune marié
+newlyweds	noun	jeune marié
+newswoman	noun	journaliste
+nexus	noun	nœud
+nexuses	noun	nœud
+nicked	verb	entailler
+nicks	noun	entaille
+niggling	verb	tracasser
+nightclub	noun	boîte de nuit
+nightwalker	noun	-
+nightwalkers	noun	-
+nincompoop	noun	nigaud
+nipple	noun	téton
+nipples	noun	téton
+nit-picking	noun	pinaillage
+nitty-gritty	noun	vif du sujet
+nitwits	noun	imbécile
+nobly	adv	-
+nod	verb	hocher la tête
+nodded	verb	hocher la tête
+nodding	verb	hocher la tête
+nods	noun	signe de tête
+noisy	adj	-
+nomadic	adj	-
+non-disclosure	noun	confidentialité
+non-flammable	adj	ininflammable
+non-negotiable	adj	-
+non-verbally	adv	sans parler
+nonchalant	adj	-
+nonessential	adj	superflu
+noni	noun	-
+nonlethal	adj	non mortel
+nontransferable	adj	-
+nook	noun	recoin
+nooks	noun	recoin
+noose	noun	nœud coulant
+normalcy	noun	-
+northeastern	adj	du nord-est
+northwestern	adj	du nord-ouest
+nosedive	verb	piquer du nez
+nosey	adj	fouineur
+notarized	verb	certifier
+noteworthy	adj	remarquable
+noticeable	adj	perceptible
+notoriety	noun	-
+nowadays	adv	de nos jours
+nuanced	adj	-
+nubs	noun	bout
+nuke	noun	bombe nucléaire
+nuked	verb	atomiser
+nuking	verb	atomiser
+numinous	adj	sacré
+numskull	noun	crétin
+nursery	noun	chambre d'enfant
+nutty	adj	au goût de noix
+nuzzle	verb	frotter du museau
+nuzzled	verb	se blottir
+oaf	noun	balourd
+obediently	adv	docilement
+obligated	adj	-
+obliterate	verb	anéantir
+obliterated	verb	anéantir
+oblivious	adj	inconscient
+obnoxious	adj	insupportable
+obnoxiousness	noun	caractère odieux
+obscenely	adv	indécemment
+obscurely	adv	vaguement
+obsequiousness	noun	-
+observer	noun	-
+observers	noun	-
+obsessed	verb	-
+obsession	noun	-
+obsessively	adv	-
+obstinate	adj	-
+obstruct	verb	-
+obtainable	adj	disponible
+offender	noun	coupable
+offending	adj	fautif
+offhand	adj	désinvolte
+offloaded	verb	se débarrasser de
+offputting	adj	rebutant
+offshoot	noun	ramification
+offspring	noun	progéniture
+oink	verb	-
+olden	adj	d'antan
+olive-colored	adj	vert olive
+om	noun	-
+omer	noun	-
+ominous	adj	inquiétant
+omit	verb	-
+omnidirectional	adj	-
+once-in-a-lifetime	adj	unique
+onesie	noun	grenouillère
+ongoing	adj	en cours
+onlookers	noun	badaud
+onto	prep	-
+oozy	adj	suintant
+opalescent	adj	-
+operator	noun	-
+operators	noun	-
+opinionated	adj	aux avis tranchés
+opponent	noun	adversaire
+opponents	noun	adversaire
+oppose	verb	-
+opposes	verb	-
+oppressing	verb	opprimer
+oppressively	adv	de façon oppressante
+optimize	verb	optimiser
+orb	noun	sphère
+orbit	verb	graviter autour
+orbiting	verb	graviter autour
+orbs	noun	sphère
+orderlies	noun	aide-soignant
+ore	noun	minerai
+organizers	noun	-
+originator	noun	créateur
+orphanage	noun	orphelinat
+orphanages	noun	orphelinat
+ostensibly	adv	en apparence
+ostentatiously	adv	-
+ou	noun	-
+oust	verb	évincer
+ousted	verb	évincer
+outbreaks	noun	épidémie
+outburst	noun	éclat
+outcome	noun	résultat
+outcomes	noun	résultat
+outcropping	noun	saillie rocheuse
+outcroppings	noun	saillie rocheuse
+outermost	adj	le plus extérieur
+outflow	noun	écoulement
+outgoing	adj	sociable
+outings	noun	sortie
+outlandish	adj	farfelu
+outlast	verb	tenir plus longtemps
+outlasted	verb	tenir plus longtemps
+outlet	noun	exutoire
+outlets	noun	exutoire
+outlining	verb	esquisser
+outlook	noun	perspective
+outpace	verb	distancer
+outpaced	verb	distancer
+outpacing	verb	distancer
+outplay	verb	surclasser
+outpour	noun	flot
+outpouring	noun	flot
+output	noun	rendement
+outrage	noun	indignation
+outrank	verb	être plus gradé que
+outranked	verb	être plus gradé que
+outreach	noun	sensibilisation
+outrider	noun	éclaireur
+outright	adv	carrément
+outrun	verb	distancer
+outshine	verb	éclipser
+outshined	verb	éclipser
+outshining	verb	éclipser
+outshone	verb	éclipser
+outsider	noun	étranger
+outsized	adj	démesuré
+outskirts	noun	périphérie
+outstrips	verb	surpasser
+outweighing	verb	l'emporter sur
+oval-shaped	adj	-
+overabundant	adj	surabondant
+overcome	verb	surmonter
+overconfidence	noun	excès de confiance
+overconfident	adj	trop sûr de soi
+overcooked	verb	trop cuire
+overcrowded	adj	bondé
+overcrowding	noun	surpopulation
+overdressed	adj	trop habillé
+overenthusiastic	adj	trop enthousiaste
+overexaggerated	adj	outrancier
+overexert	verb	se surmener
+overexerted	verb	se surmener
+overexerting	verb	se surmener
+overexertion	noun	surmenage
+overextended	verb	trop étendre
+overextending	verb	se surmener
+overgrowing	verb	envahir
+overhead	adv	au-dessus
+overhear	verb	surprendre
+overheard	verb	surprendre
+overlapped	verb	se chevaucher
+overlarge	adj	trop grand
+overlook	noun	belvédère
+overlooked	verb	négliger
+overlooking	verb	donner sur
+overnight	adv	du jour au lendemain
+overpowered	verb	maîtriser
+overpowering	adj	écrasant
+overpriced	adj	hors de prix
+overrated	adj	surfait
+overreacting	verb	exagérer
+overridden	verb	passer outre
+override	verb	passer outre
+overrides	verb	primer sur
+overseer	noun	surveillant
+oversensitive	adj	trop sensible
+overshoot	verb	dépasser
+overstayed	verb	s'attarder
+overstepped	verb	dépasser les bornes
+overstrained	verb	surmener
+overtax	verb	surmener
+overtaxed	verb	surmener
+overtop	prep	au-dessus de
+overused	verb	abuser de
+overusing	verb	abuser de
+overwhelmed	verb	submerger
+overwhelming	adj	écrasant
+overworked	verb	surmener
+overworking	verb	surmener
+overwrought	adj	à bout de nerfs
+pa	noun	-
+pace	noun	rythme
+paces	noun	pas
+pairings	noun	binôme
+pajama	noun	-
+pal	noun	pote
+palatable	adj	mangeable
+pale-faced	adj	au teint pâle
+paling	noun	palissade
+palings	noun	palissade
+pallid	adj	blafard
+pals	noun	pote
+panes	noun	vitre
+panic	verb	paniquer
+panic-stricken	adj	pris de panique
+panicked	verb	paniquer
+panicking	verb	-
+papa	noun	-
+paperback	noun	livre de poche
+paperwork	noun	paperasse
+papier-mâché	noun	-
+paralyzing	adj	-
+paratrooper	noun	parachutiste
+paratroopers	noun	parachutiste
+parched	adj	desséché
+parchment	noun	-
+parkas	noun	-
+parroting	verb	répéter
+parterre	noun	-
+participate	verb	-
+partitioning	verb	diviser
+passable	adj	praticable
+passageway	noun	couloir
+paste	noun	pâte
+pasty	adj	blafard
+pathfinder	noun	éclaireur
+pathfinders	noun	éclaireur
+pathologically	adv	maladivement
+pathway	noun	chemin
+pathways	noun	chemin
+patinated	verb	-
+patrolmen	noun	patrouilleur
+patronize	verb	prendre de haut
+patrons	noun	client
+pattering	verb	crépiter
+patties	noun	galette
+pavement	noun	chaussée
+pavements	noun	trottoir
+paving	noun	pavage
+pawed	verb	tripoter
+pawn	noun	pion
+pawning	verb	mettre en gage
+pawns	noun	pion
+paygrade	noun	échelon
+payload	noun	charge utile
+peach	noun	pêche
+peach-colored	adj	couleur pêche
+peals	noun	éclat
+pebble	noun	caillou
+pebbles	noun	caillou
+pecking	verb	picorer
+peckish	adj	un peu affamé
+peculiar	adj	bizarre
+peculiarities	noun	particularité
+peer	verb	scruter
+peered	verb	scruter
+peering	verb	scruter
+peers	noun	pair
+peeved	adj	agacé
+peeves	noun	bête noire
+peh	noun	-
+pending	adj	en attente
+penmanship	noun	écriture
+pensively	adv	-
+pep	noun	entrain
+perceived	verb	-
+perceiving	verb	-
+perf	adj	parfait
+performer	noun	artiste
+perilous	adj	-
+perilously	adv	dangereusement
+perish	verb	-
+perished	verb	-
+perishes	verb	périr
+perishing	verb	-
+perked	verb	se ragaillardir
+perking	verb	s'animer
+perky	adj	pétillant
+permanently	adv	en permanence
+perplexed	adj	-
+perplexing	adj	déroutant
+personify	verb	incarner
+personifying	verb	incarner
+pertain	verb	concerner
+peruse	verb	parcourir
+perused	verb	parcourir
+perusing	verb	parcourir
+pervaded	verb	imprégner
+pervasive	adj	omniprésent
+perverted	adj	pervers
+pestered	verb	embêter
+pestering	verb	embêter
+pestilent	adj	pestilentiel
+petal-like	adj	en forme de pétale
+petite	adj	menu
+petticoat	noun	jupon
+petty	adj	mesquin
+ph	noun	-
+phantasmal	adj	fantomatique
+phasing	noun	déphasage
+phenomena	noun	-
+phenomenon	noun	-
+philanderer	noun	coureur de jupons
+phlegmy	adj	enroué
+pho	noun	-
+phobias	noun	-
+phonebook	noun	annuaire
+photoshoot	noun	séance photo
+phrase	noun	expression
+phrased	verb	formuler
+phrases	noun	expression
+pi	noun	-
+pic	noun	photo
+pickled	verb	mariner
+piercing	adj	perçant
+piercingly	adv	de façon perçante
+piggie	noun	cochonnet
+piggy	noun	cochonnet
+piggyback	adv	à califourchon
+pigheaded	adj	têtu
+pigtails	noun	couette
+pike	noun	pique
+piled	verb	s'entasser
+piling	verb	s'entasser
+pin-cushion	noun	pelote d'épingles
+pincushion	noun	pelote d'épingles
+ping	verb	biper
+pinged	verb	biper
+pinging	verb	tinter
+pings	verb	biper
+pinhole	noun	trou d'épingle
+pinholes	noun	trou d'épingle
+pinkie	noun	petit doigt
+pinnacle	noun	sommet
+pinpoint	verb	cerner
+pinpointing	verb	localiser
+pinprick	noun	tête d'épingle
+pip	noun	pépin
+pipsqueak	noun	minus
+pitcher	noun	pichet
+pitiable	adj	pitoyable
+pitying	adj	compatissant
+pityingly	adv	avec pitié
+pivotal	adj	décisif
+pivotally	adv	de façon cruciale
+pixelated	adj	-
+pixilated	verb	-
+placatingly	adv	d'un ton apaisant
+placation	noun	apaisement
+placeholder	noun	bouche-trou
+placidity	noun	-
+placidly	adv	-
+plagued	verb	tourmenter
+planner	noun	organisateur
+planners	noun	organisateur
+plaster	noun	plâtre
+plastered	verb	plaquer
+platform	noun	-
+platinum	noun	-
+playable	adj	-
+playground	noun	aire de jeux
+pleading	verb	supplier
+pleadingly	adv	d'un ton suppliant
+pleas	noun	supplication
+pleasantries	noun	politesse
+plied	verb	exercer
+ploddingly	adv	lourdement
+plop	verb	laisser tomber
+plopped	verb	laisser tomber
+plopping	verb	laisser tomber
+plot	noun	complot
+plow	verb	foncer
+plowing	verb	foncer
+ploy	noun	stratagème
+pluck	verb	arracher
+plucking	verb	arracher
+plumbed	verb	sonder
+plumbing	noun	plomberie
+plumes	noun	plumet
+plumped	verb	se laisser tomber
+plural	noun	-
+plush	adj	moelleux
+poaching	verb	braconner
+pocked	adj	criblé
+pockmarks	noun	trou
+pod	noun	capsule
+poetry	noun	-
+poignantly	adv	de façon poignante
+pointer	noun	pointeur
+pointers	noun	conseil
+poise	noun	maintien
+poke	verb	pousser du doigt
+poked	verb	pousser du doigt
+poker	noun	-
+pokes	noun	coup de doigt
+poky	adj	exigu
+polar	adj	-
+policeman	noun	policier
+policemen	noun	policier
+politician	noun	homme politique
+politicians	noun	homme politique
+pommeled	verb	rouer de coups
+ponderously	adv	lourdement
+poo	noun	caca
+poof	noun	-
+popping	verb	éclater
+pored	verb	examiner
+porky	adj	grassouillet
+porn	noun	-
+poser	noun	frimeur
+posers	noun	frimeur
+possess	verb	-
+post-haste	adv	en toute hâte
+posthumous	adj	-
+postings	noun	affectation
+postulating	verb	supposer
+potency	noun	puissance
+poultry	noun	volaille
+pouted	verb	faire la moue
+pouty	adj	boudeur
+practical	adj	-
+practicality	noun	sens pratique
+practitioner	noun	pratiquant
+practitioners	noun	pratiquant
+praetorians	noun	prétorien
+pragmatically	adv	avec pragmatisme
+prank	noun	farce
+pranks	noun	farce
+prattling	verb	jacasser
+precariously	adv	en équilibre précaire
+precautionary	adj	préventif
+precedence	noun	priorité
+precludes	verb	empêcher
+preconceived	adj	préconçu
+preconceptions	noun	idée préconçue
+predicament	noun	pétrin
+predictable	adj	-
+predilections	noun	penchant
+prefab	noun	préfabriqué
+prefix	noun	-
+premises	noun	lieux
+premium	adj	haut de gamme
+preoccupying	verb	-
+preordained	verb	prédestiner
+preschool	noun	maternelle
+preselected	verb	-
+presumably	adv	sans doute
+pretence	noun	semblant
+pretender	noun	imposteur
+pretense	noun	faux-semblant
+pretentiously	adv	-
+prevail	verb	l'emporter
+prevalently	adv	surtout
+prick	noun	connard
+prickled	verb	picoter
+prickles	noun	picotement
+pricks	noun	connard
+priesthood	noun	clergé
+primeval	adj	primordial
+printer	noun	imprimante
+pristine	adj	impeccable
+pristinely	adv	impeccablement
+privy	adj	dans le secret
+proceedings	noun	débats
+proclivities	noun	penchant
+procured	verb	se procurer
+procuring	verb	se procurer
+profanities	noun	juron
+profanity	noun	grossièreté
+proffered	verb	tendre
+profile	noun	-
+profiles	noun	-
+profiteering	noun	mercantilisme
+profuse	adj	abondant
+profusely	adv	abondamment
+progenitor	noun	ancêtre
+progeny	noun	progéniture
+projection	noun	-
+promenades	noun	-
+prominent	adj	important
+prompt	adj	-
+prone	adj	enclin
+pronounce	verb	prononcer
+pronounced	adj	marqué
+pronouncing	verb	-
+propagate	verb	-
+propagated	verb	-
+propagating	verb	-
+propel	verb	-
+propelling	verb	-
+propping	verb	caler
+props	noun	bravo
+prosecution	noun	poursuites
+prosperous	adj	-
+prosthetic	adj	-
+prostrated	verb	se prosterner
+prostrating	verb	se prosterner
+protectively	adv	en protecteur
+protracted	adj	prolongé
+protuberant	adj	-
+provisionally	adv	-
+provocatively	adv	-
+prowess	noun	habileté
+proxy	noun	représentant
+prudent	adj	-
+prudish	adj	-
+pry	verb	fouiner
+prying	verb	forcer
+psychiatrist	noun	-
+psychologist	noun	-
+psychosis	noun	-
+pterodactyl	noun	-
+pubic	adj	-
+publicist	noun	attaché de presse
+pucker	verb	plisser
+puff	noun	bouffée
+puffed	verb	souffler
+puffing	verb	souffler
+puffy	adj	gonflé
+pulsate	verb	palpiter
+pulsated	verb	palpiter
+pulsating	adj	palpitant
+pulverize	verb	-
+pulverizing	verb	-
+pun	noun	jeu de mots
+puncture	noun	perforation
+punt	verb	botter
+punted	verb	botter
+pupils	noun	pupille
+purchasable	adj	achetable
+purple-green	adj	vert-violet
+purplish-blue	adj	bleu violacé
+pus	noun	-
+pushback	noun	résistance
+pusher	noun	dealer
+puss	noun	minou
+pussy	noun	mauviette
+pussyfooting	verb	tourner autour du pot
+puttering	verb	bricoler
+puzzling	adj	déroutant
+qi	noun	-
+quadrillion	noun	billiard
+quagmire	noun	bourbier
+qualms	noun	scrupule
+quantum	adj	quantique
+quarries	noun	carrière
+quarry	noun	proie
+quartermasters	noun	intendant
+quavered	verb	chevroter
+quavering	adj	chevrotant
+queasily	adv	l'estomac retourné
+queasiness	noun	nausée
+quench	verb	étancher
+quenched	verb	étancher
+quenching	verb	étancher
+quick-witted	adj	vif d'esprit
+quietened	verb	faire taire
+quills	noun	piquant
+quilted	adj	matelassé
+quilting	noun	matelassage
+quintillion	noun	trillion
+quip	noun	boutade
+quipped	verb	plaisanter
+quirks	noun	manie
+quizzical	adj	interrogateur
+rabble	noun	populace
+raccoon	noun	raton laveur
+racked	verb	tourmenter
+radiant	adj	rayonnant
+radiantly	adv	d'un air radieux
+rafters	noun	poutre
+rag	noun	chiffon
+ragged	adj	haché
+raggedly	adv	de façon saccadée
+raging	adj	déchaîné
+rags	noun	haillon
+rainbow-colored	adj	multicolore
+rainfall	noun	pluie
+rainstorms	noun	orage
+rainwater	noun	eau de pluie
+rallying	verb	rallier
+ramble	verb	divaguer
+rambled	verb	divaguer
+rambling	verb	divaguer
+ramming	verb	percuter
+rampage	noun	déchaînement
+rampaged	verb	se déchaîner
+rampaging	verb	se déchaîner
+randomly	adv	au hasard
+rankle	verb	irriter
+rankled	verb	irriter
+ransom	verb	rançonner
+ranted	verb	fulminer
+rantings	noun	diatribe
+rap	noun	-
+rapacious	adj	-
+rapaciously	adv	avidement
+rapid-fire	adj	en rafale
+rapids	noun	-
+rapping	verb	frapper
+rapturous	adj	extatique
+rascal	noun	coquin
+rascals	noun	coquin
+rash	adj	irréfléchi
+rasp	noun	voix rauque
+raspberries	noun	framboise
+raspberry	noun	framboise
+rasped	verb	dire d'une voix rauque
+raspier	adj	plus rauque
+raspy	adj	rauque
+rat-a-tat	noun	-
+ratchet	verb	faire monter
+ratings	noun	audience
+rationale	noun	justification
+rattled	verb	secouer
+rattles	verb	cliqueter
+ratty	adj	miteux
+raucous	adj	bruyant
+raved	verb	s'extasier
+raven	noun	corbeau
+ravens	noun	corbeau
+raving	adj	délirant
+ravings	noun	divagation
+razor-backed	adj	à dos tranchant
+razor-sharp	adj	affûté
+razored	adj	acéré
+readjusted	verb	réajuster
+reaffirmation	noun	-
+realistic	adj	-
+realistically	adv	-
+realization	noun	prise de conscience
+realm	noun	royaume
+ream	verb	engueuler
+reappear	verb	-
+reappearance	noun	-
+reappeared	verb	-
+rear	noun	arrière
+rear-ended	verb	emboutir
+reared	verb	se dresser
+rearing	verb	se dresser
+rearmost	adj	dernier
+reassign	verb	réaffecter
+reassuringly	adv	d'un air rassurant
+reawaken	verb	se réveiller
+reawakened	verb	réveiller
+rebel	noun	-
+rebelled	verb	-
+rebelling	verb	-
+rebellious	adj	-
+reborn	verb	renaître
+rebuked	verb	réprimander
+recalculate	verb	-
+recalculating	verb	-
+recant	verb	renier
+recap	noun	résumé
+recaps	noun	résumé
+recaptured	verb	reprendre
+recast	verb	relancer
+recasting	verb	relancer
+receipt	noun	reçu
+receiver	noun	combiné
+recesses	noun	recoin
+recipient	noun	destinataire
+reciprocate	verb	rendre
+reciprocated	verb	rendre
+reciprocating	verb	rendre
+recklessly	adv	imprudemment
+reckon	verb	croire
+reclaimed	verb	récupérer
+reclaiming	verb	récupérer
+recommenced	verb	-
+recon	noun	reconnaissance
+reconfirm	verb	-
+reconquer	verb	reconquérir
+recoup	verb	récupérer
+recreate	verb	-
+recruit	noun	recrue
+recruiter	noun	recruteur
+recurve	adj	recourbé
+red-rimmed	adj	rougi
+reddish-brown	adj	brun-roux
+redeemable	adj	récupérable
+redeploy	verb	-
+redesigned	verb	remanier
+reefs	noun	récif
+reeked	verb	puer
+reeking	verb	puer
+reeks	verb	puer
+reeling	verb	tituber
+reenact	verb	rejouer
+reenacted	verb	rejouer
+referral	noun	recommandation
+refine	verb	peaufiner
+refitted	verb	réaménager
+reflected	verb	refléter
+reflective	adj	pensif
+reflexive	adj	réflexe
+refocused	verb	recentrer
+reforge	verb	-
+reforged	verb	-
+reforging	verb	-
+reformers	noun	-
+refracted	verb	-
+refurbishing	verb	rénover
+regain	verb	retrouver
+regained	verb	retrouver
+regal	adj	royal
+regalia	noun	tenue d'apparat
+regally	adv	majestueusement
+regimented	adj	réglé
+registration	noun	inscription
+registry	noun	registre
+regressing	verb	régresser
+regulate	verb	réguler
+regulated	verb	réglementer
+regurgitating	verb	-
+rehearsed	verb	répéter
+reinforcements	noun	renfort
+reins	noun	rêne
+reinvested	verb	-
+rejoice	verb	se réjouir
+rejoiced	verb	se réjouir
+relentless	adj	implacable
+relentlessly	adv	sans relâche
+reliable	adj	fiable
+reliance	noun	dépendance
+relic	noun	-
+relics	noun	-
+relinquish	verb	renoncer à
+relinquished	verb	renoncer à
+relish	verb	savourer
+relished	verb	savourer
+remarked	verb	faire remarquer
+remorsefully	adv	avec remords
+remote	adj	éloigné
+remotest	adj	moindre
+removal	noun	retrait
+remover	noun	dissolvant
+ren	noun	-
+rend	verb	déchirer
+renege	verb	se dédire
+renouncement	noun	-
+reordering	verb	réorganiser
+repayment	noun	remboursement
+repeaters	noun	relais
+replay	noun	rediffusion
+replaying	verb	repasser
+replenish	verb	reconstituer
+replication	noun	reproduction
+reposition	verb	-
+repositioned	verb	repositionner
+repository	noun	dépôt
+repossess	verb	saisir
+reprieve	noun	répit
+reprobate	noun	vaurien
+reproving	adj	réprobateur
+reps	noun	-
+repulsed	verb	dégoûter
+repurpose	verb	reconvertir
+repurposed	verb	reconvertir
+reputable	adj	réputé
+requirement	noun	condition
+requirements	noun	exigence
+reroute	verb	rediriger
+rerouted	verb	rediriger
+rerouting	verb	rediriger
+reruns	noun	rediffusion
+rescuer	noun	sauveteur
+rescuers	noun	sauveteur
+resealed	verb	refermer
+resent	verb	en vouloir à
+resentful	adj	rancunier
+resentfully	adv	avec rancœur
+resettle	verb	se réinstaller
+resettlement	noun	réinstallation
+resettling	verb	se réinstaller
+reshape	verb	remodeler
+reshaped	verb	remodeler
+resigned	adj	résigné
+resignedly	adv	avec résignation
+resolutely	adv	-
+resolution	noun	-
+resounding	adj	retentissant
+resoundingly	adv	de façon retentissante
+resplendence	noun	splendeur
+responsive	adj	réactif
+restocked	verb	réapprovisionner
+restore	verb	-
+restores	verb	-
+restoring	verb	-
+restraint	noun	retenue
+restraints	noun	entrave
+resuming	verb	reprendre
+retained	verb	conserver
+retainer	noun	serviteur
+retch	verb	avoir un haut-le-cœur
+retched	verb	avoir un haut-le-cœur
+retie	verb	renouer
+retied	verb	renouer
+retorted	verb	-
+retraced	verb	revenir sur ses pas
+retracing	verb	revenir sur ses pas
+retrain	verb	réentraîner
+retribution	noun	châtiment
+retrospect	noun	recul
+returnee	noun	rapatrié
+reveled	verb	se délecter
+reveling	verb	se délecter
+reverberations	noun	écho
+reverence	noun	vénération
+reverent	adj	recueilli
+reverently	adv	avec vénération
+revert	verb	revenir
+reverted	verb	revenir
+reviled	verb	vilipender
+revolting	adj	répugnant
+revolve	verb	tourner
+revolved	verb	tourner
+revolving	verb	tourner
+revved	verb	faire vrombir
+revving	verb	faire vrombir
+rhyme	noun	rime
+rhymed	verb	rimer
+rhythm	noun	-
+rhythmically	adv	-
+ribbing	noun	taquinerie
+ricocheting	verb	-
+ricochetted	verb	-
+rid	verb	se débarrasser
+ridged	adj	strié
+ridicule	verb	-
+rife	adj	truffé
+riffraff	noun	racaille
+rifling	verb	fouiller
+rift	noun	faille
+rig	verb	bricoler
+rigged	verb	truquer
+rigging	noun	gréement
+righteousness	noun	droiture
+rightmost	adj	plus à droite
+riled	verb	énerver
+rimmed	adj	bordé
+ringleader	noun	meneur
+ripostes	noun	-
+riser	noun	lève-tôt
+risers	noun	lève-tôt
+riskier	adj	plus risqué
+ritually	adv	-
+riveted	verb	captiver
+riveting	adj	captivant
+rivulets	noun	filet
+roach	noun	cafard
+roar	noun	rugissement
+robber	noun	voleur
+robbers	noun	voleur
+robed	adj	en robe
+rogue	noun	renégat
+rogues	noun	voyou
+roil	verb	bouillonner
+roiled	verb	bouillonner
+roiling	verb	bouillonner
+roly-poly	adj	rondouillard
+romancing	verb	courtiser
+rooftops	noun	toit
+rookie	noun	débutant
+roomier	adj	spacieux
+roommate	noun	colocataire
+roommates	noun	colocataire
+rosy	adj	rose
+rote	noun	par cœur
+rough-hewn	adj	grossièrement taillé
+roughened	verb	rendre rugueux
+roughhewn	adj	grossièrement taillé
+roundabout	adj	détourné
+roused	verb	réveiller
+rousing	adj	exaltant
+routing	verb	mettre en déroute
+roving	adj	errant
+royalties	noun	droits d'auteur
+royalty	noun	royauté
+rubbish	noun	bêtise
+rubble	noun	gravats
+ruddy	adj	rougeaud
+rudely	adv	impoliment
+ruefully	adv	avec regret
+ruffians	noun	voyou
+ruffle	verb	ébouriffer
+ruffled	verb	ébouriffer
+rug	noun	tapis
+rugged	adj	robuste
+ruggedly	adv	rudement
+rugs	noun	tapis
+ruler	noun	souverain
+ruminations	noun	-
+rumored	verb	se murmurer
+rumors	noun	-
+rumpled	adj	froissé
+runaway	adj	fugitif
+runny	adj	coulant
+runway	noun	piste
+rust-red	adj	rouille
+ruthlessness	noun	dureté
+ruts	noun	ornière
+saber	noun	-
+sabotage	verb	-
+sadistically	adv	-
+safeguards	noun	garde-fou
+sag	verb	s'affaisser
+sagged	verb	s'affaisser
+sai	noun	-
+sakes	noun	bien
+salesclerk	noun	vendeur
+salivate	verb	-
+salvaged	verb	récupérer
+salvagers	noun	récupérateur
+salvaging	verb	récupérer
+sanctimonious	adj	moralisateur
+sanctimoniously	adv	d'un air moralisateur
+sanctions	noun	-
+sandbagged	verb	cacher son jeu
+sandbar	noun	banc de sable
+sane	adj	sain d'esprit
+sanitation	noun	hygiène
+sanitized	verb	désinfecter
+sapience	noun	conscience
+sapient	adj	doué de raison
+sapling	noun	jeune arbre
+saplings	noun	jeune arbre
+saps	verb	épuiser
+satchel	noun	sacoche
+satchels	noun	sacoche
+saturates	verb	-
+saturating	verb	-
+savaged	verb	déchiqueter
+savaging	verb	déchiqueter
+savoring	verb	savourer
+savvy	adj	avisé
+scads	noun	tas
+scaffold	noun	échafaudage
+scaffolding	noun	échafaudage
+scaffolds	noun	échafaudage
+scags	noun	-
+scalability	noun	évolutivité
+scalable	adj	évolutif
+scalding	adj	brûlant
+scamper	verb	détaler
+scampered	verb	détaler
+scanned	verb	balayer du regard
+scanning	verb	balayer du regard
+scarlet	adj	-
+scarred	adj	balafré
+scarring	noun	cicatrice
+scatted	verb	-
+scattering	verb	éparpiller
+scavenge	verb	récupérer
+scavenged	verb	récupérer
+scavenging	verb	récupérer
+scented	adj	parfumé
+scenting	verb	flairer
+scholar	noun	érudit
+schooling	noun	scolarité
+schoolmates	noun	camarade de classe
+scoffs	noun	moquerie
+scooped	verb	ramasser
+scoops	verb	ramasser
+scooted	verb	se décaler
+scooter	noun	-
+scooting	verb	se décaler
+scopes	noun	lunette
+scorching	adj	brûlant
+scornfully	adv	avec mépris
+scour	verb	fouiller
+scouting	noun	reconnaissance
+scowl	noun	air renfrogné
+scowled	verb	froncer les sourcils
+scowling	verb	froncer les sourcils
+scrabbling	verb	gratter
+scraggly	adj	hirsute
+scram	verb	dégager
+scrapes	noun	égratignure
+scrappy	adj	bagarreur
+scrawny	adj	maigrichon
+screenshotting	verb	faire une capture
+scribbles	noun	gribouillis
+scripture	noun	texte sacré
+scroll	noun	parchemin
+scrolls	noun	parchemin
+scrounge	verb	dénicher
+scrounged	verb	dénicher
+scrounging	verb	dénicher
+scrub	verb	frotter
+scrubs	noun	blouse
+scruff	noun	peau du cou
+scrutiny	noun	examen minutieux
+scuffle	noun	bagarre
+scuffling	verb	se bagarrer
+scuffs	noun	éraflure
+sculk	verb	rôder
+scum	noun	racaille
+scumbag	noun	ordure
+scumbags	noun	ordure
+scummy	adj	ignoble
+scurried	verb	détaler
+scuttle	verb	détaler
+scuttled	verb	détaler
+scuttling	verb	détaler
+se	noun	-
+seam	noun	couture
+seamless	adj	sans faille
+seamlessly	adv	parfaitement
+seared	verb	brûler
+seashell	noun	coquillage
+seasick	adj	qui a le mal de mer
+seaside	noun	bord de mer
+seasonings	noun	assaisonnement
+seaweed	noun	algue
+second-stringer	noun	remplaçant
+secondhand	adj	d'occasion
+secrecy	noun	secret
+secretive	adj	cachottier
+secretively	adv	secrètement
+sectionals	noun	-
+sedan	noun	berline
+sedately	adv	posément
+seeker	noun	chercheur
+seekers	noun	chercheur
+seizure	noun	crise
+self-conscious	adj	gêné
+self-deception	noun	aveuglement
+self-delusion	noun	aveuglement
+self-deprecating	adj	d'autodérision
+self-destruct	verb	s'autodétruire
+self-destructing	verb	s'autodétruire
+self-destructs	verb	s'autodétruire
+self-evident	adj	évident
+self-examine	verb	s'interroger
+self-immolation	noun	immolation
+self-imposed	adj	volontaire
+self-indulgence	noun	complaisance
+self-indulgent	adj	complaisant
+self-pity	noun	apitoiement sur soi
+self-preservation	noun	instinct de survie
+self-reliant	adj	autonome
+self-righteous	adj	moralisateur
+semi	noun	-
+semi-circular	adj	-
+sensitively	adv	avec délicatesse
+sensor	noun	capteur
+sensory	adj	-
+sentient	adj	conscient
+sentimentally	adv	-
+ser	noun	-
+serrated	adj	dentelé
+servers	noun	serveur
+setback	noun	revers
+settlement	noun	colonie
+settlements	noun	colonie
+severing	verb	trancher
+shabby	adj	miteux
+shabu	noun	-
+shack	noun	cabane
+shackled	verb	enchaîner
+shacks	noun	cabane
+shadiness	noun	malhonnêteté
+shady	adj	louche
+shaft	noun	puits
+shafts	noun	rayon
+shaker	noun	salière
+shakier	adj	tremblant
+shakily	adv	en tremblant
+shaky	adj	tremblant
+shallow	adj	peu profond
+shambled	verb	traîner les pieds
+shambling	verb	traîner les pieds
+shaper	noun	façonneur
+shapers	noun	façonneur
+sharkskin	noun	peau de requin
+shattering	adj	fracassant
+shear	verb	cisailler
+sheared	verb	trancher
+sheath	noun	fourreau
+sheathed	verb	rengainer
+shed	verb	perdre
+shedding	verb	verser
+sheepishly	adv	d'un air penaud
+sheering	verb	-
+sheeting	noun	revêtement
+shenanigans	noun	manigances
+shim	noun	-
+shimmer	verb	miroiter
+shimmy	verb	se tortiller
+shipbuilders	noun	constructeur naval
+shipwreck	noun	naufrage
+shipwrecked	verb	faire naufrage
+shirk	verb	se dérober
+shoddily	adv	à la va-vite
+shoddy	adj	médiocre
+shooed	verb	chasser
+shooing	verb	chasser
+shopkeeper	noun	commerçant
+shopkeepers	noun	commerçant
+shoring	verb	étayer
+shorl	noun	-
+shortie	noun	minus
+shortsighted	adj	à courte vue
+shotgun	noun	fusil à pompe
+showerhead	noun	pommeau de douche
+showerheads	noun	pommeau de douche
+showiness	noun	ostentation
+showy	adj	voyant
+shredded	verb	déchiqueter
+shredder	noun	déchiqueteuse
+shredding	verb	déchiqueter
+shreds	noun	lambeau
+shrewd	adj	malin
+shriek	noun	cri perçant
+shrieking	verb	hurler
+shrilled	verb	glapir
+shrink	verb	rétrécir
+shrouding	verb	envelopper
+shrub	noun	arbuste
+shuffle	verb	traîner les pieds
+shunned	verb	rejeter
+shunning	verb	rejeter
+shushed	verb	faire taire
+shute	noun	conduit
+sibling	noun	frère ou sœur
+siblings	noun	frère et sœur
+sic	adv	-
+sicced	verb	lâcher sur
+sicken	verb	écœurer
+sickened	verb	écœurer
+sidearm	noun	arme de poing
+sidearms	noun	arme de poing
+sidekick	noun	acolyte
+sidelines	noun	ligne de touche
+sidelong	adv	de côté
+sidestep	verb	esquiver
+sidestepped	verb	esquiver
+sideswipe	verb	accrocher
+sideswiped	verb	accrocher
+sideward	adv	de côté
+siding	verb	prendre parti
+sidle	verb	se glisser
+siege	noun	-
+sieges	noun	-
+sift	verb	passer au crible
+sifted	verb	passer au crible
+sifting	verb	passer au crible
+significant	adj	important
+silkiness	noun	douceur soyeuse
+silver-grey	adj	gris argenté
+silverware	noun	couverts
+silverwork	noun	orfèvrerie
+simpletons	noun	nigaud
+simultaneous	adj	-
+simultaneously	adv	-
+sine	noun	-
+sinew	noun	tendon
+sinewy	adj	noueux
+single-humped	adj	à une bosse
+singular	adj	-
+siphoned	verb	-
+sire	verb	engendrer
+sired	verb	engendrer
+siring	verb	engendrer
+sis	noun	sœurette
+sizable	adj	considérable
+skeleton	noun	squelette
+skeletons	noun	squelette
+skeptically	adv	d'un air sceptique
+sketched	verb	esquisser
+sketchy	adj	louche
+skewed	verb	fausser
+skewer	verb	embrocher
+skewers	noun	brochette
+skewing	verb	fausser
+skim	verb	survoler
+skimpy	adj	riquiqui
+skirmishing	verb	s'affronter
+skitter	verb	détaler
+skittered	verb	filer
+skittering	verb	détaler
+skittish	adj	craintif
+skulking	verb	rôder
+skylights	noun	lucarne
+skyrocketed	verb	monter en flèche
+skyrockets	verb	monter en flèche
+skyward	adv	vers le ciel
+slab	noun	dalle
+slack	adj	mou
+slackened	verb	se relâcher
+slacks	noun	pantalon
+slag	noun	scorie
+slashed	verb	taillader
+slat	noun	latte
+slate-grey	adj	gris ardoise
+slated	verb	prévoir
+slats	noun	latte
+slaughter	verb	massacrer
+slaughtered	verb	massacrer
+slaughterer	noun	massacreur
+slaughterers	noun	massacreur
+slayer	noun	tueur
+slayers	noun	tueur
+sleazy	adj	louche
+sled	noun	traîneau
+sledge	noun	masse
+sleek	adj	élégant
+sleepily	adv	d'un air endormi
+sleepyhead	noun	marmotte
+slew	noun	flopée
+slick	adj	lisse
+slicked	verb	lisser
+slickness	noun	aspect glissant
+slider	noun	curseur
+slime	noun	bave
+slimed	verb	couvrir de bave
+slimes	noun	bave
+sliming	verb	couvrir de bave
+slimness	noun	minceur
+sling	verb	balancer
+slingers	noun	lanceur
+slings	noun	fronde
+slinking	verb	se faufiler
+slivered	verb	couper en lamelles
+slivering	verb	couper en lamelles
+slob	noun	souillon
+slog	verb	avancer péniblement
+slope	noun	pente
+sloped	adj	en pente
+sloping	adj	en pente
+slopped	verb	déverser
+sloppily	adv	n'importe comment
+sloppy	adj	négligé
+sloth	noun	paresseux
+slotting	verb	insérer
+slouch	noun	mollasson
+slouched	verb	s'affaler
+slouching	verb	s'avachir
+sloughed	verb	se détacher
+sloughing	verb	se détacher
+sludge	noun	boue
+sluggish	adj	lent
+sluggishly	adv	mollement
+sluggishness	noun	lenteur
+sluice	noun	vanne
+slumber	noun	sommeil
+slumbers	verb	sommeiller
+slumped	verb	s'affaisser
+slung	verb	passer en bandoulière
+slurped	verb	aspirer bruyamment
+slurping	verb	aspirer bruyamment
+slurring	verb	bafouiller
+slushy	adj	en bouillie
+smartass	noun	petit malin
+smattering	noun	poignée
+smelted	verb	fondre
+smidge	noun	brin
+smirked	verb	sourire en coin
+smirking	verb	sourire en coin
+smithereens	noun	mille morceaux
+smitten	adj	épris
+smoothie	noun	-
+smoothies	noun	-
+smudge	noun	tache
+smugly	adv	d'un air suffisant
+smugness	noun	suffisance
+snag	verb	choper
+snagged	verb	accrocher
+snagging	verb	choper
+snakelike	adj	de serpent
+snappier	adj	vif
+snappish	adj	cassant
+snare	noun	piège
+snared	verb	piéger
+snarky	adj	sarcastique
+snarl	noun	grondement
+sneaker	noun	basket
+sneaky	adj	sournois
+sneer	noun	rictus méprisant
+sneers	noun	sourire méprisant
+snicks	noun	-
+sniffle	verb	renifler
+sniffles	noun	petit rhume
+snip	verb	couper
+snipe	verb	canarder
+sniper	noun	tireur d'élite
+snipers	noun	tireur d'élite
+snipped	verb	couper
+snitches	noun	mouchard
+snobbish	adj	-
+snobbishly	adv	avec snobisme
+snobby	adj	-
+snoop	verb	fouiner
+snooped	verb	fouiner
+snooping	verb	fouiner
+snort	noun	ricanement
+snorted	verb	ricaner
+snowfield	noun	champ de neige
+snub-nosed	adj	au nez retroussé
+snug	adj	douillet
+snuggled	verb	se blottir
+soars	verb	s'envoler
+sober	adj	-
+sobered	verb	redevenir sérieux
+sobering	adj	qui fait réfléchir
+sobs	noun	sanglot
+sockets	noun	orbite
+softie	noun	cœur tendre
+softy	noun	cœur tendre
+solar	adj	-
+soled	adj	à semelle
+solemnly	adv	gravement
+solitary	adj	-
+somberly	adv	sombrement
+somersaulted	verb	faire un salto
+somersaulting	verb	faire un salto
+somewhat	adv	quelque peu
+sonogram	noun	échographie
+sonorous	adj	-
+sonorously	adv	-
+sony	noun	-
+sooth	verb	apaiser
+soothingly	adv	doucement
+sophisticated	adj	raffiné
+sophistry	noun	sophisme
+sopping	adj	trempé
+sorely	adv	cruellement
+sorus	noun	-
+sour	adj	aigre
+soured	verb	se gâter
+sourness	noun	aigreur
+southeastern	adj	du sud-est
+souther	noun	-
+southmost	adj	le plus au sud
+sowing	verb	semer
+sows	verb	semer
+spa	noun	-
+spacecraft	noun	vaisseau spatial
+spacious	adj	-
+spackle	noun	enduit
+spamming	verb	-
+span	noun	durée
+spanning	verb	s'étendre sur
+spar	verb	s'entraîner au combat
+spars	noun	combat d'entraînement
+spattering	verb	éclabousser
+spawn	verb	apparaître
+speaker	noun	orateur
+speakers	noun	haut-parleur
+speared	verb	transpercer
+specimens	noun	-
+specked	adj	moucheté
+spectating	verb	regarder
+spice	noun	épice
+spiced	verb	épicer
+spices	noun	épice
+spiderlings	noun	bébé araignée
+spiderweb	noun	toile d'araignée
+spike	noun	pointe
+spiked	verb	monter en flèche
+spilled	verb	renverser
+spilling	verb	renverser
+spindly	adj	filiforme
+spine	noun	colonne vertébrale
+spinner	noun	toupie
+spinners	noun	toupie
+spirited	adj	fougueux
+spiteful	adj	malveillant
+spitefully	adv	méchamment
+spitefulness	noun	méchanceté
+splash	noun	éclaboussure
+splashing	verb	éclabousser
+splayed	verb	écarter
+splaying	verb	écarter
+splint	noun	attelle
+splintered	verb	éclater
+splotched	verb	tacher
+splotches	noun	tache
+splotching	verb	tacher
+splurged	verb	faire une folie
+spluttering	verb	bafouiller
+spontaneous	adj	-
+spontaneously	adv	-
+spooked	verb	effrayer
+spoon	noun	cuillère
+spooned	verb	servir à la cuillère
+spotlighted	verb	mettre en lumière
+spotters	noun	observateur
+spotty	adj	irrégulier
+spouting	verb	débiter
+spray	noun	jet
+spraying	verb	asperger
+sprays	verb	asperger
+spread-eagled	adj	étendu en croix
+sprint	verb	foncer
+sprinting	verb	foncer
+spritzing	verb	vaporiser
+sprouted	verb	pousser
+spunk	noun	cran
+sputter	verb	crachoter
+sputtered	verb	crachoter
+sputtering	verb	crachoter
+squall	noun	bourrasque
+squalor	noun	misère
+squashing	verb	écraser
+squawked	verb	piailler
+squeak	noun	couinement
+squeaked	verb	couiner
+squeal	noun	cri aigu
+squealed	verb	pousser un cri aigu
+squealing	verb	pousser un cri aigu
+squeals	verb	pousser un cri aigu
+squelch	verb	faire floc
+squelched	verb	étouffer
+squelching	verb	faire floc
+squid	noun	calmar
+squiggle	noun	gribouillis
+squiggles	noun	gribouillis
+squint	verb	plisser les yeux
+squinting	verb	plisser les yeux
+squints	noun	plissement d'yeux
+stabbers	noun	poignardeur
+stabbing	verb	poignarder
+stabilizer	noun	-
+stacking	verb	empiler
+staggered	verb	tituber
+staggering	verb	tituber
+staggeringly	adv	incroyablement
+stagnation	noun	-
+stained	verb	tacher
+staining	verb	tacher
+stakes	noun	enjeu
+stale	adj	rassis
+stalker	noun	harceleur
+stall	verb	gagner du temps
+stalled	verb	stagner
+stalling	verb	gagner du temps
+stalwart	adj	inébranlable
+stamina	noun	endurance
+stammering	verb	bégayer
+stampede	noun	ruée
+stampedes	noun	débandade
+stampeding	verb	se ruer
+stance	noun	posture
+stanchion	noun	montant
+stand-offish	adj	distant
+standoff	noun	face-à-face
+standoffish	adj	distant
+standoffishly	adv	avec froideur
+staple	noun	élément de base
+staples	noun	élément de base
+stardust	noun	poussière d'étoiles
+starker	adj	frappant
+starlike	adj	stellaire
+starlit	adj	étoilé
+starship	noun	vaisseau spatial
+starships	noun	vaisseau spatial
+startle	verb	faire sursauter
+startling	verb	faire sursauter
+startlingly	adv	étonnamment
+startup	noun	démarrage
+stave	verb	repousser
+steadfast	adj	inébranlable
+steadied	verb	stabiliser
+stealth	noun	furtivité
+steely	adj	d'acier
+steep	adj	raide
+steer	verb	diriger
+stem	noun	tige
+stemmed	verb	découler
+stems	verb	découler
+stepbrother	noun	demi-frère
+stern	adj	sévère
+sternness	noun	sévérité
+stickily	adv	de façon poisseuse
+sticky	adj	collant
+stiff	adj	raide
+stiffly	adv	avec raideur
+stiletto	noun	talon aiguille
+stilettos	noun	talon aiguille
+stilts	noun	échasse
+stinger	noun	dard
+stingy	adj	radin
+stipend	noun	allocation
+stir-fried	adj	sauté
+stoically	adv	-
+stoked	verb	attiser
+stomp	verb	marcher d'un pas lourd
+stomped	verb	marcher d'un pas lourd
+stomping	verb	marcher d'un pas lourd
+stonewall	verb	faire obstruction
+stonewalled	verb	faire obstruction
+stoop	noun	dos voûté
+stopper	noun	bouchon
+stopwatch	noun	chronomètre
+stove	noun	cuisinière
+stowage	noun	rangement
+straddling	verb	chevaucher
+straight-laced	adj	coincé
+straightened	verb	se redresser
+straightening	verb	se redresser
+straightforward	adj	simple
+straightforwardly	adv	directement
+strain	noun	tension
+strained	verb	forcer
+straitjacket	noun	camisole de force
+strand	noun	brin
+stranded	adj	bloqué
+stranding	verb	bloquer
+strands	noun	mèche
+strangling	verb	étrangler
+strapped	verb	attacher
+strayed	verb	s'écarter
+streak	noun	traînée
+streaking	verb	filer
+streaks	noun	traînée
+streambed	noun	lit de ruisseau
+streamers	noun	serpentin
+strenuous	adj	éprouvant
+stride	noun	foulée
+strides	noun	foulée
+striding	verb	marcher à grands pas
+strife	noun	discorde
+striker	noun	attaquant
+striped	adj	rayé
+stripper	noun	strip-teaseuse
+strippers	noun	strip-teaseuse
+strive	verb	s'efforcer
+strode	verb	marcher à grands pas
+stub	noun	bout
+stubs	noun	moignon
+studiously	adv	consciencieusement
+studs	noun	clou
+stuffy	adj	étouffant
+stumpy	adj	courtaud
+stun	verb	étourdir
+stunned	verb	stupéfier
+stunning	adj	superbe
+stunted	adj	rabougri
+stunting	verb	freiner
+stupefying	adj	-
+stupendous	adj	prodigieux
+stutter	verb	bégayer
+stuttered	verb	bégayer
+stuttering	verb	bégayer
+stygian	adj	ténébreux
+styler	noun	fer à coiffer
+stylus	noun	stylet
+subclass	noun	-
+subcultures	noun	-
+subcutaneously	adv	sous la peau
+subdue	verb	maîtriser
+subdued	adj	feutré
+submenus	noun	-
+submerging	verb	plonger
+submissively	adv	docilement
+subordinated	verb	-
+subpoena	noun	assignation
+subscribe	verb	s'abonner
+subsection	noun	-
+subsequent	adj	suivant
+subsided	verb	s'apaiser
+subsumed	verb	englober
+subsystem	noun	-
+subtle	adj	-
+subtly	adv	-
+succubus	noun	-
+suckle	verb	téter
+sufficient	adj	-
+sugary	adj	sucré
+sulkily	adv	d'un air boudeur
+sullenly	adv	d'un air maussade
+sullenness	noun	humeur maussade
+sultry	adj	sensuel
+summon	verb	invoquer
+summoned	verb	faire venir
+summoner	noun	invocateur
+summoning	verb	invoquer
+summonings	noun	invocation
+sunburnt	adj	brûlé par le soleil
+sunder	verb	déchirer
+sundered	verb	déchirer
+sundering	verb	déchirer
+sunlit	adj	ensoleillé
+sup	verb	quoi de neuf
+supercharge	verb	survolter
+supercomputer	noun	-
+superpower	noun	superpouvoir
+superpowers	noun	superpouvoir
+supersede	verb	primer
+supersedes	verb	primer
+supervisory	adj	de supervision
+supine	adj	allongé sur le dos
+supper	noun	dîner
+supportive	adj	encourageant
+suppressed	verb	réprimer
+suppressive	adj	inhibiteur
+surgically	adv	-
+surplus	noun	-
+surreptitiously	adv	en douce
+surrogate	noun	substitut
+surroundings	noun	alentours
+surveilling	verb	-
+sus	adj	louche
+suspension	noun	-
+sustainable	adj	durable
+sustenance	noun	nourriture
+suturing	verb	recoudre
+svelte	adj	-
+swab	noun	tampon
+swabs	noun	coton-tige
+swaddled	verb	emmailloter
+swanky	adj	chic
+swapped	verb	échanger
+swapping	verb	échanger
+swarmed	verb	grouiller
+swath	noun	bande
+swathed	verb	envelopper
+swathes	noun	étendue
+swatter	noun	tapette
+swayed	verb	se balancer
+swaying	verb	se balancer
+swell	verb	gonfler
+sweltering	adj	étouffant
+swerve	verb	faire une embardée
+swerved	verb	faire une embardée
+swiftness	noun	rapidité
+swig	noun	gorgée
+swill	noun	pâtée
+swilled	verb	boire goulûment
+swipe	verb	balayer
+swiped	verb	balayer
+swished	verb	fouetter
+swishing	verb	fouetter
+swollen	adj	enflé
+swoon	verb	se pâmer
+swoop	verb	fondre sur
+swordsman	noun	épéiste
+swordsmanship	noun	maniement de l'épée
+swordsmen	noun	épéiste
+sycophant	noun	flagorneur
+sycophants	noun	flagorneur
+sympathetically	adv	avec compassion
+synergetic	adj	synergique
+synonymous	adj	-
+synthesis	noun	-
+syringe	noun	seringue
+syringes	noun	seringue
+séance	noun	-
+tabletop	adj	de plateau
+taboo	adj	-
+tach	noun	-
+tack	noun	punaise
+tacked	verb	rajouter
+tackle	verb	s'attaquer à
+tackled	verb	plaquer
+tackling	verb	s'attaquer à
+tacky	adj	ringard
+tailed	verb	filer
+tailor-made	adj	sur mesure
+taint	noun	souillure
+tainted	adj	entaché
+tainting	verb	souiller
+takeout	noun	plat à emporter
+talker	noun	bavard
+talkie	noun	-
+tallying	verb	compter
+tamer	adj	plus modéré
+tangentially	adv	indirectement
+tangle	verb	emmêler
+tangled	verb	emmêler
+tangles	noun	nœud
+tangy	adj	acidulé
+tantalized	verb	allécher
+tantrum	noun	crise de colère
+taper	noun	amincissement
+tapered	verb	s'effiler
+tardiness	noun	retard
+tardy	adj	en retard
+tarry	verb	s'attarder
+tassel	noun	pompon
+tassels	noun	pompon
+tasty	adj	savoureux
+tat	noun	tatouage
+tats	noun	tatouage
+tattered	adj	en lambeaux
+tattle	verb	rapporter
+taut	adj	tendu
+tautened	verb	se tendre
+tautening	verb	se tendre
+tautly	adv	bien tendu
+teal	noun	bleu canard
+tease	verb	taquiner
+teased	verb	taquiner
+teasing	verb	taquiner
+teasingly	adv	d'un ton taquin
+tee	noun	t-shirt
+teens	noun	adolescence
+teensy	adj	tout petit
+teetering	verb	vaciller
+telegraphed	verb	annoncer
+telegraphing	verb	trahir
+telltale	adj	révélateur
+temper	noun	colère
+tempered	verb	modérer
+tempering	verb	modérer
+tenacious	adj	-
+tender-hearted	adj	au cœur tendre
+tenebrous	adj	ténébreux
+tenfold	adv	dix fois plus
+tenners	noun	billet de dix
+tensed	verb	se crisper
+tensely	adv	nerveusement
+tentacled	adj	à tentacules
+tentative	adj	hésitant
+tentatively	adv	avec hésitation
+tenuous	adj	fragile
+tenure	noun	mandat
+terrace	noun	-
+terror-stricken	adj	terrifié
+tersely	adv	sèchement
+tether	noun	lien
+text	verb	envoyer un texto
+texted	verb	envoyer un texto
+texting	verb	envoyer un texto
+thaw	verb	dégeler
+thawed	verb	dégeler
+theatrically	adv	-
+theoretical	adj	-
+theoretically	adv	-
+therapist	noun	-
+thereafter	adv	par la suite
+thickheaded	adj	bouché
+thickskinned	adj	endurci
+thieving	adj	voleur
+thimble	noun	dé à coudre
+thimblefuls	noun	dé à coudre
+thingies	noun	truc
+thingy	noun	truc
+thirsty	adj	-
+thoroughfares	noun	artère
+thoroughly	adv	minutieusement
+thrall	noun	emprise
+thrash	verb	se débattre
+thrashed	verb	se débattre
+thrashing	verb	se débattre
+threading	verb	se faufiler
+three-pronged	adj	à trois branches
+threesome	noun	plan à trois
+thrived	verb	prospérer
+throb	verb	palpiter
+throbbed	verb	palpiter
+throes	noun	affres
+thronged	verb	se presser
+thronging	verb	se presser
+throttle	verb	étrangler
+throttled	verb	étrangler
+throwable	adj	à lancer
+thrower	noun	lanceur
+thrum	noun	vibration
+thrumming	verb	vibrer
+thrust	verb	pousser
+thrusters	noun	propulseur
+thud	noun	bruit sourd
+thudded	verb	cogner
+thudding	verb	cogner
+thuds	verb	cogner
+thumped	verb	cogner
+thunderbolts	noun	foudre
+thunderclouds	noun	nuage d'orage
+thunderstrikes	noun	coup de tonnerre
+thunks	noun	bruit sourd
+thwack	verb	-
+ti	noun	-
+tiara	noun	-
+tic	noun	-
+tick-tock	verb	-
+tickling	noun	chatouille
+tidbit	noun	bribe
+tidiness	noun	propreté
+tidy	adj	rangé
+tidying	verb	ranger
+tiers	noun	niveau
+tight-knit	adj	très uni
+til	prep	jusqu'à
+tiled	adj	carrelé
+timeline	noun	chronologie
+tinfoil	noun	papier alu
+tinged	verb	teinter
+tinny	adj	nasillard
+tinsel	noun	guirlande
+tint	noun	teinte
+tinted	adj	teinté
+tipsy	adj	éméché
+tiptoed	verb	avancer à pas de loup
+tiresome	adj	pénible
+tit	noun	nichon
+titillating	adj	émoustillant
+tits	noun	nichon
+tittered	verb	glousser
+tizzy	noun	émoi
+toddled	verb	trottiner
+toddler	noun	bambin
+toddlers	noun	bambin
+toiling	verb	trimer
+tole	noun	-
+tolling	verb	sonner
+tolls	noun	péage
+tomboyish	adj	de garçon manqué
+tomfoolery	noun	bêtises
+toned	adj	musclé
+tongue-lashing	noun	engueulade
+toolbox	noun	boîte à outils
+toolboxes	noun	boîte à outils
+toolkit	noun	boîte à outils
+toothache	noun	mal de dents
+topmost	adj	le plus haut
+toppling	verb	basculer
+torturously	adv	atrocement
+tossup	noun	pile ou face
+totes	adv	carrément
+tousled	verb	ébouriffer
+tousling	verb	ébouriffer
+tout	verb	vanter
+tracer	noun	balle traçante
+trackers	noun	pisteur
+tracts	noun	étendue
+trademark	noun	marque de fabrique
+tragedies	noun	-
+tranquilly	adv	calmement
+transgression	noun	-
+transitioned	verb	passer
+transitioning	verb	passer
+translate	verb	-
+translating	verb	-
+translation	noun	-
+translations	noun	-
+translucent	adj	-
+transmit	verb	-
+transmitted	verb	-
+transpiring	verb	se passer
+transplant	noun	greffe
+transplanting	verb	transplanter
+transportable	adj	-
+transporting	verb	-
+trashed	verb	saccager
+trashy	adj	vulgaire
+tread	verb	marcher
+treading	verb	marcher
+treadmills	noun	tapis de course
+treads	noun	chenille
+treasonous	adj	traître
+treasurer	noun	trésorier
+treasuries	noun	trésor
+treasury	noun	trésor
+trekked	verb	crapahuter
+trekking	verb	randonner
+tremble	verb	-
+trembles	verb	trembler
+tremendous	adj	énorme
+trepidation	noun	appréhension
+trespassing	verb	entrer sans permission
+trickled	verb	couler goutte à goutte
+trickling	verb	couler goutte à goutte
+tricky	adj	délicat
+trifle	noun	broutille
+trifled	verb	prendre à la légère
+trifles	noun	broutille
+trifling	adj	insignifiant
+trim	verb	tailler
+trimmer	adj	plus mince
+tripe	noun	foutaises
+tripwire	noun	fil-piège
+tripwires	noun	fil-piège
+trisected	verb	couper en trois
+triumphantly	adv	triomphalement
+trivia	noun	anecdote
+trod	verb	marcher
+trodden	verb	fouler
+trollop	noun	traînée
+troop	noun	troupe
+troopers	noun	soldat
+trophies	noun	-
+troublemaker	noun	fauteur de troubles
+trounced	verb	écraser
+trucker	noun	routier
+trudged	verb	avancer péniblement
+trudging	verb	avancer péniblement
+trumped	verb	l'emporter sur
+trumping	verb	l'emporter sur
+trumps	verb	l'emporter sur
+truncated	verb	tronquer
+tt	adj	-
+tub	noun	baignoire
+tubing	noun	tuyau
+tug	noun	coup sec
+tummies	noun	ventre
+tummy	noun	ventre
+turf	noun	territoire
+tussle	noun	bagarre
+tussled	verb	se bagarrer
+tutoring	noun	soutien scolaire
+tweaked	verb	ajuster
+twilight	noun	crépuscule
+twinging	verb	élancer
+twinkled	verb	scintiller
+twinkling	verb	scintiller
+twirl	verb	faire tournoyer
+twirled	verb	faire tournoyer
+twirling	verb	faire tournoyer
+twisters	noun	tornade
+twitch	verb	tressaillir
+twitched	verb	tressaillir
+twitching	verb	tressaillir
+twitter	verb	-
+two-pronged	adj	sur deux fronts
+typhoon	noun	-
+tyrant	noun	-
+ulcerous	adj	-
+ultimate	adj	-
+ultimately	adv	en fin de compte
+unabashed	adj	décomplexé
+unabashedly	adv	sans complexe
+unaccustomed	adj	peu habitué
+unachievable	adj	irréalisable
+unadorned	adj	sans ornement
+unadulterated	adj	pur
+unanimous	adj	-
+unapologetic	adj	sans complexe
+unappeasable	adj	insatiable
+unapproachable	adj	inaccessible
+unarmored	adj	sans armure
+unattractive	adj	peu attirant
+unattractively	adv	disgracieusement
+unauthorized	adj	non autorisé
+unbelievably	adv	incroyablement
+unblinking	adj	sans ciller
+unblinkingly	adv	sans ciller
+unbraided	verb	dénatter
+unbridgeable	adj	infranchissable
+unbridled	adj	effréné
+unbundling	verb	défaire
+unburdened	verb	soulager
+uncanny	adj	troublant
+unceasing	adj	incessant
+unceremonious	adj	brusque
+uncharitable	adj	peu charitable
+uncoiling	verb	dérouler
+uncompromising	adj	intransigeant
+uncompromisingly	adv	sans concession
+unconquered	adj	non conquis
+unconscionable	adj	inadmissible
+unconstrained	adj	libre
+unconventional	adj	peu conventionnel
+uncoordinated	adj	désordonné
+uncorrupted	adj	non corrompu
+uncountable	adj	innombrable
+uncut	adj	brut
+undepicted	adj	non représenté
+undercarriage	noun	châssis
+underdeveloped	adj	sous-développé
+underdressed	adj	trop simplement vêtu
+underlings	noun	sbire
+underselling	verb	minimiser
+undershirt	noun	maillot de corps
+undersized	adj	trop petit
+understandably	adv	naturellement
+understated	adj	sobre
+understatement	noun	euphémisme
+understating	verb	minimiser
+undertaking	noun	entreprise
+undertone	noun	nuance
+undertones	noun	nuance
+underwhelmed	adj	déçu
+underwhelming	adj	décevant
+undid	verb	défaire
+undo	verb	défaire
+undocked	verb	désamarrer
+undulating	adj	ondulant
+undulation	noun	-
+undulations	noun	-
+unduly	adv	outre mesure
+unenthusiastic	adj	peu enthousiaste
+unenthusiastically	adv	sans enthousiasme
+unerring	adj	infaillible
+unerringly	adv	sans faillir
+unexceptional	adj	banal
+unfaltering	adj	inébranlable
+unfed	adj	affamé
+unfit	adj	inapte
+unflinching	adj	impassible
+unflinchingly	adv	sans broncher
+unforgivably	adv	impardonnablement
+unfortunate	adj	malheureux
+ungracious	adj	peu aimable
+ungreased	adj	mal huilé
+unidentifiable	adj	non identifiable
+unifying	verb	unifier
+unimaginably	adv	incroyablement
+unimaginatively	adv	sans imagination
+unimpeachable	adj	irréprochable
+unknowns	noun	inconnue
+unlatched	verb	déverrouiller
+unlit	adj	éteint
+unmemorable	adj	quelconque
+unmistakable	adj	reconnaissable
+unmoored	adj	à la dérive
+unmute	verb	réactiver le son
+unnerved	verb	déstabiliser
+unnerving	adj	troublant
+unnoticeably	adv	imperceptiblement
+unobserved	adj	inaperçu
+unobstructed	adj	dégagé
+unorthodox	adj	peu orthodoxe
+unpalatable	adj	désagréable
+unpolished	adj	brut
+unrecognizably	adv	de façon méconnaissable
+unrefined	adj	fruste
+unreliable	adj	peu fiable
+unremarkable	adj	quelconque
+unremarked	adj	inaperçu
+unresolved	adj	non résolu
+unresponsive	adj	sans réaction
+unrestrained	adj	débridé
+unscrambled	verb	déchiffrer
+unsolicited	adj	non sollicité
+unsportsmanlike	adj	antisportif
+unstrap	verb	détacher
+unsubtle	adj	peu subtil
+unsympathetic	adj	peu compatissant
+unsympathetically	adv	sans compassion
+untalented	adj	sans talent
+untangle	verb	démêler
+untangled	verb	démêler
+untangling	verb	démêler
+unthinkable	adj	impensable
+untidiness	noun	désordre
+unto	prep	à
+untraversable	adj	infranchissable
+untrodden	adj	inexploré
+untrustworthy	adj	indigne de confiance
+unwarranted	adj	injustifié
+unwary	adj	imprudent
+unwavering	adj	inébranlable
+unwieldy	adj	encombrant
+unwitting	adj	involontaire
+unwontedly	adv	inhabituellement
+unwooded	adj	déboisé
+unworkable	adj	irréalisable
+unwrinkled	adj	lisse
+unzip	verb	défaire la fermeture
+unzipped	verb	défaire la fermeture
+upbeat	adj	enjoué
+upgraded	verb	améliorer
+upheld	verb	maintenir
+uplift	noun	élévation
+uplifting	adj	réconfortant
+uploaded	verb	téléverser
+uploading	verb	mettre en ligne
+uploads	noun	mise en ligne
+upright	adj	droit
+uprising	noun	soulèvement
+uproar	noun	tollé
+uproot	verb	déraciner
+upstage	verb	éclipser
+upstanding	adj	intègre
+upstream	adj	en amont
+upwards	adv	vers le haut
+upwind	adv	au vent
+urban	adj	-
+urged	verb	pousser
+urn	noun	-
+users	noun	-
+ushered	verb	conduire
+uttering	verb	prononcer
+utterly	adv	complètement
+utu	noun	-
+uzi	noun	-
+vacantly	adv	d'un air absent
+vacating	verb	quitter
+vacuous	adj	vide
+vacuums	noun	aspirateur
+vagaries	noun	caprice
+vagueness	noun	imprécision
+valets	noun	-
+valuables	noun	objet de valeur
+vambrace	noun	brassard
+vambraces	noun	brassard
+vanishing	verb	disparaître
+vapid	adj	insipide
+vastly	adv	nettement
+vault	noun	chambre forte
+vaults	noun	chambre forte
+vees	noun	-
+veneer	noun	vernis
+venerating	verb	vénérer
+venereal	adj	-
+vengeful	adj	vengeur
+venomous	adj	venimeux
+vent	noun	conduit d'aération
+venting	verb	se défouler
+verbatim	adv	mot pour mot
+verdure	noun	-
+verge	noun	bord
+vesper	noun	vêpres
+vestment	noun	habit sacerdotal
+vestments	noun	habit sacerdotal
+veterinarian	noun	-
+vexation	noun	contrariété
+vexed	verb	contrarier
+via	prep	-
+vibe	noun	ambiance
+vibes	noun	ambiance
+vicious	adj	féroce
+viciousness	noun	férocité
+vie	verb	rivaliser
+viewpoints	noun	point de vue
+vigilantly	adv	avec vigilance
+vigor	noun	-
+vilest	adj	ignoble
+vilified	verb	dénigrer
+villainous	adj	infâme
+villainy	noun	méchanceté
+vindicated	adj	conforté
+vindication	noun	triomphe
+vindictiveness	noun	rancune
+vines	noun	liane
+vintage	adj	d'époque
+vintages	noun	millésime
+viridian	adj	vert bleuté
+visibly	adv	-
+visitations	noun	visite
+vivacious	adj	pétillant
+vividly	adv	nettement
+vivisected	verb	disséquer
+vivisecting	verb	disséquer
+vizor	noun	visière
+voguing	noun	-
+volleying	verb	échanger
+voluminous	adj	-
+voluntold	verb	désigner d'office
+voracious	adj	-
+vouch	verb	se porter garant
+vouched	verb	se porter garant
+vows	noun	vœu
+vs	prep	-
+vying	verb	rivaliser
+wad	noun	liasse
+wadded	verb	chiffonner
+waft	noun	bouffée
+waggling	verb	remuer
+waif	noun	gamin des rues
+waifs	noun	gamin des rues
+waist-deep	adv	jusqu'à la taille
+waist-high	adj	à hauteur de taille
+waitress	noun	serveuse
+waiver	noun	dérogation
+walkable	adj	praticable
+wanes	verb	décliner
+wanton	adj	gratuit
+wantonly	adv	inconsidérément
+wap	noun	-
+warden	noun	gardien
+wardens	noun	gardien
+warding	verb	repousser
+wardrobe	noun	garde-robe
+wards	noun	protection
+wares	noun	marchandise
+warily	adv	avec méfiance
+wariness	noun	méfiance
+warranted	verb	justifier
+wartorn	adj	ravagé par la guerre
+washer	noun	lave-linge
+waspish	adj	acerbe
+wastelands	noun	terre désolée
+watchtower	noun	tour de guet
+waterproof	adj	étanche
+waterworks	noun	usine des eaux
+waul	verb	-
+wavy	adj	ondulé
+waxy	adj	cireux
+waylaid	verb	retarder
+wayward	adj	égaré
+wealth	noun	richesse
+weaponize	verb	utiliser comme arme
+weaponized	verb	utiliser comme arme
+wearily	adv	avec lassitude
+weathered	adj	buriné
+weaves	verb	tisser
+wedged	verb	coincer
+wedging	verb	coincer
+weighty	adj	lourd
+weirdo	noun	cinglé
+welfare	noun	bien-être
+well-proportioned	adj	bien proportionné
+wellspring	noun	source
+wench	noun	donzelle
+wenches	noun	donzelle
+westernmost	adj	le plus à l'ouest
+whap	noun	-
+whatnot	noun	et tout ça
+whatnots	noun	et tout ça
+wheezing	verb	respirer en sifflant
+wheezy	adj	sifflant
+whelp	noun	chiot
+whereabouts	noun	localisation
+wherever	adv	partout où
+whiff	noun	bouffée
+whiffed	verb	rater
+whim	noun	caprice
+whimsical	adj	fantaisiste
+whined	verb	geindre
+whinnied	verb	hennir
+whiplash	noun	contrecoup
+whipping	verb	fouetter
+whir	verb	vrombir
+whirl	noun	tourbillon
+whirled	verb	pivoter
+whirling	verb	tournoyer
+whirlwind	noun	tourbillon
+whirred	verb	vrombir
+whirring	verb	vrombir
+whisk	verb	emmener
+whisked	verb	emmener
+whisker	noun	moustache
+whisking	verb	emmener
+white-streaked	adj	strié de blanc
+whitening	verb	blanchir
+whitewashing	noun	blanchiment
+whittled	verb	réduire
+whizzed	verb	filer
+wholehearted	adj	sincère
+wholesome	adj	sain
+whooped	verb	crier de joie
+whooping	verb	crier de joie
+whooshed	verb	passer en sifflant
+whooshing	verb	passer en sifflant
+wickedly	adv	méchamment
+widen	verb	s'élargir
+widened	verb	s'élargir
+width	noun	largeur
+wiggle	verb	gigoter
+wiggled	verb	gigoter
+wiggling	verb	gigoter
+wildcard	noun	inconnue
+wildcards	noun	joker
+wilt	verb	se faner
+wilting	verb	se faner
+windblown	adj	ébouriffé
+windbreaker	noun	coupe-vent
+windowsill	noun	rebord de fenêtre
+winked	verb	faire un clin d'œil
+winterized	verb	adapter à l'hiver
+wiper	noun	essuie-glace
+wipers	noun	essuie-glace
+wishy-washy	adj	indécis
+wisp	noun	volute
+wisps	noun	volute
+wispy	adj	vaporeux
+wistful	adj	nostalgique
+wistfully	adv	avec nostalgie
+wistfulness	noun	nostalgie
+wit	noun	esprit
+wither	verb	dépérir
+withheld	verb	retenir
+withhold	verb	retenir
+witty	adj	spirituel
+wobble	verb	vaciller
+wobbled	verb	vaciller
+wobbling	verb	vaciller
+wobbly	adj	tremblotant
+woe	noun	malheur
+wolflike	adj	de loup
+womanizer	noun	coureur de jupons
+womankind	noun	gent féminine
+womb	noun	ventre
+woof	noun	-
+woosh	noun	-
+woozy	adj	vaseux
+workaholic	noun	bourreau de travail
+workaround	noun	solution détournée
+workday	noun	journée de travail
+workplace	noun	lieu de travail
+workstation	noun	poste de travail
+worrisome	adj	inquiétant
+worshipful	adj	adorateur
+worthwhile	adj	qui vaut la peine
+wraith	noun	spectre
+wraiths	noun	spectre
+wrangle	verb	gérer
+wrapper	noun	emballage
+wrappers	noun	emballage
+wreaking	verb	semer
+wreathed	verb	envelopper
+wrestling	verb	lutter
+wringing	verb	tordre
+wrinkled	verb	plisser
+wrinkles	noun	ride
+writhe	verb	se tordre
+writhed	verb	se tordre
+writhing	verb	se tordre
+wrung	verb	tordre
+wry	adj	ironique
+wryly	adv	avec ironie
+wuss	noun	mauviette
+xenophobic	adj	-
+xenopus	noun	-
+yak	noun	-
+yearn	verb	aspirer
+yearning	noun	désir
+yellow-tinged	adj	jaunâtre
+yellowish-grey	adj	gris jaunâtre
+yelp	noun	petit cri
+yelped	verb	glapir
+yelping	verb	glapir
+yelps	verb	glapir
+yen	noun	-
+yield	verb	céder
+yipped	verb	japper
+yoked	verb	atteler
+yolk	noun	jaune d'œuf
+yolks	noun	jaune d'œuf
+youngsters	noun	jeune
+yowl	noun	hurlement
+yowled	verb	hurler
+yowling	verb	hurler
+zap	verb	foudroyer
+zapped	verb	foudroyer
+zapping	verb	foudroyer
+zine	noun	fanzine
+zing	noun	peps
+zipping	verb	filer
+zoom	verb	filer
+zoomed	verb	filer
