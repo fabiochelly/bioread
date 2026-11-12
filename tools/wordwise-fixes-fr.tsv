@@ -176,6 +176,7 @@ appraisal	noun	évaluation
 appraise	verb	jauger
 appraised	verb	évaluer
 appraising	verb	jauger
+appreciation	noun	-
 appreciations	noun	gratitude
 appreciatively	adv	d'un air approbateur
 apprehensive	adj	inquiet
@@ -423,6 +424,7 @@ bland	adj	fade
 blandest	adj	fade
 blandness	noun	fadeur
 blanketed	adj	recouvert
+blares	verb	retentir
 blast	noun	explosion
 blasted	adj	maudit
 blaster	noun	pistolet laser
@@ -625,6 +627,7 @@ cackle	noun	ricanement
 cackled	verb	ricaner
 cackling	verb	ricaner
 cacophonous	adj	-
+cad	noun	-
 cads	noun	goujat
 cagey	adj	évasif
 cahoots	noun	de mèche
@@ -719,6 +722,7 @@ chastising	verb	réprimander
 chatter	noun	bavardage
 chauffeuring	verb	conduire
 checkers	noun	jeu de dames
+checkups	noun	bilan de santé
 cheep	verb	pépier
 cheerily	adv	gaiement
 cherished	adj	chéri
@@ -1310,6 +1314,7 @@ dispirited	adj	découragé
 display	noun	affichage
 displays	noun	affichage
 displeasure	noun	mécontentement
+disproportional	adj	-
 disquieting	adj	troublant
 disrobed	verb	se déshabiller
 disruptions	noun	perturbation
@@ -1378,6 +1383,7 @@ downright	adv	carrément
 downstairs	adv	-
 downstream	adj	en aval
 downstroke	noun	coup vers le bas
+downswing	noun	baisse
 downtime	noun	temps mort
 downtrodden	adj	opprimé
 dozer	noun	bulldozer
@@ -1646,6 +1652,7 @@ extracting	verb	-
 extracurriculars	noun	activité périscolaire
 extraneous	adj	superflu
 extravagantly	adv	avec extravagance
+extroverted	adj	-
 exuded	verb	dégager
 eyehole	noun	trou pour l'œil
 eyelid	noun	paupière
@@ -1744,6 +1751,7 @@ flamethrowers	noun	lance-flammes
 flap	noun	rabat
 flaps	noun	rabat
 flare	noun	éclat
+flare-ups	noun	poussée
 flared	verb	s'embraser
 flaring	verb	s'embraser
 flashily	adv	de façon voyante
@@ -1799,6 +1807,7 @@ foam	noun	mousse
 foaming	verb	écumer
 fodder	noun	chair à canon
 fogged	adj	embué
+fogging	verb	s'embuer
 fogies	noun	vieux schnock
 foil	noun	papier alu
 foist	verb	imposer
@@ -2205,6 +2214,7 @@ heartland	noun	cœur du pays
 heartthrob	noun	idole
 heater	noun	chauffage
 heaters	noun	radiateur
+heaves	noun	halètement
 heckler	noun	chahuteur
 hectic	adj	mouvementé
 hectically	adv	frénétiquement
@@ -2635,6 +2645,7 @@ likelihood	noun	probabilité
 lilt	noun	accent chantant
 limbed	adj	à membres
 limber	adj	souple
+limbering	verb	s'échauffer
 lime	noun	citron vert
 limp	adj	mou
 limply	adv	mollement
@@ -3093,6 +3104,7 @@ ominous	adj	inquiétant
 omit	verb	-
 omnidirectional	adj	-
 once-in-a-lifetime	adj	unique
+onehanded	adv	d'une main
 onesie	noun	grenouillère
 ongoing	adj	en cours
 onlookers	noun	badaud
@@ -3182,6 +3194,7 @@ overexertion	noun	surmenage
 overextended	verb	trop étendre
 overextending	verb	se surmener
 overgrowing	verb	envahir
+overgrown	adj	envahi
 overhead	adv	au-dessus
 overhear	verb	surprendre
 overheard	verb	surprendre
@@ -3465,6 +3478,7 @@ predictable	adj	-
 predilections	noun	penchant
 prefab	noun	préfabriqué
 prefix	noun	-
+premise	noun	-
 premises	noun	lieux
 premium	adj	haut de gamme
 preoccupying	verb	-
@@ -3485,6 +3499,7 @@ pricks	noun	connard
 priesthood	noun	clergé
 primeval	adj	primordial
 printer	noun	imprimante
+prioritization	noun	-
 pristine	adj	impeccable
 pristinely	adv	impeccablement
 privy	adj	dans le secret
@@ -3919,6 +3934,8 @@ ruggedly	adv	rudement
 rugs	noun	tapis
 ruler	noun	souverain
 ruminations	noun	-
+rumor	noun	-
+rumor	verb	-
 rumored	verb	se murmurer
 rumors	noun	-
 rumpled	adj	froissé
@@ -3941,6 +3958,7 @@ salivate	verb	-
 salvaged	verb	récupérer
 salvagers	noun	récupérateur
 salvaging	verb	récupérer
+samplings	noun	prélèvement
 sanctimonious	adj	moralisateur
 sanctimoniously	adv	d'un air moralisateur
 sanctions	noun	-
@@ -4525,6 +4543,7 @@ stopwatch	noun	chronomètre
 stove	noun	cuisinière
 stowage	noun	rangement
 straddling	verb	chevaucher
+straggling	verb	traîner
 straight-laced	adj	coincé
 straightened	verb	se redresser
 straightening	verb	se redresser
@@ -4815,6 +4834,7 @@ til	prep	jusqu'à
 tiled	adj	carrelé
 timeline	noun	chronologie
 tinfoil	noun	papier alu
+ting	noun	tintement
 tinged	verb	teinter
 tinny	adj	nasillard
 tinsel	noun	guirlande
@@ -4886,6 +4906,7 @@ trekked	verb	crapahuter
 trekking	verb	randonner
 tremble	verb	-
 trembles	verb	trembler
+trembling	verb	-
 tremendous	adj	énorme
 trepidation	noun	appréhension
 trespassing	verb	entrer sans permission
@@ -5222,6 +5243,7 @@ weighty	adj	lourd
 weirdo	noun	cinglé
 welfare	noun	bien-être
 well-proportioned	adj	bien proportionné
+wellformed	adj	bien formé
 wellspring	noun	source
 wench	noun	donzelle
 wenches	noun	donzelle
