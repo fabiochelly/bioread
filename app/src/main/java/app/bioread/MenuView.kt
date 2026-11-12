@@ -307,21 +307,48 @@ class MenuView(private val host: MainActivity, private val reader: ReaderView, i
         )
 
         // --- Mise en forme de l'éditeur (lettres, vers, épigraphes…) : la bascule est dans le titre
-        section(IconButton.CONTENTS, "Fidèle au livre", Switch(Prefs.faithful) { on ->
+        // Sur la même ligne, pour rester compact : le choix de la police, puis la bascule.
+        val fonts = host.fonts
+        val font = label("${fonts.family.label}  ▾", false, 15f).apply {
+            gravity = Gravity.CENTER
+            background = outline()
+            typeface = fonts.regular        // le nom est écrit dans la police elle-même
+            setPadding(dp(12), 0, dp(12), 0)
+            setOnClickListener {
+                val list = fonts.families
+                AlertDialog.Builder(host).setItems(list.map { it.label }.toTypedArray()) { _, i ->
+                    if (list[i] !== fonts.family) {
+                        Prefs.font = list[i].id
+                        Prefs.save()
+                        fonts.select(list[i].id)
+                        text = "${fonts.family.label}  ▾"
+                        typeface = fonts.regular
+                        reader.restyle()
+                    }
+                }.show()
+            }
+        }
+        val faithful = LinearLayout(host)
+        faithful.gravity = Gravity.CENTER_VERTICAL
+        faithful.setPadding(0, dp(12), 0, dp(8))
+        faithful.addView(font, LinearLayout.LayoutParams(0, dp(44), 1f))
+        // Écran large (liseuse) : la police occupe la première moitié, la bascule la seconde.
+        // Écran étroit : la bascule prend sa place, la police le reste.
+        val wide = resources.displayMetrics.widthPixels / d >= 480
+        val right = LinearLayout(host)
+        right.gravity = Gravity.CENTER_VERTICAL or Gravity.END
+        right.addView(label("FIDÈLE AU LIVRE", true, 11.5f).apply { letterSpacing = 0.12f },
+            LinearLayout.LayoutParams(-2, -2).apply { leftMargin = dp(16); rightMargin = dp(12) })
+        right.addView(Switch(Prefs.faithful) { on ->
             Prefs.faithful = on
             Prefs.save()
             reader.restyle()
         })
+        faithful.addView(right, if (wide) LinearLayout.LayoutParams(0, -2, 1f) else LinearLayout.LayoutParams(-2, -2))
+        panel.addView(faithful)
 
-        // --- Traduction : la bascule est dans le titre du groupe
-        section(IconButton.GLOBE, "Traduction", Switch(Prefs.translate) { on ->
-            Prefs.translate = on
-            Prefs.save()
-            if (on && book != null && book.lang == Prefs.target) {
-                host.toast("Ce livre est déjà en ${Translator.label(Prefs.target).lowercase()}")
-            }
-            reader.translationChanged(false)
-        })
+        // --- Traduction : moteur, langue et clé. L'activation se fait par l'icône du pied de page.
+        section(IconButton.GLOBE, "Traduction")
         // Moteur : choix libre, même quand une clé DeepL est enregistrée.
         lateinit var engine: Segmented
         engine = Segmented(arrayOf("DeepL", "Hors-ligne"), if (Prefs.engine == 1 || Prefs.deeplKey.isBlank()) 1 else 0) { i ->

@@ -48,6 +48,7 @@ object Prefs {
     var lastBook = ""
     var warm = 60           // smartphone : force du réchauffement de l'écran le soir, 0 (aucun) à 100
     var sort = 0            // accueil : 0 = dernière lecture, 1 = titre, 2 = auteur
+    var font = ""           // police du texte (identifiant de Fonts.FAMILIES ; vide = la première disponible)
     var faithful = false    // « Fidèle au livre » : la mise en forme voulue par l'éditeur (CSS) est respectée
 
     fun init(c: Context) {
@@ -75,6 +76,7 @@ object Prefs {
         sort = sp.getInt("sort", sort)
         warm = sp.getInt("warm100", if (sp.contains("warm")) sp.getInt("warm", 3) * 20 else warm)
         faithful = sp.getBoolean("faithful", faithful)
+        font = sp.getString("font", font)!!
     }
 
     /** Une fois : sort du fichier des réglages ce que les versions précédentes y rangeaient par livre. */
@@ -118,6 +120,7 @@ object Prefs {
             .putInt("sort", sort)
             .putInt("warm100", warm)
             .putBoolean("faithful", faithful)
+            .putString("font", font)
             .apply()
     }
 }

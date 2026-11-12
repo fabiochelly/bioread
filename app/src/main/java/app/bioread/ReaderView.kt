@@ -145,7 +145,7 @@ class ReaderView(private val host: MainActivity) : View(host) {
     /** Géométrie et réglages dont dépend la composition. */
     private fun layoutKey(w: Int, h: Int, top: Int) =
         "$w,$h,$top,${Prefs.fontSize},${Prefs.lineSpacing},${Prefs.margin}," +
-            "${Prefs.weight},${Prefs.spacing},${Prefs.stretch},${Prefs.sharp}" + if (Prefs.faithful) ",css" else ""
+            "${Prefs.weight},${Prefs.spacing},${Prefs.stretch},${Prefs.sharp},${fonts.family.id}" + if (Prefs.faithful) ",css" else ""
 
     private fun setTypesetter(w: Int, h: Int, top: Int, lang: String) {
         ts = Typesetter(fonts, w, h, top, density, lang)

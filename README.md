@@ -51,3 +51,8 @@ au lancement suivant (puis retire l'original). Le format est décrit en tête du
 - `com.google.mlkit:translate` : traduction hors-ligne.
 - `org.lsposed.hiddenapibypass` (Apache 2.0) : utilisée uniquement sur les liseuses Onyx, pour
   appeler le rafraîchissement complet de l'écran que leur firmware masque aux applications.
+
+## Polices
+
+Literata, Vollkorn et Bitter (licence SIL OFL, textes dans `app/src/main/assets/fonts/licences/`)
+sont livrées avec l'app et se choisissent dans les options. Inter sert aux titres et à l'interface.

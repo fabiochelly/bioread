@@ -13,19 +13,60 @@ import android.text.TextPaint
 import android.text.style.MetricAffectingSpan
 import java.util.Locale
 
-/** Bookerly pour le texte, Inter pour les titres et l'interface. Chargées une seule fois. */
-class Fonts(c: Context) {
-    val regular = load(c, "Bookerly-Regular.ttf", Typeface.NORMAL)
-    val italic = load(c, "Bookerly-Italic.ttf", Typeface.ITALIC)
-    val bold = load(c, "Bookerly-Bold.ttf", Typeface.BOLD)
-    val boldItalic = load(c, "Bookerly-BoldItalic.ttf", Typeface.BOLD_ITALIC)
+/**
+ * Police du texte (au choix, voir [FAMILIES]) et Inter pour les titres et l'interface. Les
+ * quatre styles de la police choisie sont chargés une fois ; [select] les remplace sur place,
+ * l'objet reste le même pour tous ceux qui le détiennent.
+ */
+class Fonts(private val c: Context) {
+    /** Une police de texte livrée avec l'app. [variable] : un fichier par pente, graisse réglable. */
+    class Family(val id: String, val label: String, val file: String, val variable: Boolean)
+
+    /** Polices disponibles : Bookerly seulement si ses fichiers ont été fournis à la compilation. */
+    val families: List<Family> = FAMILIES.filter { it.id != "bookerly" || exists("Bookerly-Regular.ttf") }
+
+    @Volatile var family: Family = families[0]
+        private set
+    @Volatile lateinit var regular: Typeface
+        private set
+    @Volatile lateinit var italic: Typeface
+        private set
+    @Volatile lateinit var bold: Typeface
+        private set
+    @Volatile lateinit var boldItalic: Typeface
+        private set
     val ui = inter(c, 450)
     val uiBold = inter(c, 650)
 
-    private fun load(c: Context, name: String, style: Int): Typeface = try {
-        Typeface.createFromAsset(c.assets, "fonts/$name")
+    init {
+        select(Prefs.font)
+    }
+
+    /** Charge la police [id] (ou la première disponible si elle est inconnue). */
+    fun select(id: String) {
+        val f = families.firstOrNull { it.id == id } ?: families[0]
+        family = f
+        val r = face(f, false, false)
+        val i = face(f, false, true)
+        val b = face(f, true, false)
+        val bi = face(f, true, true)
+        regular = r; italic = i; bold = b; boldItalic = bi
+    }
+
+    /** Le style normal de la police [f], pour l'afficher dans la liste de choix. */
+    fun sample(f: Family): Typeface = if (f === family) regular else face(f, false, false)
+
+    private fun exists(name: String) = try { c.assets.open("fonts/$name").close(); true } catch (e: Exception) { false }
+
+    private fun face(f: Family, b: Boolean, i: Boolean): Typeface = try {
+        if (f.variable) {
+            Typeface.Builder(c.assets, "fonts/${f.file}${if (i) "-Italic" else ""}.ttf")
+                .setFontVariationSettings("'wght' ${if (b) 700 else 400}").build()
+        } else {
+            Typeface.createFromAsset(c.assets, "fonts/${f.file}-${if (b) (if (i) "BoldItalic" else "Bold") else (if (i) "Italic" else "Regular")}.ttf")
+        }
     } catch (e: Exception) {
-        Typeface.create(Typeface.SERIF, style)
+        Typeface.create(Typeface.SERIF, (if (b) Typeface.BOLD else 0) or (if (i) Typeface.ITALIC else 0))
     }
 
     private fun inter(c: Context, weight: Int): Typeface = try {
@@ -36,6 +77,15 @@ class Fonts(c: Context) {
     }
 
     fun body(b: Boolean, i: Boolean) = if (b) (if (i) boldItalic else bold) else (if (i) italic else regular)
+
+    companion object {
+        val FAMILIES = listOf(
+            Family("bookerly", "Bookerly", "Bookerly", false),
+            Family("literata", "Literata", "Literata", true),
+            Family("vollkorn", "Vollkorn", "Vollkorn", false),
+            Family("bitter", "Bitter", "Bitter", false),
+        )
+    }
 }
 
 /** Italique / gras à l'intérieur d'un paragraphe, en choisissant la vraie graisse Bookerly. */
@@ -93,7 +143,14 @@ class Typesetter(
     // Les pages traduites sont coupées selon les règles de césure de la langue cible.
     private val targetLocale: Locale = Locale.forLanguageTag(Prefs.target)
     private val textPx = Prefs.fontSize * density
-    private val mult = Prefs.lineSpacing / 100f
+    // Interligne : chaque police a sa propre hauteur de ligne naturelle (de 1,2 à 1,5 fois le
+    // corps). Elle est ramenée à celle de Bookerly, pour qu'un même réglage donne le même
+    // écart entre les lignes quelle que soit la police choisie.
+    private val mult = Prefs.lineSpacing / 100f * run {
+        val fm = Paint().apply { typeface = f.regular; textSize = 100f }.fontMetrics
+        val natural = (fm.descent - fm.ascent) / 100f
+        if (natural > 0.5f) (1.318f / natural).coerceIn(0.8f, 1.25f) else 1f
+    }
     val mx = (Prefs.margin * density).toInt()
     val top = (Prefs.margin * 0.6f * density + 14 * density).toInt() + topInset
     val bottom = (Prefs.margin * 0.4f * density + 30 * density).toInt()
