@@ -82,8 +82,6 @@ class Fonts(private val c: Context) {
         val FAMILIES = listOf(
             Family("bookerly", "Bookerly", "Bookerly", false),
             Family("literata", "Literata", "Literata", true),
-            Family("vollkorn", "Vollkorn", "Vollkorn", false),
-            Family("bitter", "Bitter", "Bitter", false),
         )
     }
 }

@@ -113,6 +113,16 @@ class MenuView(private val host: MainActivity, private val reader: ReaderView, i
         panel.addView(row)
     }
 
+    /** Boîte de choix : la valeur à gauche, un chevron fin à droite ; un toucher ouvre la liste. */
+    private fun select(value: String, size: Float, onClick: () -> Unit) = LinearLayout(host).apply {
+        gravity = Gravity.CENTER_VERTICAL
+        background = outline()
+        setPadding(dp(16), 0, dp(10), 0)
+        addView(label(value, false, size), LinearLayout.LayoutParams(0, -2, 1f))
+        addView(IconButton(host, IconButton.DOWN, 22, 16), LinearLayout.LayoutParams(-2, -2).apply { leftMargin = dp(8) })
+        setOnClickListener { onClick() }
+    }
+
     /** Pavé de réglage : icône et nom au-dessus, pastille « − valeur + » d'un seul tenant. */
     private fun stepper(icon: Int, name: String, get: () -> Int, set: (Int) -> Unit, step: Int, min: Int, max: Int, fmt: (Int) -> String): View {
         val value = label(fmt(get()), true, 15f).apply { gravity = Gravity.CENTER }
@@ -309,25 +319,22 @@ class MenuView(private val host: MainActivity, private val reader: ReaderView, i
         // --- Mise en forme de l'éditeur (lettres, vers, épigraphes…) : la bascule est dans le titre
         // Sur la même ligne, pour rester compact : le choix de la police, puis la bascule.
         val fonts = host.fonts
-        val font = label("${fonts.family.label}  ▾", false, 15f).apply {
-            gravity = Gravity.CENTER
-            background = outline()
-            typeface = fonts.regular        // le nom est écrit dans la police elle-même
-            setPadding(dp(12), 0, dp(12), 0)
-            setOnClickListener {
-                val list = fonts.families
-                AlertDialog.Builder(host).setItems(list.map { it.label }.toTypedArray()) { _, i ->
-                    if (list[i] !== fonts.family) {
-                        Prefs.font = list[i].id
-                        Prefs.save()
-                        fonts.select(list[i].id)
-                        text = "${fonts.family.label}  ▾"
-                        typeface = fonts.regular
-                        reader.restyle()
-                    }
-                }.show()
-            }
+        lateinit var fontName: TextView
+        val font = select(fonts.family.label, 15f) {
+            val list = fonts.families
+            AlertDialog.Builder(host).setItems(list.map { it.label }.toTypedArray()) { _, i ->
+                if (list[i] !== fonts.family) {
+                    Prefs.font = list[i].id
+                    Prefs.save()
+                    fonts.select(list[i].id)
+                    fontName.text = fonts.family.label
+                    fontName.typeface = fonts.regular
+                    reader.restyle()
+                }
+            }.show()
         }
+        fontName = font.getChildAt(0) as TextView
+        fontName.typeface = fonts.regular        // le nom est écrit dans la police elle-même
         val faithful = LinearLayout(host)
         faithful.gravity = Gravity.CENTER_VERTICAL
         faithful.setPadding(0, dp(12), 0, dp(8))
@@ -360,21 +367,18 @@ class MenuView(private val host: MainActivity, private val reader: ReaderView, i
                 true
             }
         }
-        val language = label("${Translator.label(Prefs.target)}  ▾", false, 14f).apply {
-            gravity = Gravity.CENTER
-            background = outline()
-            setPadding(dp(14), 0, dp(14), 0)
-            setOnClickListener {
-                AlertDialog.Builder(host).setItems(Translator.LABELS) { _, i ->
-                    if (Prefs.target != Translator.LANGS[i]) {
-                        Prefs.target = Translator.LANGS[i]
-                        Prefs.save()
-                        text = "${Translator.label(Prefs.target)}  ▾"
-                        reader.translationChanged(true)
-                    }
-                }.show()
-            }
+        lateinit var languageName: TextView
+        val language = select(Translator.label(Prefs.target), 14f) {
+            AlertDialog.Builder(host).setItems(Translator.LABELS) { _, i ->
+                if (Prefs.target != Translator.LANGS[i]) {
+                    Prefs.target = Translator.LANGS[i]
+                    Prefs.save()
+                    languageName.text = Translator.label(Prefs.target)
+                    reader.translationChanged(true)
+                }
+            }.show()
         }
+        languageName = language.getChildAt(0) as TextView
         val key = FrameLayout(host).apply {
             background = outline(filled = Prefs.deeplKey.isNotBlank(), color = Theme.tint(IconButton.KEY))
             val icon = IconButton(host, IconButton.KEY, 30, 20)

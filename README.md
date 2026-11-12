@@ -54,5 +54,5 @@ au lancement suivant (puis retire l'original). Le format est décrit en tête du
 
 ## Polices
 
-Literata, Vollkorn et Bitter (licence SIL OFL, textes dans `app/src/main/assets/fonts/licences/`)
-sont livrées avec l'app et se choisissent dans les options. Inter sert aux titres et à l'interface.
+Literata (licence SIL OFL, texte dans `app/src/main/assets/fonts/licences/`) est livrée avec
+l'app ; si les fichiers Bookerly sont fournis, la police se choisit dans les options. Inter sert aux titres et à l'interface.
