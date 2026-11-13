@@ -101,11 +101,14 @@ SUB_WEIGHT = 0.5       # part des sous-titres dans la fréquence
 AOA_K = 0.07           # zipf gagné par année d'acquisition plus précoce que 10 ans
 DERIVED = 0.3          # un dérivé transparent : au plus 0,3 zipf plus rare que sa base (unsurprisingly ← surprisingly)
 MIN_RANK = 2500        # en deçà, aucun mot n'est gardé : le curseur de l'app commence à 3 000
+POS_K = 1.0            # zipf perdus par décade de rareté d'une catégorie dans sa famille (to wolf, to motion)
+POS_T = 0.3            # part d'usage en deçà de laquelle une catégorie est jugée plus rare que sa famille
 
 # Mots que la table ne connaît pas (les mots d'usage vieilli, l'argot) : écartés des familles.
 OLD = {"archaic", "obsolete", "dated", "dialectal", "nonstandard", "eye-dialect", "pronunciation-spelling",
        "misspelling", "rare", "uncommon", "colloquial", "slang", "informal", "Scotland", "UK-dialectal",
        "Northern-England", "Southern-US", "humorous"}
+ABBR = {"abbreviation", "initialism", "acronym"}
 SKIP_POS = {"name", "prefix", "suffix", "infix", "affix", "symbol", "character", "punct", "phrase", "prep_phrase",
             "proverb", "abbrev", "romanization", "combining_form", "interfix", "circumfix", "root", "syllable",
             "unknown", "letter"}
@@ -252,6 +255,9 @@ def read_english(src, target):
                 tags = set(s.get("tags", ()) or ())
                 targets = [t.get("word", "") for t in (s.get("form_of") or ())] + [t.get("word", "") for t in (s.get("alt_of") or ())]
                 if targets:
+                    # Une abréviation n'est pas une forme du mot (in n'est pas une forme d'inch).
+                    if tags & ABBR:
+                        continue
                     for t in targets:
                         links.append((w, t.split(" (")[0].strip(), pos, bool(tags & OLD)))
                     continue
@@ -296,7 +302,7 @@ def read_english(src, target):
                     d.parts.append((t["name"], parts))
             for fm in e.get("forms", ()) or ():
                 tags = set(fm.get("tags", ()) or ())
-                if not tags or tags & BAD_FORM or not word_ok(fm.get("form", "")):
+                if not tags or tags & (BAD_FORM | ABBR) or not word_ok(fm.get("form", "")):
                     continue
                 d.forms.append((fm["form"], bool(tags & OLD)))
     return lemmas, links
@@ -625,6 +631,35 @@ def build(a):
         return min(65000, bisect.bisect_right(neg, -s) + 1 if s > 0 else 65000)
     lrank = {w: rank(s) for w, s in sc.items()}
 
+    # ---- rang par catégorie : le verbe d'un nom courant (to wolf, to motion, to tower) est bien
+    # plus rare que le nom. Part de chaque catégorie dans l'usage de la famille, d'après les formes
+    # (fréquence × part de la catégorie dans les sous-titres) ; une catégorie rare perd des zipf.
+    posf, famf = {}, {}
+    for f, lem in of.items():
+        fq = wf.get(f, 0.0)
+        ps = [(l, p) for l, p in lem if p in POS]
+        if not fq or not ps:
+            continue
+        sh = shares.get(f)
+        tot = sum(sh[POS[p]] for _, p in ps) if sh else 0.0
+        for l, p in ps:
+            part = fq * (sh[POS[p]] / tot if tot > 0 else 1.0 / len(ps))
+            posf[(l, p)] = posf.get((l, p), 0.0) + part
+            famf[l] = famf.get(l, 0.0) + part
+    def prank(l, p, f=None):
+        # Seulement pour une forme surtout employée dans cette catégorie (towered, motioned), ou trop
+        # rare pour figurer dans les sous-titres : « the ceiling », « he still » restent des mots connus.
+        r = lrank.get(l, 65000)
+        sh = shares.get(f) if f else None
+        if sh and sh[POS[p]] < 0.5:
+            return r
+        if l not in sc or not famf.get(l):
+            return r
+        share = posf.get((l, p), 0.0) / famf[l]
+        if share >= POS_T:
+            return r
+        return max(r, rank(sc[l] + POS_K * math.log10(max(share, 1e-4) / POS_T)))
+
     # ---- gloses et fiches par forme
     # Corrections faites à la main : forme, catégorie, traduction (ou « - » : jamais traduit). Une
     # correction notée sur une forme (assessed) vaut pour son lemme, donc pour toutes ses formes.
@@ -659,6 +694,7 @@ def build(a):
         return gid[g]
     gloss_id("")    # glose n° 0 : aucune (lecture transparente, jamais montrée)
     records = {}
+    clear = {}      # lectures jugées transparentes (lemme, catégorie) → (glose, rang), pour --dump
     for f, lem in of.items():
         sh = shares.get(f)
         # Surtout un mot grammatical dans l'usage (till, still) : jamais traduit.
@@ -669,10 +705,12 @@ def build(a):
             if p not in POS:
                 continue
             g, trans = gl.gloss(l, p, L.get((l, p)))
+            if g and trans:
+                clear[(l, p)] = (g, lrank.get(l, 65000))
             if g:
                 share = sh[POS[p]] if sh else 0.0
                 old = reads.get(POS[p])
-                rd = (lrank.get(l, 65000), POS[p] | (8 if trans else 0), 0 if trans else gloss_id(g), share, L[(l, p)].senses if (l, p) in L else 0)
+                rd = (prank(l, p, f), POS[p] | (8 if trans else 0), 0 if trans else gloss_id(g), share, L[(l, p)].senses if (l, p) in L else 0)
                 # Une même catégorie par deux lemmes (left : leave, left) : le plus facile.
                 if old is None or rd[0] < old[0]:
                     reads[POS[p]] = rd
@@ -682,9 +720,14 @@ def build(a):
         r = min(x[0] for x in reads)
         if f in lrank:
             r = min(r, lrank[f])
+        # Lecture secondaire d'une forme courante (le verbe ceil sous ceiling, rail sous railing) :
+        # le rang de la forme, qu'on connaît. Seul l'emploi principal d'une forme garde son rang propre.
+        if sh:
+            reads = [(min(x[0], r),) + x[1:] if x[3] < 0.5 else x for x in reads]
         # Mots toujours connus (le curseur ne descend pas sous MIN_RANK : il faut déjà lire l'anglais
-        # correctement) ou toujours transparents : inutiles.
-        if r < MIN_RANK or all(x[1] & 8 for x in reads):
+        # correctement) ou toujours transparents : inutiles. Une forme courante garde sa fiche si
+        # une de ses lectures traduites est rare (towered : le verbe, pas le nom).
+        if all(x[0] < MIN_RANK or x[1] & 8 for x in reads):
             continue
         # Lectures : la catégorie la plus courante de la forme d'abord, puis la plus facile, puis
         # celle qui a le plus de sens.
@@ -765,11 +808,15 @@ def build(a):
         # Forme absente de la table : son propre rang d'après sa fréquence ; ou celui donné à la main.
         fq = wf.get(f, 0.0)
         r, reads = records.get(k, (lrank.get(f, rank(math.log10(fq * 1e9)) if fq > 0 else 65000), []))
-        r = ranked.get(f, r)
+        # Rang de la lecture corrigée : celui donné à la main, sinon celui de sa catégorie (le verbe
+        # de tower, pas le nom), sinon celui de la forme.
+        lr = [prank(l, q, f) for l, q in of.get(f, ()) if q == p]
+        rr = ranked[f] if f in ranked else (min(lr) if lr else r)
+        r = ranked.get(f, min(r, rr))
         # « - » : la forme n'est jamais traduite, quelle que soit sa catégorie.
         reads = [] if g == "-" else [x for x in reads if x[1] & 7 != POS[p]]
         if g != "-":
-            reads.insert(0, (r, POS[p], gloss_id(g), 1.0, 0))
+            reads.insert(0, (rr, POS[p], gloss_id(g), 1.0, 0))
         records[k] = (r, reads)
     print(f"{len(records)} formes, {len(glosses)} gloses, {sum(1 for r in records.values() if r[1] and r[1][0][1] & 8)} transparentes", flush=True)
 
@@ -787,6 +834,11 @@ def build(a):
                 r, reads = records[k]
                 f.write(k.decode("utf-8") + "\t" + str(r) + "\t" +
                         ";".join(f"{x[1]}:{x[0]}:{glosses[x[2]]}" for x in reads) + "\n")
+        # Mots jamais traduits parce que jugés transparents : à relire (faux amis partiels).
+        with open(a.dump + ".transparent", "w", encoding="utf-8") as f:
+            for (l, p), (g, r) in sorted(clear.items(), key=lambda x: x[1][1]):
+                if r >= MIN_RANK:
+                    f.write(f"{l}\t{p}\t{g}\t{r}\n")
     if a.check:
         check(a.check, records, glosses)
 

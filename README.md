@@ -50,8 +50,7 @@ au lancement suivant (puis retire l'original). Le format est décrit en tête du
 
 Dans un livre anglais, l'option « Mots difficiles » (Options › Traduction) écrit en tout petit,
 sous chaque mot difficile, sa traduction française. Le curseur règle la taille du vocabulaire du
-lecteur (de 3 000 à 30 000 mots) ; un aperçu montre, dans le chapitre ouvert, les mots qui
-seront traduits et ceux qui sont supposés connus.
+lecteur (de 3 000 à 30 000 mots).
 
 Le classement des mots est livré dans l'app (`app/src/main/assets/wordwise-en-fr.bin`) et se
 refabrique avec :
@@ -62,10 +61,12 @@ uv run --with wordfreq --with openpyxl --with nltk tools/make_wordwise.py --chec
 
 Il combine la fréquence (wordfreq, sous-titres SUBTLEX-US), le taux de connaissance mesuré chez
 des locuteurs non natifs (Brysbaert, Keuleers & Mandera 2020) et l'âge d'acquisition (Kuperman
-et al. 2012), par famille de mots (run, ran, running). Les mots transparents pour un francophone
-(melancholy, curious) ne sont pas traduits ; les faux amis (library, eventually) le sont. Le sens
+et al. 2012), par famille de mots (run, ran, running) ; une catégorie rare dans sa famille a son
+propre rang (le verbe de tower, « dominer », est bien plus rare que le nom). Les mots transparents
+pour un francophone (melancholy, curious) ne sont pas traduits ; les faux amis (library, agony,
+succeed) le sont. Le sens
 traduit est le plus courant d'après WordNet, et `tools/wordwise-fixes-fr.tsv` corrige à la main
-plus de 7 500 mots relus en contexte dans une trentaine de romans récents, recoupés avec deux
+plus de 8 000 mots relus en contexte dans une trentaine de romans récents, recoupés avec deux
 dictionnaires indépendants (MUSE de Facebook, alignements des sous-titres OpenSubtitles d'OPUS). La
 méthode est décrite en tête du script. Les données de l'étude sur les non-natifs sont sous
 licence CC BY-NC-SA 4.0 : la table n'est utilisable qu'à des fins non commerciales.

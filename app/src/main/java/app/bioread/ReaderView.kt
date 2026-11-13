@@ -555,9 +555,6 @@ class ReaderView(private val host: MainActivity) : View(host) {
         post(prepareR)
     }
 
-    /** Le chapitre affiché (aperçu du réglage des mots difficiles), ou null. */
-    fun shownChapter(): LaidChapter? = if (ready && partial == null) chapters[ci] else null
-
     /** Le livre ouvert reçoit-il les traductions sous les mots difficiles ? */
     fun glossable(): Boolean = book?.let { WordWise.applies(it.lang) } ?: false
 

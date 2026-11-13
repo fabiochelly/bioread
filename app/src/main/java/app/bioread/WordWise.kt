@@ -120,8 +120,14 @@ object WordWise {
         return key.size - n
     }
 
-    /** Fiche d'une forme : rang, puis lectures (catégorie et drapeaux, glose). */
-    private class Rec(val rank: Int, val kinds: IntArray, val gloss: IntArray)
+    /**
+     * Fiche d'une forme : rang (celui de sa lecture la plus facile : le lecteur connaît-il le mot ?),
+     * puis lectures (catégorie et drapeaux, rang propre, glose). Une lecture a son propre rang : le
+     * verbe de tower (« dominer ») est bien plus rare que le nom. [top] : le rang de la plus rare.
+     */
+    private class Rec(val rank: Int, val kinds: IntArray, val ranks: IntArray, val gloss: IntArray) {
+        val top = ranks.maxOrNull() ?: rank
+    }
 
     /**
      * Dichotomie sur la première forme de chaque bloc, puis parcours du bloc désigné. Chaque forme
@@ -168,13 +174,14 @@ object WordWise {
         val rank = varint(m, at)
         val n = m.get(at[0]++).toInt() and 0xFF
         val kinds = IntArray(n)
+        val ranks = IntArray(n)
         val gl = IntArray(n)
         for (r in 0 until n) {
             kinds[r] = m.get(at[0]++).toInt() and 0xFF
-            varint(m, at)   // rang de la lecture : sans usage ici
+            ranks[r] = varint(m, at)
             gl[r] = varint(m, at)
         }
-        return Rec(rank, kinds, gl)
+        return Rec(rank, kinds, ranks, gl)
     }
 
     /** Glose désignée par sa position dans le réservoir (0 : la glose vide). */
@@ -204,15 +211,6 @@ object WordWise {
         return r
     }
 
-    /** (rang, traduction) d'un mot pour l'aperçu des réglages ; null s'il n'est jamais traduit. */
-    fun preview(word: String): Pair<Int, String>? {
-        val k = key(word)
-        val r = rec(k) ?: return null
-        if (r.kinds.isEmpty() || obvious(k, Prefs.wwLevel, 0)) return null
-        val g = pick(r, "", word)
-        return if (g < 0) null else r.rank to gloss(g)
-    }
-
     /** Niveau européen correspondant, à peu près, à un vocabulaire de [n] mots sur cette échelle. */
     fun cefr(n: Int) = when {
         n < 4500 -> "B1"
@@ -231,11 +229,11 @@ object WordWise {
     // ---------------------------------------------------------------- repérage dans un paragraphe
 
     /**
-     * Mots à traduire dans [text] pour le vocabulaire [level] : triplets (début, fin, glose) à plat.
-     * Les noms propres (majuscule hors début de phrase) sont ignorés.
+     * Mots de [text], dans l'ordre : [each] reçoit le mot, sa place [i, j), s'il ouvre une phrase et
+     * le mot qui le précède (en minuscules, vide après une ponctuation forte). Un mot composé absent
+     * de la table (lodging-house) donne chacun de ses éléments.
      */
-    fun marks(text: CharSequence, level: Int): Marks {
-        val out = ArrayList<Any>()
+    private inline fun scan(text: CharSequence, each: (word: String, i: Int, j: Int, sentence: Boolean, prev: String) -> Unit) {
         val n = text.length
         var i = 0
         var sentence = true
@@ -257,34 +255,46 @@ object WordWise {
                 break
             }
             var word = text.subSequence(i, j).toString()
-            // Mot composé absent de la table (lodging-house) : chacun de ses éléments, l'un après l'autre.
             val h = word.indexOfFirst { it == '-' || it == '‐' }
             if (h > 0 && rec(key(word)) == null) {
                 j = i + h
                 word = word.substring(0, h)
             }
+            each(word, i, j, sentence, prev)
+            prev = word.lowercase()
+            sentence = false
+            i = j
+        }
+    }
+
+    /**
+     * Mots à traduire dans [text] pour le vocabulaire [level] : triplets (début, fin, glose) à plat.
+     * Les noms propres (majuscule hors début de phrase) sont ignorés.
+     */
+    fun marks(text: CharSequence, level: Int): Marks {
+        val out = ArrayList<Any>()
+        scan(text) { word, i, j, sentence, prev ->
             val capital = Character.isUpperCase(word[0])
             val k = key(word)
             // Majuscule en début de phrase sur un mot que le livre écrit ailleurs avec une majuscule
             // au milieu d'une phrase : un nom propre (Eve), pas le mot eve.
             val name = capital && sentence && k in names
-            if (!(capital && !sentence) && !name && !obvious(k, level, 0)) {
-                val r = rec(k)
-                // Repli sur une définition anglaise : mot absent de la table (très rare) ou mot plus
-                // rare que le vocabulaire du lecteur sans traduction.
-                val plain = !capital && word.length >= 5
-                if (r != null && r.rank > level) {
-                    if (r.kinds.isNotEmpty()) {
-                        val g = pick(r, prev, word)
-                        if (g >= 0) { out.add(i); out.add(j); out.add(gloss(g)) }
-                    } else if (plain) fallback(key(word))?.let { out.add(i); out.add(j); out.add(it) }
-                } else if (r == null && plain) {
-                    fallback(key(word))?.let { out.add(i); out.add(j); out.add(it) }
-                }
+            if (capital && !sentence || name || obvious(k, level, 0)) return@scan
+            val r = rec(k)
+            // Repli sur une définition anglaise : mot absent de la table (très rare) ou mot plus
+            // rare que le vocabulaire du lecteur sans traduction.
+            val plain = !capital && word.length >= 5
+            if (r != null && r.kinds.isNotEmpty() && r.top > level) {
+                // La lecture que le contexte désigne, si elle est elle-même plus rare que le
+                // vocabulaire du lecteur (« the tower » : non ; « towered over » : oui).
+                val x = pick(r, prev, word)
+                val g = shown(r, x)
+                if (g >= 0 && r.ranks[x] > level) { out.add(i); out.add(j); out.add(gloss(g)) }
+            } else if (r != null && r.kinds.isEmpty() && r.rank > level) {
+                if (plain) fallback(k)?.let { out.add(i); out.add(j); out.add(it) }
+            } else if (r == null && plain) {
+                fallback(k)?.let { out.add(i); out.add(j); out.add(it) }
             }
-            prev = word.lowercase()
-            sentence = false
-            i = j
         }
         val a = IntArray(out.size / 3 * 2)
         val s = arrayOfNulls<String>(out.size / 3)
@@ -353,6 +363,7 @@ object WordWise {
     /** Nouveau livre : ses noms propres sont à réapprendre. */
     fun forgetNames() = names.clear()
 
+
     /**
      * Relève les noms propres de [blocks] (un chapitre, sur le fil de composition) : les mots écrits
      * avec une majuscule au milieu d'une phrase. Une passe sur le texte, sans recherche dans la table.
@@ -414,7 +425,10 @@ object WordWise {
     /** Marque d'une définition anglaise (au lieu d'une traduction) dans [Marks.gloss]. */
     private const val ENGLISH = "\u0001"
 
-    /** La lecture à montrer d'après le mot qui précède ; -1 si elle est transparente. */
+    /** Glose de la lecture [k] ; -1 si elle est transparente. */
+    private fun shown(r: Rec, k: Int) = if (r.kinds[k] and TRANSPARENT != 0 || r.gloss[k] == 0) -1 else r.gloss[k]
+
+    /** La lecture que désigne le mot qui précède (son indice). */
     private fun pick(r: Rec, prev: String, word: String): Int {
         var best = 0
         if (r.kinds.size > 1) {
@@ -432,7 +446,7 @@ object WordWise {
             }
             if (want != null) best = want
         }
-        return if (r.kinds[best] and TRANSPARENT != 0 || r.gloss[best] == 0) -1 else r.gloss[best]
+        return best
     }
 
     /** Mots à traduire d'un paragraphe : [at] = (début, fin) par mot, [gloss] leur traduction. */
