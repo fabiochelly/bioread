@@ -1,0 +1,1358 @@
+# Expressions anglaises (verbes à particule, locutions) et leur traduction, lues par tools/make_wordwise.py.
+# Une ligne : forme de base, catégorie (verb, adv, adj, prep, noun, intj), traduction, rang (taille de vocabulaire
+# à partir de laquelle l'expression est connue), puis pour un verbe ses formes fléchies (gives up,gave up…),
+# celles du Wiktionnaire ; sans elles, les formes régulières du premier mot. one's tient la place d'un possessif
+# (lost her temper), oneself celle d'un réfléchi (pulled himself together).
+# Tirées du Wiktionnaire (expressions présentes dans une trentaine de romans), gardées seulement quand le sens
+# figuré l'emporte dans ces romans : l'app ne distingue pas « looked up at the sky » de « looked up the word ».
+# Puis vérifiées sur toutes leurs occurrences dans ces romans, telles que l'app les repère.
+a fair bit	adv	pas mal	10000
+a good deal	adv	beaucoup	7000
+a tad	adv	un peu	12000
+abide by	verb	respecter	13000	abided by,abides by,abiding by,abode by
+above all	adv	surtout	4500
+above and beyond	adv	plus que nécessaire	13000
+above one's pay grade	adv	pas de son ressort	15500
+above one's station	adv	au-dessus de son rang	16000
+across from	prep	en face de	5500
+across the board	adv	sur toute la ligne	11000
+across the way	adv	en face	10000
+act up	verb	faire des siennes	13000	acted up,acting up,acts up
+add insult to injury	verb	pour couronner le tout	13000	added insult to injury,adding insult to injury,adds insult to injury
+after a fashion	adv	en quelque sorte	16000
+after dark	adv	une fois la nuit tombée	7000
+after the fact	adv	après coup	11000
+against all odds	adv	contre toute attente	10000
+against one's better judgment	adv	malgré son bon sens	12500
+against time	adv	contre la montre	11000
+all in all	adv	tout compte fait	7000
+all manner of	adj	toutes sortes de	12000
+all over again	adv	à nouveau	6000
+all over the place	adv	partout	5000
+all smiles	adj	tout sourire	10000
+all the more	adv	d'autant plus	9000
+all the while	adv	pendant ce temps	8000
+all very well	adj	bien beau	12000
+along the lines of	prep	du genre	11000
+among other things	adv	entre autres	7000
+and so forth	adv	et ainsi de suite	8000
+and stuff	adv	et tout ça	5000
+and the like	adv	et autres	10000
+any day now	adv	d'un jour à l'autre	9000
+any moment now	adv	d'un instant à l'autre	7000
+any number of	adj	de nombreux	10000
+any time soon	adv	de sitôt	8500
+arm in arm	adv	bras dessus bras dessous	10000
+as a rule	adv	en règle générale	9000
+as a whole	adv	dans son ensemble	6500
+as follows	adv	comme suit	8000
+as fuck	adv	vachement	9000
+as good as new	adj	comme neuf	8000
+as it happens	adv	justement	9000
+as of late	adv	dernièrement	10000
+as opposed to	prep	plutôt que	7000
+as per	prep	selon	9000
+as such	adv	par conséquent	8000
+as yet	adv	pour l'instant	10000
+ask around	verb	se renseigner	9000	asked around,asking around,asks around
+at a glance	adv	d'un coup d'œil	9000
+at a loss	adj	perplexe	8500
+at a run	adv	en courant	8000
+at all costs	adv	à tout prix	6500
+at all events	adv	en tout cas	13000
+at an end	adj	terminé	9000
+at any cost	adv	à tout prix	8000
+at any rate	adv	en tout cas	8000
+at bay	adv	à distance	10000
+at every turn	adv	sans cesse	10000
+at fault	adj	en tort	11000
+at liberty	adj	libre	11000
+at long last	adv	enfin	7000
+at most	adv	au plus	5000
+at odds	adj	en désaccord	12000
+at play	adv	en jeu	11000
+at speed	adv	à toute vitesse	9000
+at stake	adv	en jeu	9000
+at the earliest	adv	au plus tôt	9000
+at the expense of	prep	au détriment de	9000
+at the hands of	prep	de la main de	9000
+at the ready	adj	prêt	9500
+at this rate	adv	à ce rythme	6500
+at will	adv	à volonté	7000
+attend to	verb	s'occuper de	8000	attended to,attending to,attends to
+back in the day	adv	à l'époque	11000
+back off	verb	reculer	7000	backed off,backing off,backs off
+balance out	verb	compenser	11000	balanced out,balances out,balancing out
+band together	verb	s'unir	11000	banded together,banding together,bands together
+bang into	verb	se cogner contre	10000	banged into,banging into,bangs into
+banged up	adj	amoché	13000
+bargain for	verb	s'attendre à	13000	bargained for,bargaining for,bargains for
+barge in	verb	faire irruption	14000	barged in,barges in,barging in
+barge into	verb	faire irruption dans	12000	barged into,barges into,barging into
+bat an eye	verb	sourciller	15000	bats an eye,batted an eye,batting an eye
+bat away	verb	écarter	13000	bats away,batted away,batting away
+be in for	verb	avoir droit à	12000	been in for,being in for,is in for,was in for
+be my guest	intj	je t'en prie	9000
+be no match for	verb	ne pas faire le poids	9000	been no match for,being no match for,is no match for,was no match for
+be no stranger to	verb	bien connaître	13000	been no stranger to,being no stranger to,is no stranger to,was no stranger to
+be on the lookout	verb	être aux aguets	10000	been on the lookout,being on the lookout,is on the lookout,was on the lookout
+be rid of	verb	être débarrassé de	9000	been rid of,being rid of,is rid of,was rid of
+bear in mind	verb	garder à l'esprit	8000	bearing in mind,bears in mind,bore in mind,borne in mind
+bear witness	verb	témoigner	11000	bearing witness,bears witness,bore witness,borne witness
+beat around the bush	verb	tourner autour du pot	12000	beat about the bush,beated around the bush,beaten around the bush,beating around the bush,beats around the bush
+beat back	verb	repousser	10000	beaten back,beating back,beats back
+beat to a pulp	verb	réduire en bouillie	12000	beaten to a pulp,beating to a pulp,beats to a pulp
+beat up	verb	tabasser	5500	beated up,beaten up,beating up,beats up
+become of	verb	devenir	8000	became of,becomes of,becoming of
+behind closed doors	adv	à huis clos	12000
+behind the scenes	adv	en coulisses	9000
+beside oneself	adj	hors de soi	11000
+beside the point	adj	hors sujet	13000
+between you and me	adv	entre nous	6000
+beyond belief	adv	incroyablement	11000
+beyond measure	adv	infiniment	13000
+bide one's time	verb	attendre son heure	15000	bidden one's time,bided one's time,bides one's time,biding one's time,bode one's time
+big deal	noun	truc important	5000
+bit by bit	adv	petit à petit	7000
+bite back	verb	ravaler	12000	bit back,bites back,biting back,bitten back
+bleed dry	verb	saigner à blanc	15000	bled dry,bleeding dry,bleeds dry
+bleed out	verb	perdre tout son sang	11000	bled out,bleeding out,bleeds out
+blend in	verb	se fondre	10000	blended in,blending in,blends in
+bless you	adv	Dieu vous bénisse	6000
+blot out	verb	masquer	13000	blots out,blotted out,blotting out
+blow up	verb	exploser	4500	blew up,blowing up,blown up,blows up
+blurt out	verb	lâcher	14000	blurted out,blurting out,blurts out
+board up	verb	barricader	13000	boarded up,boarding up,boards up
+bog down	verb	s'enliser	13000	bogged down,bogging down,bogs down
+boil down	verb	se résumer à	12000	boiled down,boiling down,boils down
+boil over	verb	déborder	11000	boiled over,boiling over,boils over
+bolt upright	adj	redressé d'un coup	14000
+bona fide	adj	authentique	18000
+border on	verb	friser	11000	bordered on,bordering on,borders on
+bored out of one's mind	adj	mort d'ennui	11000
+boss around	verb	donner des ordres à	12000	bossed around,bosses around,bossing around
+bottle up	verb	refouler	11000	bottled up,bottles up,bottling up
+bounce back	verb	rebondir	9000	bounced back,bounces back,bouncing back
+bound for	adj	en route pour	10000
+bow down	verb	s'incliner	8000	bowed down,bowing down,bows down
+bowl over	verb	renverser	13000	bowled over,bowling over,bowls over
+brand new	adj	flambant neuf	6000
+break a sweat	verb	se fatiguer	11000	breaking a sweat,breaks a sweat,broke a sweat,broken a sweat
+break away	verb	se détacher	8000	breaking away,breaks away,broke away,broken away
+break into a run	verb	se mettre à courir	8000	break into a jog,breaking into a run,breaks into a run,broke into a run,broken into a run
+break loose	verb	se déchaîner	11000	breaking loose,breaks loose,broke loose,broken loose
+break one's fall	verb	amortir sa chute	13000	breaking one's fall,breaks one's fall,broke one's fall,broken one's fall
+breathe one's last	verb	rendre son dernier souffle	13000	breathed one's last,breathes one's last,breathing one's last
+bring about	verb	provoquer	10000	bringing about,brings about,brought about
+bring forth	verb	faire surgir	11000	bringing forth,brings forth,brought forth
+bring oneself to	verb	se résoudre à	9500	bringing oneself to,brings oneself to,brought oneself to
+bring to bear	verb	déployer	15000	bringing to bear,brings to bear,brought to bear
+bring to mind	verb	évoquer	11000	bringing to mind,brings to mind,brought to mind
+bring up the rear	verb	fermer la marche	12000	bringing up the rear,brings up the rear,brought up the rear
+brush aside	verb	écarter	11000	brushed aside,brushes aside,brushing aside
+brush off	verb	balayer	10000	brushed off,brushes off,brushing off
+brush past	verb	passer en frôlant	11000	brushed past,brushes past,brushing past
+buck up	verb	reprendre courage	14000	bucked up,bucking up,bucks up
+buckle under	verb	céder	15000	buckled under,buckles under,buckling under
+burst out laughing	verb	éclater de rire	7000	bursting out laughing,bursts out laughing
+butt heads	verb	s'affronter	14000	butted heads,butting heads,butts heads
+butt in	verb	interrompre	14000	butted in,butting in,butts in
+buy time	verb	gagner du temps	7000	bought time,buying time,buys time
+by a long shot	adv	loin de là	13000
+by all accounts	adv	selon toute apparence	12000
+by all means	intj	bien sûr	8000
+by any chance	adv	par hasard	6000
+by chance	adv	par hasard	5000
+by design	adv	à dessein	11000
+by far	adv	de loin	5000
+by hand	adv	à la main	5000
+by heart	adv	par cœur	5000
+by means of	prep	au moyen de	9000
+by no means	adv	pas du tout	9000
+by right	adv	de droit	13000
+by sight	adv	de vue	11000
+by the book	adv	dans les règles	12000
+by the minute	adv	de minute en minute	9000
+by the moment	adv	de minute en minute	12000
+by the name of	prep	nommé	8000
+by thunder	intj	sapristi	15000
+by virtue of	prep	du fait de	15000
+call forth	verb	invoquer	15000	called forth,calling forth,calls forth
+call it a day	verb	s'arrêter là	11000	called it a day,calling it a day,calls it a day
+call it a night	verb	s'arrêter là	12000	called it a night,calling it a night,calls it a night
+call names	verb	insulter	11000	called names,calling names,calls names
+calm and collected	adj	calme et posé	10000
+cannot but	verb	ne pouvoir que	12000	can't but
+carried away	adj	emporté	8000
+cast about	verb	chercher	16000	casting about,casts about
+cast aside	verb	écarter	11000	casting aside,casts aside
+cast one's mind back	verb	se remémorer	16500	casting one's mind back,casts one's mind back
+cast out	verb	chasser	10000	casting out,casts out
+catch fire	verb	prendre feu	6000	catches fire,catching fire,caught fire
+catch one's breath	verb	reprendre son souffle	7500	catches one's breath,catching one's breath,caught one's breath
+catch the eye	verb	attirer le regard	11000	catches the eye,catching the eye,caught the eye
+cause a stir	verb	faire sensation	12000	caused a stir,causes a stir,causing a stir
+chances are	adv	probablement	8000
+change one's spots	verb	changer de nature	15500	changed one's spots,changes one's spots,changing one's spots
+change one's tune	verb	changer de discours	12000	changed one's tune,changes one's tune,changing one's tune
+cheat on	verb	tromper	6000	cheated on,cheating on,cheats on
+check in on	verb	prendre des nouvelles de	9000	checked in on,checking in on,checks in on
+check off	verb	cocher	11000	checked off,checking off,checks off
+check out	verb	jeter un œil	4500	checked out,checking out,checks out
+check up on	verb	surveiller	10000	checked up on,checking up on,checks up on
+cheer on	verb	encourager	9000	cheered on,cheering on,cheers on
+cheer up	verb	remonter le moral	5000	cheered up,cheering up,cheers up
+chew out	verb	engueuler	15000	chewed out,chewing out,chews out
+chime in	verb	intervenir	14000	chimed in,chimes in,chiming in
+chip away	verb	entamer	13000	chipped away,chipping away,chips away
+choke back	verb	ravaler	13000	choked back,chokes back,choking back
+choke out	verb	dire en s'étranglant	12000	choked out,chokes out,choking out
+chuck out	verb	virer	11000	chucked out,chucking out,chucks out
+circle back	verb	revenir	11000	circled back,circles back,circling back
+clam up	verb	se taire	14000	clammed up,clamming up,clams up
+clean house	verb	faire le ménage	13000	cleaned house,cleaning house,cleans house
+clear away	verb	débarrasser	9000	cleared away,clearing away,clears away
+clear one's throat	verb	s'éclaircir la voix	6500	cleared one's throat,clearing one's throat,clears one's throat
+clear the air	verb	dissiper les tensions	12000	cleared the air,clearing the air,clears the air
+clock out	verb	finir sa journée	12000	clocked out,clocking out,clocks out
+close at hand	adv	à portée de main	9000
+clue in	verb	mettre au courant	14000	clued in,clueing in,clues in,cluing in
+cobble together	verb	bricoler	15000	cobbled together,cobbles together,cobbling together
+collect oneself	verb	se ressaisir	12500	collected oneself,collecting oneself,collects oneself
+come about	verb	se produire	10000	came about,comes about,coming about
+come alive	verb	s'animer	7000	came alive,comes alive,coming alive
+come apart	verb	se défaire	10000	came apart,comes apart,coming apart
+come at a cost	verb	avoir un prix	12000	came at a cost,comes at a cost,coming at a cost
+come back to bite	verb	se retourner contre	12000	came back to bite,comes back to bite,coming back to bite
+come back to one's senses	verb	reprendre ses esprits	9000	came back to one's senses,comes back to one's senses,coming back to one's senses
+come calling	verb	se présenter	13000	came calling,comes calling,coming calling
+come clean	verb	tout avouer	11000	came clean,comes clean,coming clean
+come full circle	verb	boucler la boucle	15000	came full circle,comes full circle,coming full circle
+come in handy	verb	être utile	8000	came in handy,comes in handy,coming in handy
+come in useful	verb	être utile	8000	came in useful,comes in useful,coming in useful
+come into being	verb	apparaître	11000	came into being,comes into being,coming into being
+come into effect	verb	prendre effet	12000	came into effect,comes into effect,coming into effect
+come into play	verb	entrer en jeu	10000	came into play,comes into play,coming into play
+come of age	verb	devenir majeur	10000	came of age,comes of age,coming of age
+come one's way	verb	se présenter	10000	came one's way,comes one's way,coming one's way
+come online	verb	s'activer	11000	came online,comes online,coming online
+come out on top	verb	l'emporter	9000	came out on top,comes out on top,coming out on top
+come to a close	verb	se terminer	10000	came to a close,comes to a close,coming to a close
+come to a stop	verb	s'arrêter	6000	came to a stop,comes to a stop,coming to a stop
+come to fruition	verb	se concrétiser	14000	came to fruition,comes to fruition,coming to fruition
+come to life	verb	s'animer	7000	came to life,comes to life,coming to life
+come to light	verb	apparaître au grand jour	12000	came to light,comes to light,coming to light
+come to one's senses	verb	reprendre ses esprits	9500	came to one's senses,comes to one's senses,coming to one's senses
+come to pass	verb	arriver	13000	came to pass,comes to pass,coming to pass
+come to rest	verb	s'immobiliser	9000	came to rest,comes to rest,coming to rest
+come to terms with	verb	accepter	9000	came to terms with,comes to terms with,coming to terms with
+come true	verb	se réaliser	5500	came true,comes true,coming true
+come undone	verb	se défaire	11000	came undone,comes undone,coming undone
+come up short	verb	s'arrêter net	13000	came up short,comes up short,coming up short
+come upon	verb	tomber sur	9000	came upon,comes upon,coming upon
+coming right up	intj	ça arrive	10000
+commit to memory	verb	mémoriser	12000	commits to memory,committed to memory,committing to memory
+complete with	prep	avec en prime	10000
+confine oneself	verb	se limiter à	14000	confined oneself,confines oneself,confining oneself
+contend with	verb	faire face à	11000	contended with,contending with,contends with
+cook up	verb	concocter	11000	cooked up,cooking up,cooks up
+cool off	verb	refroidir	11000	cooled off,cooling off,cools off
+coop up	verb	enfermer	13000	cooped up,cooping up,coops up
+cope with	verb	faire face à	7000	coped with,copes with,coping with
+cough up	verb	cracher	12000	coughed up,coughing up,coughs up
+count upon	verb	compter sur	8000	counted upon,counting upon,counts upon
+cover up	verb	cacher	7000	covered up,covering up,covers up
+crack a smile	verb	esquisser un sourire	13000	cracked a smile,cracking a smile,cracks a smile
+crawl with	verb	grouiller de	10000	crawled with,crawling with,crawls with
+creep up	verb	monter lentement	11000	creeping up,creeps up,crept up
+crop up	verb	surgir	13000	cropped up,cropping up,crops up
+cross oneself	verb	se signer	12000	crossed oneself,crosses oneself,crossing oneself
+cross out	verb	rayer	9000	crossed out,crosses out,crossing out
+cross paths	verb	se croiser	8000	crossed paths,crosses paths,crossing paths
+cross the line	verb	dépasser les bornes	9000	crossed the line,crosses the line,crossing the line
+crush on	noun	béguin pour	9000
+cry one's eyes out	verb	pleurer toutes ses larmes	11000	cried one's eyes out,cries one's eyes out,cry one's heart out,crying one's eyes out
+cut it close	verb	laisser peu de marge	14000	cuts it close,cutting it close
+cut one's losses	verb	limiter les dégâts	13500	cuts one's losses,cutting one's losses
+cut the crap	verb	arrêter les salades	13000	cuts the crap,cutting the crap
+cut to the chase	verb	aller droit au but	11000	cuts to the chase,cutting to the chase
+damn well	adv	foutrement	9000
+dawn on	verb	apparaître à	12000	dawn upon,dawned on,dawning on,dawns on
+dead set	adj	résolu	14000
+dear me	intj	mon Dieu	9000
+deck out	verb	parer	15000	decked out,decking out,decks out
+deep down	adv	au fond	7500
+defeat the purpose	verb	être contre-productif	12000	defeated the purpose,defeating the purpose,defeats the purpose
+descend upon	verb	s'abattre sur	12000	descend on,descended upon,descending upon,descends upon
+dial back	verb	réduire	15000	dialed back,dialing back,dialled back,dialling back,dials back
+die away	verb	s'estomper	11000	died away,dies away,dying away
+die down	verb	se calmer	9000	died down,dies down,dying down
+dig around	verb	fouiller	10000	digging around,digs around,dug around
+dig up	verb	déterrer	8000	digging up,digs up,dug up
+dispense with	verb	se débarrasser de	14000	dispensed with,dispenses with,dispensing with
+do a number on	verb	amocher	15000	did a number on,does a number on,doing a number on,done a number on
+do away with	verb	supprimer	13000	did away with,does away with,doing away with,done away with
+do one's damnedest	verb	faire tout son possible	15500	did one's damnedest,does one's damnedest,doing one's damnedest,done one's damnedest
+do the dishes	verb	faire la vaisselle	6000	did the dishes,does the dishes,doing the dishes,done the dishes
+do the trick	verb	faire l'affaire	9500	did the trick,does the trick,doing the trick,done the trick
+do well for oneself	verb	réussir	11500	did well for oneself,does well for oneself,doing well for oneself,done well for oneself
+do you mind	intj	ça te dérange ?	4500
+dole out	verb	distribuer	15000	doled out,doles out,doling out
+double back	verb	rebrousser chemin	12000	doubled back,doubles back,doubling back
+double over	verb	se plier en deux	12000	doubled over,doubles over,doubling over
+double take	noun	regarder à deux fois	15000
+double up	verb	se plier en deux	11000	doubled up,doubles up,doubling up
+doze off	verb	s'assoupir	11000	dozed off,dozes off,dozing off
+draw attention	verb	attirer l'attention	6000	drawing attention,drawn attention,draws attention,drew attention
+draw away	verb	éloigner	10000	drawing away,drawn away,draws away,drew away
+draw blood	verb	faire saigner	11000	drawing blood,drawn blood,draws blood,drew blood
+draw breath	verb	respirer	10000	drawing breath,drawn breath,draws breath,drew breath
+draw level	verb	arriver à hauteur	13000	drawing level,drawn level,draws level,drew level
+draw near	verb	s'approcher	9000	drawing near,drawn near,draws near,drew near
+dream up	verb	inventer	10000	dreamed up,dreaming up,dreams up,dreamt up
+dress up	verb	pomponner	9000	dressed up,dresses up,dressing up
+drift apart	verb	s'éloigner	12000	drifted apart,drifting apart,drifts apart
+drift off	verb	s'assoupir	11000	drifted off,drifting off,drifts off
+drink up	verb	tout boire	9000	drank up,drinking up,drinks up,drunk up
+drone on	verb	monologuer	13000	droned on,drones on,droning on
+drop dead	verb	tomber raide mort	8000	dropped dead,dropping dead,drops dead
+drown out	verb	couvrir	11000	drowned out,drowning out,drowns out
+duck down	verb	se baisser	9000	ducked down,ducking down,ducks down
+duke out	verb	se battre	15000	duked out,dukes out,duking out
+ease oneself	verb	s'installer doucement	15000	eased oneself,eases oneself,easing oneself
+ease up	verb	y aller doucement	11000	eased up,eases up,easing up
+eat away at	verb	ronger	12000	ate away at,eaten away at,eating away at,eats away at
+eat into	verb	entamer	13000	ate into,eaten into,eating into,eats into
+eat one's fill	verb	manger à sa faim	12000	ate one's fill,eaten one's fill,eating one's fill,eats one's fill
+eat one's words	verb	ravaler ses paroles	13500	ate one's words,eaten one's words,eating one's words,eats one's words
+eke out	verb	arracher	18000	eked out,ekes out,eking out
+end it all	verb	en finir	13000	ended it all,ending it all,ends it all
+ever after	adv	pour toujours	8000
+every last	adj	jusqu'au dernier	8000
+every now and then	adv	de temps en temps	5000
+every so often	adv	de temps en temps	8000
+face off	verb	s'affronter	9000	faced off,faces off,facing off
+faint of heart	noun	âmes sensibles	14000
+fair and square	adv	à la loyale	13000
+fair enough	intj	c'est juste	6000
+fall apart	verb	s'effondrer	6000	fallen apart,falling apart,falls apart,fell apart
+fall behind	verb	prendre du retard	8000	fallen behind,falling behind,falls behind,fell behind
+fall in line	verb	rentrer dans le rang	13000	fallen in line,falling in line,falls in line,fell in line
+fall into place	verb	se mettre en place	9000	fallen into place,falling into place,falls into place,fell into place
+fall on deaf ears	verb	rester lettre morte	13000	fallen on deaf ears,falling on deaf ears,falls on deaf ears,fell on deaf ears
+fall prey	verb	être victime	11000	fallen prey,falling prey,falls prey,fell prey
+fall short	verb	rester en deçà	10000	fallen short,falling short,falls short,fell short
+fan out	verb	se déployer	12000	fanned out,fanning out,fans out
+far and wide	adv	loin à la ronde	9000
+far cry	noun	rien à voir	12000
+far gone	adj	bien atteint	14000
+fast asleep	adj	profondément endormi	7000
+fawn over	verb	s'extasier sur	16000	fawned over,fawning over,fawns over
+feed off	verb	se nourrir de	9000	fed off,feeding off,feeds off
+feed on	verb	se nourrir de	8000	fed on,feeding on,feeds on
+feed up	verb	en avoir marre	8000	fed up,feeding up,feeds up
+feel around	verb	tâtonner	9000	feeling around,feels around,felt around
+feel free	verb	ne pas hésiter	6000	feeling free,feels free,felt free
+feel one's way	verb	avancer à tâtons	13000	feeling one's way,feels one's way,felt one's way
+feel sorry for	verb	plaindre	5000	feeling sorry for,feels sorry for,felt sorry for
+fend off	verb	repousser	13000	fended off,fending off,fends off
+few and far between	adj	rares	12000
+fiddle with	verb	tripoter	12000	fiddled with,fiddles with,fiddling with
+fight a losing battle	verb	se battre en vain	13000	fighting a losing battle,fights a losing battle,fought a losing battle
+fight off	verb	repousser	7000	fighting off,fights off,fought off
+file out	verb	sortir en file	14000	filed out,files out,filing out
+file past	verb	défiler	15000	filed past,files past,filing past
+fill out	verb	remplir	7000	filled out,filling out,fills out
+find fault	verb	trouver à redire	13000	finding fault,finds fault,found fault
+find it in oneself	verb	parvenir à	13000	finding it in oneself,finds it in oneself,found it in oneself
+find one's feet	verb	retrouver l'équilibre	12000	finding one's feet,finds one's feet,found one's feet
+find one's tongue	verb	retrouver la parole	13000	finding one's tongue,finds one's tongue,found one's tongue
+find one's voice	verb	retrouver la parole	10000	finding one's voice,finds one's voice,found one's voice
+fired up	adj	remonté à bloc	10000
+first and foremost	adv	avant tout	9000
+first off	adv	d'abord	9000
+first things first	intj	d'abord l'essentiel	8000
+flag down	verb	héler	13000	flagged down,flagging down,flags down
+flare up	verb	s'enflammer	12000	flared up,flares up,flaring up
+flat out	adv	à fond	13000
+flick through	verb	feuilleter	13000	flicked through,flicking through,flicks through
+flip off	verb	faire un doigt d'honneur	12000	flipped off,flipping off,flips off
+flip out	verb	péter les plombs	13000	flipped out,flipping out,flips out
+flip through	verb	feuilleter	11000	flipped through,flipping through,flips through
+flop down	verb	s'affaler	14000	flopped down,flopping down,flops down
+fold one's arms	verb	croiser les bras	7000	folded one's arms,folding one's arms,folds one's arms
+follow suit	verb	faire de même	11000	followed suit,following suit,follows suit
+fool around	verb	s'amuser	11000	fooled around,fooling around,fools around
+for a fact	adv	avec certitude	8000
+for dear life	adv	de toutes ses forces	11000
+for fear of	prep	de peur de	9000
+for good measure	adv	en prime	12000
+for lack of	prep	faute de	9000
+for one's trouble	adv	pour sa peine	13000
+for real	adv	pour de vrai	5000
+for show	adv	pour la galerie	11000
+for starters	adv	pour commencer	8000
+for that matter	adv	d'ailleurs	10000
+for the longest time	adv	pendant très longtemps	10000
+for the most part	adv	dans l'ensemble	7000
+for the record	adv	pour info	9000
+freak out	verb	paniquer	6500	freaked out,freaking out,freaks out
+free of charge	adv	gratuitement	8000
+freshen up	verb	se rafraîchir	12000	freshened up,freshening up,freshens up
+from here on out	adv	désormais	9000
+from scratch	adv	à partir de zéro	11000
+from the ground up	adv	de zéro	12000
+from then on	adv	dès lors	7000
+fuck off	intj	dégage	6000
+fucked up	adj	foiré	8000
+fucking hell	intj	bordel	7000
+full of oneself	adj	prétentieux	10500
+full of shit	adj	baratineur	9000
+full tilt	adv	à toute vitesse	14000
+full well	adv	parfaitement	12000
+fuss over	verb	s'affairer autour de	12000	fussed over,fusses over,fussing over
+gain momentum	verb	prendre de l'élan	11000	gained momentum,gaining momentum,gains momentum
+gain on	verb	rattraper	12000	gain upon,gained on,gaining on,gains on
+gang up on	verb	se liguer contre	13000	ganged up on,ganging up on,gangs up on
+gather speed	verb	prendre de la vitesse	10000	gathered speed,gathering speed,gathers speed
+get a grip	verb	se ressaisir	8000	gets a grip,getting a grip,got a grip,gotten a grip
+get a handle on	verb	maîtriser	12000	gets a handle on,getting a handle on,got a handle on,gotten a handle on
+get a move on	verb	se dépêcher	9000	gets a move on,getting a move on,got a move on,gotten a move on
+get ahead of oneself	verb	s'emballer	13500	gets ahead of oneself,getting ahead of oneself,got ahead of oneself,gotten ahead of oneself
+get ahold of oneself	verb	se ressaisir	10000	gets ahold of oneself,getting ahold of oneself,got ahold of oneself,gotten ahold of oneself
+get around to	verb	trouver le temps de	11000	gets around to,getting around to,got around to,gotten around to
+get away with	verb	s'en tirer	7000	gets away with,getting away with,got away with,gotten away with
+get back at	verb	se venger de	10000	gets back at,getting back at,got back at,gotten back at
+get down to business	verb	passer aux choses sérieuses	10000	gets down to business,getting down to business,got down to business,gotten down to business
+get going	verb	y aller	5500	gets going,getting going,got going,gotten going
+get hold of	verb	mettre la main sur	7500	get ahold of,get hold on,gets hold of,getting hold of,got hold of,gotten hold of
+get in touch	verb	prendre contact	5000	gets in touch,getting in touch,got in touch,gotten in touch
+get late	verb	se faire tard	6000	gets late,getting late,got late,gotten late
+get on with	verb	continuer	7000	gets on with,getting on with,got on with,gotten on with
+get one's act together	verb	se ressaisir	12000	gets one's act together,getting one's act together,got one's act together,gotten one's act together
+get one's hopes up	verb	se faire des illusions	10000	gets one's hopes up,getting one's hopes up,got one's hopes up,gotten one's hopes up
+get one's way	verb	arriver à ses fins	10000	gets one's way,getting one's way,got one's way,gotten one's way
+get over oneself	verb	arrêter son cinéma	14000	gets over oneself,getting over oneself,got over oneself,gotten over oneself
+get the better of	verb	prendre le dessus sur	9000	get the best of,gets the better of,getting the better of,got the better of,gotten the better of
+get the drop on	verb	prendre de court	16000	gets the drop on,getting the drop on,got the drop on,gotten the drop on
+get the hang of	verb	prendre le coup de	11000	gets the hang of,getting the hang of,got the hang of,gotten the hang of,have the hang of
+get the hint	verb	comprendre l'allusion	10000	gets the hint,getting the hint,got the hint,gotten the hint
+get the point	verb	comprendre	6000	gets the point,getting the point,got the point,gotten the point
+get the wrong idea	verb	se faire des idées	9000	gets the wrong idea,getting the wrong idea,got the wrong idea,gotten the wrong idea
+get to know	verb	apprendre à connaître	4000	gets to know,getting to know,got to know,gotten to know
+get to one's feet	verb	se lever	5000	gets to one's feet,getting to one's feet,got to one's feet,gotten to one's feet
+get wind of	verb	avoir vent de	13000	catch wind of,gets wind of,getting wind of,got wind of,gotten wind of
+give a damn	verb	s'en soucier	8000	care a damn,gave a damn,give a darn,given a damn,gives a damn,giving a damn
+give a shit	verb	se soucier	8000	gave a shit,given a shit,gives a shit,giving a shit
+give chase	verb	poursuivre	11000	gave chase,given chase,gives chase,giving chase
+give credit	verb	reconnaître le mérite	9000	gave credit,given credit,gives credit,giving credit
+give it a rest	verb	arrêter un peu	12000	gave it a rest,given it a rest,gives it a rest,giving it a rest
+give off	verb	dégager	7000	gave off,given off,gives off,giving off
+give or take	adv	à peu près	9000
+give pause	verb	faire réfléchir	14000	gave pause,given pause,gives pause,giving pause
+give the word	verb	donner le signal	12000	gave the word,given the word,gives the word,giving the word
+give voice	verb	exprimer	12000	gave voice,given voice,gives voice,giving voice
+give way	verb	céder	8000	gave way,given way,gives way,giving way
+given that	prep	étant donné que	6000
+glare daggers	verb	fusiller du regard	18000	glared daggers,glares daggers,glaring daggers
+gloss over	verb	passer sous silence	14000	glossed over,glosses over,glossing over
+go a long way	verb	beaucoup aider	14000	goes a long way,going a long way,gone a long way,went a long way
+go about	verb	s'occuper de	8000	goes about,going about,gone about,went about
+go about one's business	verb	vaquer à ses occupations	11000	goes about one's business,going about one's business,gone about one's business,went about one's business
+go all out	verb	tout donner	11000	goes all out,going all out,gone all out,went all out
+go along with	verb	accepter	7500	goes along with,going along with,gone along with,went along with
+go awry	verb	mal tourner	13000	goes awry,going awry,gone awry,went awry
+go bad	verb	se gâter	8000	goes bad,going bad,gone bad,went bad
+go ballistic	verb	péter les plombs	13000	goes ballistic,going ballistic,gone ballistic,went ballistic
+go easy	verb	y aller doucement	9000	goes easy,going easy,gone easy,went easy
+go for it	verb	se lancer	5000	goes for it,going for it,gone for it,went for it
+go haywire	verb	se détraquer	15000	goes haywire,going haywire,gone haywire,went haywire
+go hungry	verb	souffrir de la faim	9000	goes hungry,going hungry,gone hungry,went hungry
+go missing	verb	disparaître	8000	goes missing,going missing,gone missing,went missing
+go nuts	verb	devenir fou	8000	goes nuts,going nuts,gone nuts,went nuts
+go out of one's way	verb	se donner la peine	10000	goes out of one's way,going out of one's way,gone out of one's way,went out of one's way
+go so far as	verb	aller jusqu'à	9000	go as far as,goes so far as,going so far as,gone so far as,went so far as
+go through the motions	verb	faire machinalement	13000	goes through the motions,going through the motions,gone through the motions,went through the motions
+go through with	verb	aller jusqu'au bout	9000	goes through with,going through with,gone through with,went through with
+go to plan	verb	se passer comme prévu	9000	goes to plan,going to plan,gone to plan,went to plan
+go to the trouble	verb	se donner la peine	11000	go through the trouble,goes to the trouble,going to the trouble,gone to the trouble,went to the trouble
+go too far	verb	dépasser les bornes	6000	goes too far,going too far,gone too far,went too far
+go up against	verb	affronter	9000	goes up against,going up against,gone up against,went up against
+go up in flames	verb	partir en fumée	11000	goes up in flames,going up in flames,gone up in flames,went up in flames
+go wild	verb	se déchaîner	10000	goes wild,going wild,gone wild,went wild
+go with the flow	verb	suivre le mouvement	9000	goes with the flow,going with the flow,gone with the flow,went with the flow
+go wrong	verb	mal tourner	4500	goes wrong,going wrong,gone wrong,went wrong
+gobble up	verb	engloutir	13000	gobbled up,gobbles up,gobbling up
+good gracious	intj	mon Dieu	11000
+good grief	intj	bon sang	9000
+good heavens	intj	juste ciel	8000
+good riddance	intj	bon débarras	13000
+good thinking	intj	bonne idée	7000
+gouge out	verb	arracher	14000	gouged out,gouges out,gouging out
+grapple with	verb	lutter avec	14000	grappled with,grapples with,grappling with
+grasp at straws	verb	se raccrocher à tout	16000	grab at straws,grasped at straws,grasping at straws,grasps at straws
+grind to a halt	verb	s'immobiliser	12000	grinding to a halt,grinds to a halt,ground to a halt
+gutter out	verb	s'éteindre	18000	guttered out,guttering out,gutters out
+had best	verb	faire mieux de	10000
+hail from	verb	venir de	14000	hailed from,hailing from,hails from
+hang about	verb	traîner	12000	hanging about,hangs about,hung about
+hang back	verb	rester en retrait	11000	hanging back,hangs back,hung back
+hang one's head	verb	baisser la tête	9500	hanging one's head,hangs one's head,hung one's head
+hang onto	verb	s'accrocher à	7000	hanging onto,hangs onto,hung onto
+happily ever after	adv	heureux pour toujours	8000
+harp on	verb	rabâcher	16000	harped on,harping on,harps on
+haul ass	verb	se grouiller	15000	hauled ass,hauling ass,hauls ass
+have a fit	verb	piquer une crise	10000	had a fit,has a fit,having a fit
+have a hand in	verb	être mêlé à	13000	had a hand in,has a hand in,having a hand in
+have a hard time	verb	avoir du mal	5000	had a hard time,has a hard time,having a hard time
+have a laugh	verb	plaisanter	10000	had a laugh,has a laugh,having a laugh
+have a point	verb	avoir raison	6000	had a point,has a point,having a point
+have a say	verb	avoir son mot à dire	11000	had a say,has a say,have one's say,having a say
+have a seat	verb	s'asseoir	4500	had a seat,has a seat,having a seat
+have a word	verb	parler	8000	had a word,has a word,having a word
+have eyes for	verb	n'avoir d'yeux que pour	14000	had eyes for,has eyes for,having eyes for
+have it coming	verb	l'avoir cherché	12000	had it coming,has it coming,having it coming
+have it in for	verb	en vouloir à	14000	got it in for,had it in for,has it in for,having it in for
+have it out	verb	en découdre	14000	had it out,has it out,having it out
+have it rough	verb	en baver	14000	had it rough,has it rough,having it rough
+have it your way	intj	comme tu veux	10000
+have no business	verb	n'avoir rien à faire	11000	had no business,has no business,having no business
+have no use for	verb	n'avoir que faire de	13000	had no use for,has no use for,having no use for
+have one's hands full	verb	être débordé	10500	had one's hands full,has one's hands full,having one's hands full
+have one's way	verb	imposer sa volonté	11000	had one's way,has one's way,having one's way
+have other ideas	verb	en décider autrement	12000	had other ideas,has other ideas,having other ideas
+have seen better days	verb	connaître des jours meilleurs	14000	had seen better days,has seen better days,having seen better days
+have to say for oneself	verb	avoir pour sa défense	12500	had to say for oneself,has to say for oneself,having to say for oneself
+have words	verb	s'expliquer	13000	had words,has words,having words
+hazard a guess	verb	risquer une hypothèse	13000	hazard to guess,hazarded a guess,hazarding a guess,hazards a guess
+hear me out	intj	laisse-moi finir	9000
+hear out	verb	écouter jusqu'au bout	11000	heard out,hearing out,hears out
+hell no	intj	sûrement pas	8000
+hell of a	adj	sacré	6000
+here goes	intj	allons-y	8000
+here goes nothing	intj	on y va	11000
+here we go again	intj	c'est reparti	8000
+high and mighty	adj	arrogant	14000
+hinge on	verb	dépendre de	15000	hinge upon,hinged on,hinges on,hinging on
+hitch up	verb	remonter	14000	hitched up,hitches up,hitching up
+hold a grudge	verb	garder rancune	11000	held a grudge,holding a grudge,holds a grudge
+hold against	verb	en vouloir à	11000	held against,holding against,holds against
+hold court	verb	tenir salon	15000	held court,holding court,holds court
+hold dear	verb	chérir	12000	held dear,holding dear,holds dear
+hold fast	verb	tenir ferme	12000	held fast,holding fast,holds fast
+hold firm	verb	tenir fermement	9000	held firm,holding firm,holds firm
+hold one's ground	verb	tenir bon	11500	held one's ground,holding one's ground,holds one's ground
+hold one's own	verb	tenir tête	12500	held one's own,holding one's own,holds one's own
+hold oneself together	verb	tenir le coup	13500	held oneself together,holding oneself together,holds oneself together
+hold the line	verb	tenir bon	9000	held the line,holding the line,holds the line
+hold tight	verb	serrer fort	6500	held tight,holding tight,holds tight
+hole up	verb	se terrer	13000	holed up,holes up,holing up
+holy shit	intj	putain !	5000
+hope against hope	verb	espérer malgré tout	14000	hoped against hope,hopes against hope,hoping against hope
+how dare you	intj	comment oses-tu	5000
+hunch over	verb	se pencher	14000	hunched over,hunches over,hunching over
+hunker down	verb	se terrer	14000	hunkered down,hunkering down,hunkers down
+hunt down	verb	traquer	7000	hunted down,hunting down,hunts down
+if at all	adv	et encore	13000
+if needs be	adv	si nécessaire	9000
+if not for	prep	sans	7000
+if nothing else	adv	au moins	10000
+if so	adv	si oui	5000
+if you please	intj	s'il vous plaît	8000
+ill at ease	adj	mal à l'aise	12000
+in a blink	adv	en un clin d'œil	7000
+in a heartbeat	adv	en un instant	8000
+in a pinch	adv	au besoin	13000
+in a row	adv	d'affilée	6500
+in and of itself	adv	en soi	10000
+in attendance	adj	présent	10000
+in bad shape	adj	mal en point	10000
+in bloom	adj	en fleur	10000
+in broad daylight	adv	en plein jour	9000
+in check	adv	sous contrôle	9000
+in cold blood	adv	de sang-froid	9000
+in concert	adv	de concert	14000
+in conjunction with	prep	combiné à	12000
+in droves	adv	en masse	15000
+in due course	adv	en temps voulu	11000
+in due time	adv	en temps voulu	10000
+in earnest	adv	pour de bon	11000
+in equal measure	adv	à parts égales	11000
+in essence	adv	en substance	11000
+in force	adv	en force	11000
+in full swing	adj	battant son plein	11000
+in full view	adv	à la vue de tous	10000
+in future	adv	à l'avenir	6000
+in hindsight	adv	avec le recul	11000
+in kind	adv	de même	10000
+in league with	prep	de mèche avec	13000
+in living memory	adv	de mémoire d'homme	14000
+in no small part	adv	en grande partie	15000
+in no time	adv	en un rien de temps	6000
+in no uncertain terms	adv	sans détour	15000
+in one's back pocket	adv	en réserve	14000
+in one's own right	adv	à part entière	12000
+in one's right mind	adj	sain d'esprit	9000
+in one's sights	adv	en ligne de mire	12000
+in one's stead	adv	à sa place	15000
+in one's tracks	adv	sur place	9000
+in order for	prep	pour que	5000
+in order that	prep	afin que	9000
+in rags	adj	en haillons	10000
+in regard to	prep	concernant	9000
+in relation to	prep	par rapport à	10000
+in retrospect	adv	avec le recul	10000
+in short order	adv	rapidement	12000
+in spades	adv	à revendre	15000
+in spite of	prep	malgré	4500
+in store	adj	en réserve	10000
+in stride	adv	sans broncher	14000
+in tandem	adv	de concert	12000
+in tatters	adj	en lambeaux	14000
+in the face of	prep	face à	7000
+in the flesh	adv	en chair et en os	10000
+in the know	adj	au courant	12000
+in the lead	adj	en tête	7000
+in the least	adv	le moins du monde	8000
+in the long run	adv	à la longue	7000
+in the midst of	prep	au milieu de	7000
+in the mood	adj	d'humeur	7000
+in the nick	adv	juste à temps	12000
+in the process	adv	au passage	7000
+in the process of	prep	en train de	6000
+in the running	adj	dans la course	12000
+in the thick of	prep	au cœur de	13000
+in the throes of	prep	en proie à	15000
+in the wake of	prep	dans le sillage de	11000
+in touch	adj	en contact	5500
+in tow	adv	à sa suite	12000
+insofar as	adv	dans la mesure où	16000
+into thin air	adv	sans laisser de trace	10000
+iron out	verb	aplanir	15000	ironed out,ironing out,irons out
+it goes without saying	adv	cela va sans dire	9000
+jot down	verb	noter	13000	jots down,jotted down,jotting down
+just yet	adv	pour l'instant	7000
+just you wait	intj	tu vas voir	9000
+jut out	verb	dépasser	15000	juts out,jutted out,jutting out
+keel over	verb	s'écrouler	14000	keeled over,keeling over,keels over
+keen on	adj	tenir à	9000
+keep a cool head	verb	garder son sang-froid	12000	keeping a cool head,keeps a cool head,kept a cool head
+keep a lookout	verb	faire le guet	11000	keeping a lookout,keeps a lookout,kept a lookout
+keep a low profile	verb	faire profil bas	12000	keeping a low profile,keeps a low profile,kept a low profile
+keep an eye on	verb	surveiller	4500	keeping an eye on,keeps an eye on,kept an eye on
+keep an eye out	verb	guetter	8000	keeping an eye out,keeps an eye out,kept an eye out
+keep it together	verb	tenir le coup	9000	keeping it together,keeps it together,kept it together
+keep one's cool	verb	garder son calme	9000	keeping one's cool,keeps one's cool,kept one's cool
+keep one's temper	verb	garder son calme	11500	keeping one's temper,keeps one's temper,kept one's temper
+keep out	verb	tenir à l'écart	7000	keeping out,keeps out,kept out
+keep pace	verb	suivre le rythme	9000	keeping pace,keeps pace,kept pace
+keep tabs on	verb	surveiller	12000	keeping tabs on,keeps tabs on,kept tabs on
+keep track	verb	suivre	7000	keeping track,keeps track,kept track
+keep up appearances	verb	sauver les apparences	12000	keeping up appearances,keeps up appearances,kept up appearances
+keep up with	verb	suivre	6000	keeping up with,keeps up with,kept up with
+keep watch	verb	monter la garde	7000	keeping watch,keeps watch,kept watch
+kick oneself	verb	s'en vouloir	12500	kicked oneself,kicking oneself,kicks oneself
+kick out	verb	mettre dehors	6000	kicked out,kicking out,kicks out
+kick the bucket	verb	casser sa pipe	12000	kicked the bucket,kicking the bucket,kicks the bucket
+knock down	verb	renverser	7000	knocked down,knocking down,knocks down
+knock over	verb	renverser	7000	knocked over,knocking over,knocks over
+know full well	verb	savoir pertinemment	10000	knew full well,knowing full well,known full well,knows full well
+know no bounds	verb	être sans limites	14000	knew no bounds,knowing no bounds,known no bounds,knows no bounds
+know one's place	verb	rester à sa place	11500	knew one's place,know your place,knowing one's place,known one's place,knows one's place
+know one's stuff	verb	s'y connaître	11500	knew one's stuff,knowing one's stuff,known one's stuff,knows one's stuff
+know one's way around	verb	bien connaître	11500	knew one's way around,knowing one's way around,known one's way around,knows one's way around
+know the drill	verb	connaître la musique	13000	knew the drill,knowing the drill,known the drill,knows the drill
+lag behind	verb	être à la traîne	12000	lagged behind,lagging behind,lags behind
+lash out	verb	frapper	12000	lashed out,lashes out,lashing out
+latch onto	verb	s'accrocher à	13000	latched onto,latches onto,latching onto
+laugh off	verb	prendre à la légère	14000	laughed off,laughing off,laughs off
+lay a finger on	verb	toucher	9000	laid a finger on,laying a finger on,lays a finger on
+lay bare	verb	mettre à nu	12000	laid bare,laying bare,lays bare
+lay into	verb	s'en prendre à	13000	laid into,laying into,lays into
+lay the groundwork	verb	préparer le terrain	15000	laid the groundwork,laying the groundwork,lays the groundwork
+lay to rest	verb	enterrer	13000	laid to rest,laying to rest,lays to rest
+lay waste	verb	dévaster	14000	laid waste,laying waste,lays waste
+laze about	verb	paresser	15000	lazed about,lazes about,lazing about
+lead astray	verb	égarer	15000	leading astray,leads astray,led astray
+lead up to	verb	mener à	8000	leading up to,leads up to,led up to
+leaps and bounds	adv	à pas de géant	14000
+least of all	adv	surtout pas	9000
+leave be	verb	laisser tranquille	9000	leaves be,leaving be,left be
+leave it at that	verb	en rester là	10000	leaves it at that,leaving it at that,left it at that
+leave off	verb	s'arrêter	9000	leaves off,leaving off,left off
+lend a hand	verb	aider	10000	lending a hand,lends a hand,lent a hand
+let alone	adv	encore moins	7000
+let down	verb	laisser tomber	6000	lets down,letting down
+let in on	verb	mettre dans la confidence	12000	lets in on,letting in on
+let loose	verb	lâcher	10000	lets loose,letting loose
+let on	verb	laisser paraître	13000	lets on,letting on
+let slip	verb	laisser échapper	9000	lets slip,letting slip
+let up	verb	faiblir	9500	lets up,letting up
+lie ahead	verb	attendre	9000	lain ahead,lay ahead,lies ahead,lying ahead
+lie around	verb	traîner	8000	lain around,lay around,lies around,lying around
+lie in wait	verb	être à l'affût	11000	lain in wait,lay in wait,lies in wait,lying in wait
+lie low	verb	faire profil bas	12000	lain low,lay low,lies low,lying low
+lie through one's teeth	verb	mentir effrontément	12000	lied through one's teeth,lies through one's teeth,lying through one's teeth
+lift a finger	verb	lever le petit doigt	12000	lifted a finger,lifting a finger,lifts a finger
+light on one's feet	adj	agile	12500
+like crazy	adv	comme un fou	8000
+like it or not	adv	bon gré mal gré	10000
+like mad	adv	comme un fou	12000
+like no other	adj	sans pareil	9000
+limb from limb	adv	en morceaux	14000
+listen in	verb	écouter en douce	9000	listened in,listening in,listens in
+live off	verb	vivre de	9000	lived off,lives off,living off
+live through	verb	traverser	8000	lived through,lives through,living through
+live up	verb	être à la hauteur	7000	lived up,lives up,living up
+live with oneself	verb	se le pardonner	11500	lived with oneself,lives with oneself,living with oneself
+liven up	verb	s'animer	12000	livened up,livening up,livens up
+lock away	verb	enfermer	7000	locked away,locking away,locks away
+lock eyes	verb	échanger un regard	9000	locked eyes,locking eyes,locks eyes
+locker room	noun	vestiaire	8000
+long since	adv	depuis longtemps	9000
+look in on	verb	passer voir	11000	looked in on,looking in on,looks in on
+look one's age	verb	faire son âge	12000	looked one's age,looking one's age,looks one's age
+look the other way	verb	regarder ailleurs	11000	looked the other way,looking the other way,looks the other way
+look the part	verb	avoir la tête de l'emploi	14000	looked the part,looking the part,looks the part
+loosen up	verb	se détendre	11000	loosened up,loosening up,loosens up
+lose heart	verb	se décourager	13000	loses heart,losing heart,lost heart
+lose one's cool	verb	perdre son sang-froid	9500	loses one's cool,losing one's cool,lost one's cool
+lose one's marbles	verb	perdre la boule	13000	loses one's marbles,losing one's marbles,lost one's marbles
+lose one's nerve	verb	perdre courage	11000	loses one's nerve,losing one's nerve,lost one's nerve
+lose one's temper	verb	s'emporter	9000	loses one's temper,losing one's temper,lost one's temper
+lose one's touch	verb	perdre la main	13000	loses one's touch,losing one's touch,lost one's touch
+lose track	verb	perdre le fil	8000	loses track,losing track,lost track
+lost for words	adj	sans voix	10000
+loud and clear	adv	fort et clair	8000
+luck out	verb	avoir de la chance	14000	lucked out,lucking out,lucks out
+lump to one's throat	noun	gorge nouée	11000
+make a dent	verb	entamer	13000	leave a dent,made a dent,makes a dent,making a dent,put a dent
+make a face	verb	faire la grimace	7000	made a face,makes a face,making a face
+make a fool of	verb	ridiculiser	7000	made a fool of,makes a fool of,making a fool of
+make a living	verb	gagner sa vie	7000	made a living,makes a living,making a living
+make all the difference	verb	tout changer	9000	made all the difference,makes all the difference,making all the difference
+make amends	verb	se racheter	11000	made amends,makes amends,making amends
+make certain	verb	s'assurer	5000	made certain,makes certain,making certain
+make fun of	verb	se moquer de	4500	made fun of,makes fun of,making fun of
+make good on	verb	honorer	14000	made good on,makes good on,making good on
+make it big	verb	réussir	11000	made it big,makes it big,making it big
+make it one's business	verb	se faire un devoir	15000	made it one's business,makes it one's business,making it one's business
+make landfall	verb	toucher terre	15000	made landfall,make land,makes landfall,making landfall
+make matters worse	verb	aggraver les choses	9000	made matters worse,makes matters worse,making matters worse
+make money	verb	gagner de l'argent	4500	made money,makes money,making money
+make no mistake	intj	soyez-en sûr	13000
+make one's way	verb	se diriger	5500	made one's way,makes one's way,making one's way
+make oneself at home	verb	faire comme chez soi	6000	made oneself at home,makes oneself at home,making oneself at home
+make oneself scarce	verb	s'éclipser	14000	made oneself scarce,makes oneself scarce,making oneself scarce
+make room	verb	faire de la place	6000	made room,makes room,making room
+make short work of	verb	expédier	14000	made short work of,makes short work of,making short work of
+make the most of	verb	profiter au maximum	9000	made the most of,makes the most of,making the most of
+make up one's mind	verb	se décider	5500	made up one's mind,makes up one's mind,making up one's mind
+make yourself at home	intj	fais comme chez toi	7000
+mark my words	intj	crois-moi	11000
+max out	verb	atteindre le maximum	12000	maxed out,maxes out,maxing out
+may as well	adv	autant	9000
+me neither	intj	moi non plus	4500
+mean well	verb	avoir de bonnes intentions	13000	meaning well,means well,meant well
+meet one's end	verb	trouver la mort	12500	meeting one's end,meets one's end,met one's end
+meet one's match	verb	trouver son maître	13000	meeting one's match,meets one's match,met one's match
+mess with	verb	toucher à	6000	messed with,messes with,messing with
+midnight blue	adj	bleu nuit	9000
+mill around	verb	aller et venir	15000	milled around,milling around,mills around
+mind one's own business	verb	se mêler de ses affaires	7000	minded one's own business,minding one's own business,minds one's own business
+miss out	verb	rater	9000	missed out,misses out,missing out
+missing in action	adj	porté disparu	12000
+mix and match	verb	combiner	13000	mixed and matched,mixes and matches,mixing and matching
+more often than not	adv	le plus souvent	9000
+more so	adv	encore plus	7000
+more than likely	adv	très probablement	8000
+mouth off	verb	faire le malin	14000	mouthed off,mouthing off,mouths off
+mow down	verb	faucher	14000	mowed down,mowing down,mown down,mows down
+mull over	verb	réfléchir à	15000	mulled over,mulling over,mulls over
+munch on	verb	grignoter	15000	munched on,munches on,munching on
+muster up	verb	rassembler	13000	mustered up,mustering up,musters up
+mutually exclusive	adj	incompatibles	13000
+my bad	intj	ma faute	7000
+my goodness	intj	mon Dieu	5000
+my pleasure	intj	avec plaisir	6000
+narrow down	verb	réduire	12000	narrowed down,narrowing down,narrows down
+needless to say	adv	inutile de préciser	6000
+neither here nor there	adj	sans importance	15000
+never you mind	intj	ça ne te regarde pas	14000
+no clue	intj	aucune idée	6000
+no hard feelings	intj	sans rancune	10000
+no kidding	intj	sans blague	10000
+no offense	intj	sans vouloir vexer	6000
+no shit	intj	sans blague	9000
+no worries	intj	pas de souci	5000
+none other than	adv	nul autre que	8000
+none the wiser	adj	n'y voir que du feu	15000
+not a chance	intj	pas question	6000
+not in the least	adv	pas du tout	8000
+nothing if not	adv	on ne peut plus	16000
+nothing short of	adv	tout simplement	12000
+now and again	adv	de temps en temps	8000
+now and then	adv	de temps en temps	5000
+now then	intj	eh bien	6000
+nowhere near	adv	loin de	8000
+of all people	adv	entre tous	10000
+of all places	adv	justement là	10000
+of note	adj	notable	11000
+of one's own accord	adv	spontanément	10000
+of sorts	adv	en quelque sorte	9000
+off guard	adv	au dépourvu	8000
+off one's game	adj	déstabilisé	14000
+off one's rocker	adj	cinglé	16500
+off the hook	adj	tiré d'affaire	11000
+oh boy	intj	oh là là	6000
+oh dear	intj	oh là là	5000
+oh well	intj	tant pis	5000
+on a dime	adv	d'un coup	16000
+on a par	adv	au même niveau	13000
+on a whim	adv	sur un coup de tête	12000
+on account of	prep	à cause de	9000
+on all fours	adv	à quatre pattes	8000
+on and on	adv	sans fin	6500
+on behalf of	prep	au nom de	7000
+on call	adj	de garde	11000
+on cue	adv	comme sur commande	11000
+on display	adv	exposé	7000
+on duty	adj	de service	6000
+on edge	adj	à cran	9000
+on guard	adj	sur ses gardes	7000
+on hand	adv	sous la main	9000
+on hold	adj	en attente	9000
+on impulse	adv	sur un coup de tête	10000
+on occasion	adv	parfois	7000
+on one's lonesome	adv	tout seul	16500
+on point	adj	impeccable	15000
+on purpose	adv	exprès	4000
+on second thought	adv	à la réflexion	10000
+on sight	adv	à vue	11000
+on speaking terms	adj	en bons termes	13000
+on the brink of	prep	au bord de	9000
+on the count of	prep	au compte de	8000
+on the cusp	prep	sur le point de	16000
+on the fence	adj	indécis	13000
+on the flip side	adv	en revanche	12000
+on the fly	adv	à la volée	11000
+on the lookout	adj	à l'affût	10000
+on the loose	adj	en liberté	10000
+on the money	adj	dans le mille	14000
+on the off chance	adv	au cas où	13000
+on the part of	prep	de la part de	9000
+on the plus side	adv	côté positif	12000
+on the receiving end	adj	visé	13000
+on the right track	adj	sur la bonne voie	9000
+on the run	adj	en fuite	7000
+on the uptake	adj	pour comprendre	16000
+on tiptoe	adv	sur la pointe des pieds	8000
+on top of that	adv	en plus	5000
+on track	adj	sur les rails	8000
+once and for all	adv	une fois pour toutes	7000
+once in a while	adv	de temps en temps	6500
+once upon a time	adv	autrefois	4000
+only too	adv	que trop	9000
+order around	verb	donner des ordres à	9000	ordered around,ordering around,orders around
+out and about	adj	de sortie	11000
+out cold	adj	assommé	10000
+out of a job	adj	au chômage	9000
+out of bounds	adj	hors limites	11000
+out of breath	adj	essoufflé	5000
+out of character	adj	pas son genre	12000
+out of commission	adj	hors service	11000
+out of date	adj	dépassé	8000
+out of favour	adj	en disgrâce	14000
+out of focus	adj	flou	9000
+out of hand	adj	hors de contrôle	9000
+out of luck	adj	pas de chance	9000
+out of one's depth	adj	dépassé	13500
+out of one's league	adj	hors de portée	10000
+out of one's skin	adv	de frayeur	12000
+out of one's wits	adv	à en perdre la tête	14500
+out of place	adj	pas à sa place	6000
+out of sorts	adj	pas dans son assiette	14000
+out of the blue	adv	à l'improviste	9000
+out of the loop	adj	hors du coup	13000
+out of the picture	adv	hors jeu	10000
+out of the running	adj	hors course	12000
+out of thin air	adv	de nulle part	8000
+out of time	adj	à court de temps	6000
+out with it	intj	dis-le	13000
+over time	adv	avec le temps	6000
+owing to	prep	en raison de	9000
+pace oneself	verb	doser ses efforts	14000	paced oneself,paces oneself,pacing oneself
+pack up	verb	remballer	7000	packed up,packing up,packs up
+pale in comparison	verb	faire pâle figure	12000	pale by comparison,paled in comparison,pales in comparison,paling in comparison
+pan out	verb	aboutir	14000	panned out,panning out,pans out
+part ways	verb	se séparer	9000	parted ways,parting ways,parts ways
+part with	verb	se séparer de	10000	parted with,parting with,parts with
+partial to	adj	friand de	15000
+pass around	verb	faire circuler	9000	passed around,passes around,passing around
+pass away	verb	s'éteindre	6000	passed away,passes away,passing away
+pass off	verb	faire passer	11000	passed off,passes off,passing off
+pass up	verb	laisser passer	11000	passed up,passes up,passing up
+patch up	verb	retaper	10000	patched up,patches up,patching up
+pay no mind	verb	ignorer	12000	paid no mind,paying no mind,pays no mind
+pay one's respects	verb	rendre hommage	10500	paid one's respects,paying one's respects,pays one's respects
+per se	adv	en soi	12000
+perk up	verb	s'animer	13000	perked up,perking up,perks up
+pick a fight	verb	chercher la bagarre	8000	picked a fight,picking a fight,picks a fight
+pick off	verb	abattre un à un	12000	picked off,picking off,picks off
+pick on	verb	s'en prendre à	9000	picked on,picking on,picks on
+pick one's way	verb	avancer prudemment	14000	picked one's way,picking one's way,picks one's way
+pick up on	verb	remarquer	10000	picked up on,picking up on,picks up on
+pick up speed	verb	accélérer	8000	picked up speed,picking up speed,picks up speed
+piece together	verb	reconstituer	10000	pieced together,pieces together,piecing together
+pin down	verb	immobiliser	11000	pinned down,pinning down,pins down
+pipe up	verb	intervenir	14000	piped up,pipes up,piping up
+piss off	verb	énerver	6000	pissed off,pisses off,pissing off
+pissed off	adj	énervé	7000
+pit against	verb	opposer à	12000	pits against,pitted against,pitting against
+plain and simple	adv	tout simplement	8000
+play along	verb	jouer le jeu	9000	played along,playing along,plays along
+play dead	verb	faire le mort	9000	played dead,playing dead,plays dead
+play dumb	verb	faire l'innocent	10000	played dumb,playing dumb,plays dumb
+play favorites	verb	faire du favoritisme	14000	play favourites,played favorites,playing favorites,plays favorites
+play for time	verb	gagner du temps	13000	played for time,playing for time,plays for time
+play it safe	verb	jouer la prudence	11000	played it safe,playing it safe,plays it safe
+play nice	verb	être gentil	10000	played nice,playing nice,plays nice
+play out	verb	se dérouler	9000	played out,playing out,plays out
+play the fool	verb	faire l'idiot	12000	played the fool,playing the fool,plays the fool
+play tricks	verb	jouer des tours	9000	played tricks,playing tricks,plays tricks
+plop down	verb	s'affaler	14000	plopped down,plopping down,plops down
+plow into	verb	percuter	11000	plough into,plowed into,plowing into,plows into
+plow on	verb	poursuivre	14000	plowed on,plowing on,plows on
+pluck up	verb	rassembler	14000	plucked up,plucking up,plucks up
+point fingers	verb	accuser	11000	pointed fingers,pointing fingers,points fingers
+poke around	verb	fouiner	11000	poked around,pokes around,poking around
+poke out	verb	dépasser	11000	poked out,pokes out,poking out
+pore over	verb	examiner	14000	pored over,pores over,poring over
+pour one's heart out	verb	se confier	13500	poured one's heart out,pouring one's heart out,pours one's heart out
+pray tell	intj	dis-moi donc	16000
+press charges	verb	porter plainte	11000	pressed charges,presses charges,pressing charges
+pretty much	adv	quasiment	4500
+pretty well	adv	plutôt bien	5000
+prey on	verb	s'attaquer à	12000	preyed on,preying on,preys on
+prick up	verb	se dresser	13000	pricked up,pricking up,pricks up
+prior to	prep	avant	6500
+prone to	adj	sujet à	11000
+prop up	verb	soutenir	11000	propped up,propping up,props up
+provided that	adv	à condition que	8000
+puff out	verb	gonfler	12000	puffed out,puffing out,puffs out
+pull a face	verb	faire la grimace	11000	pulled a face,pulling a face,pulls a face
+pull ahead	verb	prendre la tête	11000	pulled ahead,pulling ahead,pulls ahead
+pull one's weight	verb	faire sa part	13500	pulled one's weight,pulling one's weight,pulls one's weight
+pull oneself together	verb	se ressaisir	9500	pulled oneself together,pulling oneself together,pulls oneself together
+pull strings	verb	faire jouer ses relations	12000	pulled strings,pulling strings,pulls strings
+push one's luck	verb	tenter le diable	11000	pushed one's luck,pushes one's luck,pushing one's luck
+push past	verb	bousculer	8000	pushed past,pushes past,pushing past
+put a stop to	verb	mettre fin à	7000	puts a stop to,putting a stop to
+put an end to	verb	mettre fin à	6000	puts an end to,putting an end to
+put away	verb	ranger	5000	puts away,putting away
+put forward	verb	proposer	12000	puts forward,putting forward
+put one's mind to it	verb	s'y mettre	12500	puts one's mind to it,putting one's mind to it
+put past	verb	croire capable de	13000	puts past,putting past
+put up a fight	verb	résister	9000	puts up a fight,putting up a fight
+put up with	verb	supporter	8000	puts up with,putting up with
+puzzle over	verb	réfléchir à	15000	puzzled over,puzzles over,puzzling over
+queue up	verb	faire la queue	9000	queued up,queueing up,queues up,queuing up
+quite a bit	adv	pas mal	5000
+quite the opposite	adv	bien au contraire	7000
+rack one's brain	verb	se creuser la tête	13000	rack one's brains,racked one's brain,racking one's brain,racks one's brain,wrack one's brain,wrack one's brains
+raise the alarm	verb	donner l'alerte	10000	raised the alarm,raises the alarm,raising the alarm
+rally around	verb	se rallier à	14000	rallied around,rallies around,rallying around
+ramp up	verb	intensifier	15000	ramped up,ramping up,ramps up
+read out	verb	lire à voix haute	8000	reading out,reads out
+read the room	verb	sentir l'ambiance	14000	reading the room,reads the room
+reap the benefits	verb	récolter les fruits	11000	reaped the benefits,reaping the benefits,reaps the benefits
+rear back	verb	se cabrer	15000	reared back,rearing back,rears back
+rear one's head	verb	se manifester	14000	reared one's head,rearing one's head,rears one's head
+rear up	verb	se dresser	14000	reared up,rearing up,rears up
+reckon with	verb	compter avec	14000	reckoned with,reckoning with,reckons with
+regain one's senses	verb	reprendre ses esprits	10000	regained one's senses,regaining one's senses,regains one's senses
+regardless of	prep	peu importe	6000
+remain to be seen	verb	rester à voir	10000	remained to be seen,remaining to be seen,remains to be seen
+report back	verb	faire son rapport	9000	reported back,reporting back,reports back
+rest assured	verb	soyez sûr	9000	rested assured,resting assured,rests assured
+rest easy	verb	être tranquille	11000	rested easy,resting easy,rests easy
+retrace one's steps	verb	revenir sur ses pas	12000	retraced one's steps,retraces one's steps,retracing one's steps
+return the favor	verb	rendre la pareille	9000	return the favour,returned the favor,returning the favor,returns the favor
+rile up	verb	échauffer	16000	riled up,riles up,riling up
+rip apart	verb	mettre en pièces	9000	ripped apart,ripping apart,rips apart
+rip into	verb	déchiqueter	11000	ripped into,ripping into,rips into
+rip to shreds	verb	déchiqueter	10000	ripped to shreds,ripping to shreds,rips to shreds
+rise from the dead	verb	ressusciter	9000	risen from the dead,rises from the dead,rising from the dead,rose from the dead
+rise to the occasion	verb	se montrer à la hauteur	13000	risen to the occasion,rises to the occasion,rising to the occasion,rose to the occasion
+roger that	intj	bien reçu	10000
+roll one's eyes	verb	lever les yeux au ciel	6500	rolled one's eyes,rolling one's eyes,rolls one's eyes
+root for	verb	soutenir	14000	rooted for,rooting for,roots for
+root out	verb	éradiquer	13000	rooted out,rooting out,roots out
+rooted to the spot	adj	cloué sur place	13000
+round on	verb	s'en prendre à	14000	rounded on,rounding on,rounds on
+round up	verb	rassembler	10000	rounded up,rounding up,rounds up
+rub in	verb	en rajouter	13000	rubbed in,rubbing in,rubs in
+rub off on	verb	déteindre sur	14000	rubbed off on,rubbing off on,rubs off on
+rule out	verb	exclure	11000	ruled out,rules out,ruling out
+run amok	verb	se déchaîner	15000	ran amok,run amuck,running amok,runs amok
+run deep	verb	être profond	12000	ran deep,running deep,runs deep
+run dry	verb	se tarir	12000	ran dry,running dry,runs dry
+run for it	verb	s'enfuir	7000	ran for it,running for it,runs for it
+run for one's money	noun	du fil à retordre	14000
+run high	verb	s'échauffer	14000	ran high,running high,runs high
+run late	verb	être en retard	11000	ran late,running late,runs late
+run low	verb	commencer à manquer	8000	ran low,running low,runs low
+run off	verb	s'enfuir	6500	ran off,running off,runs off
+run off with	verb	filer avec	10000	ran off with,running off with,runs off with
+run rampant	verb	se déchaîner	14000	ran rampant,running rampant,runs rampant
+run short	verb	venir à manquer	11000	ran short,running short,runs short
+run wild	verb	se déchaîner	11000	ran wild,running wild,runs wild
+rush off	verb	filer	8000	rushed off,rushes off,rushing off
+safe and sound	adj	sain et sauf	6000
+said and done	adj	en fin de compte	13000
+satisfy oneself	verb	s'assurer	15000	satisfied oneself,satisfies oneself,satisfying oneself
+save for	prep	sauf	9000
+save one's breath	verb	économiser sa salive	13000	saved one's breath,saves one's breath,saving one's breath
+save the day	verb	sauver la situation	11000	saved the day,saves the day,saving the day
+save up	verb	économiser	7000	saved up,saves up,saving up
+says who	intj	qui dit ça ?	10000
+scare away	verb	faire fuir	9000	scared away,scares away,scaring away
+scare off	verb	faire fuir	9000	scared off,scares off,scaring off
+scoop up	verb	ramasser	11000	scooped up,scooping up,scoops up
+scratch that	intj	oublie ça	12000
+scratch the surface	verb	effleurer	13000	scratched the surface,scratches the surface,scratching the surface
+scream one's head off	verb	hurler à pleins poumons	13500	screamed one's head off,screaming one's head off,screams one's head off
+screw over	verb	faire un sale coup	14000	screwed over,screwing over,screws over
+scribble down	verb	griffonner	13000	scribbled down,scribbles down,scribbling down
+seal off	verb	boucler	10000	sealed off,sealing off,seals off
+second to last	adj	avant-dernier	9000
+see eye to eye	verb	être d'accord	13000	saw eye to eye,seeing eye to eye,seen eye to eye,sees eye to eye
+see fit	verb	juger bon	10000	saw fit,seeing fit,seen fit,sees fit
+see reason	verb	entendre raison	11000	saw reason,seeing reason,seen reason,sees reason
+see sense	verb	entendre raison	13000	saw sense,seeing sense,seen sense,sees sense
+see to it	verb	veiller à	9000	saw to it,seeing to it,seen to it,sees to it
+seize up	verb	se bloquer	14000	seized up,seizes up,seizing up
+sell off	verb	liquider	12000	selling off,sells off,sold off
+send for	verb	faire venir	7500	sending for,sends for,sent for
+send word	verb	faire savoir	10000	sending word,sends word,sent word
+set about	verb	se mettre à	10000	sets about,settest about,setteth about,setting about
+set aside	verb	mettre de côté	6500	sets aside,setting aside
+set in stone	adj	gravé dans le marbre	12000
+set one's sights	verb	viser	12500	sets one's sights,setting one's sights
+set sail	verb	prendre la mer	10000	sets sail,setting sail
+set the table	verb	mettre la table	7000	sets the table,setting the table
+set to work	verb	se mettre au travail	9000	sets to work,setting to work
+settle down	verb	se poser	7000	settled down,settles down,settling down
+settle in	verb	s'installer	8000	settled in,settles in,settling in
+shed blood	verb	verser le sang	12000	shedding blood,sheds blood
+shed tears	verb	verser des larmes	9000	shedding tears,sheds tears
+shoo away	verb	chasser	14000	shooed away,shooing away,shoos away
+shoot up	verb	bondir	8500	shooting up,shoots up,shot up
+shore up	verb	renforcer	15000	shored up,shores up,shoring up
+shrink away	verb	reculer	13000	shrank away,shrinking away,shrinks away,shrunk away,shrunken away
+shrink back	verb	reculer	12000	shrank back,shrinking back,shrinks back,shrunk back,shrunken back
+shrug off	verb	balayer	18000	shrugged off,shrugging off,shrugs off
+shut off	verb	couper	7000	shuts off,shutting off
+shy away from	verb	éviter	13000	shied away from,shies away from,shying away from
+sick and tired	adj	en avoir assez	9000
+sick to one's stomach	adj	écœuré	9000
+sift through	verb	passer au crible	14000	sifted through,sifting through,sifts through
+sign up	verb	s'inscrire	6000	signed up,signing up,signs up
+single out	verb	cibler	11000	singled out,singles out,singling out
+sit through	verb	endurer	13000	sat through,sits through,sitting through
+size up	verb	jauger	13000	sized up,sizes up,sizing up
+skim through	verb	survoler	11000	skimmed through,skimming through,skims through
+skirt around	verb	contourner	12000	skirted around,skirting around,skirts around
+slack off	verb	se relâcher	13000	slacked off,slacking off,slacks off
+slip away	verb	s'échapper	9000	slipped away,slipping away,slips away
+slip by	verb	passer	9000	slipped by,slipping by,slips by
+slip out	verb	s'échapper	8000	slipped out,slipping out,slips out
+slip through the cracks	verb	se faufiler	15000	slipped through the cracks,slipping through the cracks,slips through the cracks
+slip up	verb	faire une erreur	12000	slipped up,slipping up,slips up
+small wonder	adv	pas étonnant	10000
+snake out	verb	jaillir	15000	snaked out,snakes out,snaking out
+snap out of	verb	sortir de	11000	snapped out of,snapping out of,snaps out of
+snap to attention	verb	se mettre au garde-à-vous	13000	snapped to attention,snapping to attention,snaps to attention
+sniff around	verb	fouiner	12000	sniffed around,sniffing around,sniffs around
+snuff out	verb	éteindre	13000	snuffed out,snuffing out,snuffs out
+so as to	prep	afin de	6000
+so be it	intj	soit	9000
+so much so	adv	à tel point	8000
+so on	adv	etc.	4000
+so to speak	adv	pour ainsi dire	6000
+sober up	verb	dessoûler	12000	sobered up,sobering up,sobers up
+soon enough	adv	bien vite	6000
+sooner or later	adv	tôt ou tard	4500
+sopping wet	adj	trempé	14000
+sorry for oneself	adj	apitoyé sur son sort	9000
+sort oneself out	verb	s'arranger	12000	sorted oneself out,sorting oneself out,sorts oneself out
+sort out	verb	régler	7000	sorted out,sorting out,sorts out
+sort through	verb	trier	9000	sorted through,sorting through,sorts through
+sound asleep	adj	profondément endormi	12000
+space out	verb	être dans la lune	13000	spaced out,spaces out,spacing out
+speak highly	verb	dire du bien	11000	speaking highly,speaks highly,spoke highly
+speak ill of	verb	dire du mal de	13000	speaking ill of,speaks ill of,spoke ill of,spoken ill of
+speak of the devil	intj	quand on parle du loup	11000
+speak one's mind	verb	parler franchement	11500	speaking one's mind,speaks one's mind,spoke one's mind,spoken one's mind
+speak volumes	verb	en dire long	13000	say volumes,speaking volumes,speaks volumes,spoke volumes,spoken volumes
+spell it out	verb	expliquer clairement	11000	spelled it out,spelling it out,spells it out,spelt it out
+spill over	verb	déborder	10000	spilled over,spilling over,spills over,spilt over
+spill the beans	verb	vendre la mèche	13000	spilled the beans,spilling the beans,spills the beans,spilt the beans
+spite of	prep	malgré	4500
+split up	verb	se séparer	6000	splits up,splitting up
+spread like wildfire	verb	se répandre très vite	11000	spreading like wildfire,spreads like wildfire
+spring in one's step	noun	pas allègre	14000
+spring to life	verb	s'animer	11000	sprang to life,springing to life,springs to life,sprung to life
+spring up	verb	surgir	9000	sprang up,springing up,springs up,sprung up
+square one's shoulders	verb	redresser les épaules	13000	squared one's shoulders,squares one's shoulders,squaring one's shoulders
+squeeze into	verb	se faufiler dans	9000	squeezed into,squeezes into,squeezing into
+stall for time	verb	gagner du temps	11000	stalled for time,stalling for time,stalls for time
+stand a chance	verb	avoir une chance	8000	standing a chance,stands a chance,stood a chance
+stand at attention	verb	se mettre au garde-à-vous	11000	stand to attention,standing at attention,stands at attention,stood at attention
+stand back	verb	reculer	6000	standing back,stands back,stood back
+stand down	verb	se retirer	12000	standing down,stands down,stood down
+stand firm	verb	tenir bon	9000	standing firm,stands firm,stood firm
+stand guard	verb	monter la garde	7000	standing guard,stands guard,stood guard
+stand in the way	verb	faire obstacle	8000	standing in the way,stands in the way,stood in the way
+stand on end	verb	se dresser	11000	standing on end,stands on end,stood on end
+stand one's ground	verb	tenir bon	10500	standing one's ground,stands one's ground,stood one's ground
+stand still	verb	rester immobile	5500	standing still,stands still,stood still
+stand to reason	verb	aller de soi	13000	standing to reason,stands to reason,stood to reason
+stare daggers	verb	fusiller du regard	15000	stared daggers,stares daggers,staring daggers
+start over	verb	recommencer	5000	started over,starting over,starts over
+stave off	verb	repousser	15000	staved off,staves off,staving off,stove off
+stay put	verb	ne pas bouger	8000	stayed put,staying put,stays put
+steal a glance	verb	jeter un coup d'œil	12000	stealing a glance,steals a glance,stole a glance,stolen a glance
+steer clear	verb	éviter	11000	stay clear,steered clear,steering clear,steers clear
+stem the tide	verb	endiguer	15000	stemmed the tide,stemming the tide,stems the tide
+step foot	verb	mettre les pieds	11000	stepped foot,stepping foot,steps foot
+stick around	verb	rester dans le coin	8000	sticking around,sticks around,stuck around
+stick together	verb	rester ensemble	7000	sticking together,sticks together,stuck together
+stick up for	verb	défendre	11000	sticking up for,sticks up for,stuck up for
+stiff as a board	adj	raide comme un piquet	12000
+stir up	verb	attiser	9000	stirred up,stirring up,stirs up
+stock up	verb	faire des provisions	11000	stocked up,stocking up,stocks up
+stomp off	verb	partir furieux	13000	stomped off,stomping off,stomps off
+stop at nothing	verb	ne reculer devant rien	12000	stopped at nothing,stopping at nothing,stops at nothing
+stop dead	verb	s'arrêter net	9500	stopped dead,stopping dead,stops dead
+stop short	verb	s'arrêter net	10000	stopped short,stopping short,stops short
+storm out	verb	sortir en trombe	11000	stormed out,storming out,storms out
+straight away	adv	tout de suite	6000
+strictly speaking	adv	à proprement parler	9000
+strike down	verb	abattre	8000	stricken down,strikes down,striking down,struck down
+strike up	verb	entamer	12000	stricken up,strikes up,striking up,struck up
+string up	verb	pendre	14000	stringing up,strings up,strung up
+study up on	verb	se renseigner sur	12000	studied up on,studies up on,studying up on
+stuff one's face	verb	s'empiffrer	12500	stuffed one's face,stuffing one's face,stuffs one's face
+stumble onto	verb	tomber sur	11000	stumbled onto,stumbles onto,stumbling onto
+stumble upon	verb	tomber sur	10000	stumbled upon,stumbles upon,stumbling upon
+suck in	verb	aspirer	8000	sucked in,sucking in,sucks in
+suffice it to say	adv	bref	13000
+suit oneself	intj	comme tu veux	11500
+sum up	verb	résumer	8000	summed up,summing up,sums up
+sure thing	intj	pas de problème	7000
+swear at	verb	injurier	9000	swearing at,swears at,swore at,sworn at
+tag along	verb	suivre	11000	tagged along,tagging along,tags along
+tail away	verb	s'éteindre	15000	tailed away,tailing away,tails away
+take a hit	verb	en prendre un coup	11000	taken a hit,takes a hit,taking a hit,took a hit
+take a knee	verb	s'agenouiller	10000	take the knee,taken a knee,takes a knee,taking a knee,took a knee
+take a liking to	verb	se prendre d'affection	13000	taken a liking to,takes a liking to,taking a liking to,took a liking to
+take advantage	verb	profiter	5000	taken advantage,takes advantage,taking advantage,took advantage
+take aim	verb	viser	6000	taken aim,takes aim,taking aim,took aim
+take apart	verb	démonter	8000	taken apart,takes apart,taking apart,took apart
+take cover	verb	se mettre à l'abri	7000	taken cover,takes cover,taking cover,took cover
+take credit	verb	s'attribuer le mérite	11000	taken credit,takes credit,taking credit,took credit
+take easy	verb	se détendre	6000	taken easy,takes easy,taking easy,took easy
+take flight	verb	s'envoler	8000	taken flight,takes flight,taking flight,took flight
+take for granted	verb	tenir pour acquis	10000	taken for granted,takes for granted,taking for granted,took for granted
+take hold	verb	saisir	7000	taken hold,takes hold,taking hold,took hold
+take it in turns	verb	à tour de rôle	9000	taken it in turns,takes it in turns,taking it in turns,took it in turns
+take it out on	verb	passer ses nerfs sur	11000	taken it out on,takes it out on,taking it out on,took it out on
+take it upon oneself	verb	se charger de	12000	taken it upon oneself,takes it upon oneself,taking it upon oneself,took it upon oneself
+take its toll	verb	laisser des traces	11000	take a toll,take their toll,taken its toll,takes its toll,taking its toll,took its toll
+take leave	verb	prendre congé	11000	taken leave,takes leave,taking leave,took leave
+take leave of one's senses	verb	perdre la raison	15000	taken leave of one's senses,takes leave of one's senses,taking leave of one's senses,took leave of one's senses
+take no notice of	verb	ignorer	9000	taken no notice of,takes no notice of,taking no notice of,took no notice of
+take one's eyes off	verb	quitter des yeux	7000	taken one's eyes off,takes one's eyes off,taking one's eyes off,took one's eyes off
+take one's leave	verb	prendre congé	9000	taken one's leave,takes one's leave,taking one's leave,took one's leave
+take pride	verb	être fier	8000	taken pride,takes pride,taking pride,took pride
+take sides	verb	prendre parti	9000	taken sides,takes sides,taking sides,took sides
+take stock	verb	faire le point	12000	taken stock,takes stock,taking stock,took stock
+take the bait	verb	mordre à l'hameçon	12000	taken the bait,takes the bait,taking the bait,took the bait
+take the fall	verb	porter le chapeau	14000	take a fall,taken the fall,takes the fall,taking the fall,took the fall
+take the hint	verb	comprendre l'allusion	10000	taken the hint,takes the hint,taking the hint,took the hint
+take the lead	verb	prendre la tête	6500	taken the lead,takes the lead,taking the lead,took the lead
+take the trouble	verb	prendre la peine	11000	taken the trouble,takes the trouble,taking the trouble,took the trouble
+take turns	verb	se relayer	7500	taken turns,takes turns,taking turns,took turns
+take up the slack	verb	prendre le relais	16000	pick up the slack,taken up the slack,takes up the slack,taking up the slack,took up the slack
+talk back	verb	être insolent	9000	talked back,talking back,talks back
+talk one's way out of	verb	s'en sortir en parlant	14000	talked one's way out of,talking one's way out of,talks one's way out of
+tap into	verb	puiser dans	12000	tapped into,tapping into,taps into
+taste of one's own medicine	noun	monnaie de sa pièce	13500
+team up	verb	faire équipe	7000	teamed up,teaming up,teams up
+team up with	verb	s'allier avec	8000	teamed up with,teaming up with,teams up with
+tear down	verb	démolir	8000	tearing down,tears down,tore down,torn down
+tear to shreds	verb	déchiqueter	10000	tearing to shreds,tears to shreds,tore to shreds,torn to shreds
+teem with	verb	grouiller de	15000	teemed with,teeming with,teems with
+tell apart	verb	distinguer	10000	telling apart,tells apart,told apart
+tell off	verb	gronder	9000	telling off,tells off,told off
+tell the difference	verb	distinguer	6000	telling the difference,tells the difference,told the difference
+thank goodness	intj	Dieu merci	5000
+that being said	adv	cela dit	7000
+the end of one's rope	noun	à bout	15000
+the hard way	adv	à la dure	10000
+the other way around	adv	l'inverse	8000
+the shit out of	adv	à fond	9000
+then and there	adv	sur-le-champ	10000
+there you go	intj	et voilà	6000
+thick and fast	adv	en masse	14000
+thin out	verb	s'éclaircir	14000	thinned out,thinning out,thins out
+think better of	verb	se raviser	12000	thinking better of,thinks better of,thought better of
+think much of	verb	estimer	10000	thinking much of,thinks much of,thought much of
+think straight	verb	avoir les idées claires	8000	thinking straight,thinks straight,thought straight
+think through	verb	bien réfléchir à	8000	thinking through,thinks through,thought through
+think up	verb	inventer	11000	thinking up,thinks up,thought up
+this instant	adv	tout de suite	6000
+through and through	adv	complètement	9000
+throw a fit	verb	piquer une crise	12000	threw a fit,throwing a fit,thrown a fit,throws a fit
+throw a tantrum	verb	piquer une crise	12000	threw a tantrum,throwing a tantrum,thrown a tantrum,throws a tantrum
+throw off balance	verb	déséquilibrer	8000	threw off balance,throwing off balance,thrown off balance,throws off balance
+throw open	verb	ouvrir en grand	8000	threw open,throwing open,thrown open,throws open
+throw up one's hands	verb	lever les mains	12500	threw up one's hands,throwing up one's hands,thrown up one's hands,throws up one's hands
+thrust out	verb	avancer	11000	thrusted out,thrusting out,thrusts out
+thus far	adv	jusqu'ici	8000
+tick away	verb	s'égrener	14000	ticked away,ticking away,ticks away
+tick by	verb	s'écouler	13000	ticked by,ticking by,ticks by
+tie down	verb	immobiliser	11000	tied down,ties down,tying down
+time after time	adv	à maintes reprises	11000
+time and time again	adv	à maintes reprises	9000
+time of one's life	noun	moment génial	9500
+tip off	verb	prévenir	11000	tipped off,tipping off,tips off
+tip over	verb	renverser	11000	tipped over,tipping over,tips over
+tip the scale	verb	faire pencher la balance	14000	tip the scales,tipped the scale,tipping the scale,tips the scale
+tiptoe around	verb	tourner autour	14000	tiptoed around,tiptoeing around,tiptoes around
+to an extent	adv	dans une certaine mesure	8000
+to and fro	adv	dans tous les sens	11000
+to begin with	adv	dès le départ	6000
+to boot	adv	en plus	14000
+to heel	adv	au pas	15000
+to hell with	intj	au diable	10000
+to no avail	adv	en vain	11000
+to no end	adv	au plus haut point	13000
+to one's credit	adv	à son honneur	11000
+to say nothing of	prep	sans parler de	12000
+to say the least	adv	c'est peu dire	10000
+to some extent	adv	dans une certaine mesure	7000
+to the brim	adv	à ras bord	10000
+to the extent that	adv	au point que	11000
+to the rescue	adv	à la rescousse	8000
+to this day	adv	encore aujourd'hui	7000
+to what end	adv	dans quel but	13000
+toe to toe	adv	d'égal à égal	12000
+tone down	verb	modérer	13000	toned down,tones down,toning down
+tooth and nail	adv	bec et ongles	15000
+top out	verb	plafonner	15000	topped out,topping out,tops out
+top to bottom	adv	de haut en bas	10000
+topple over	verb	basculer	13000	toppled over,topples over,toppling over
+toss and turn	verb	se retourner sans dormir	13000	tossed and turned,tosses and turns,tossing and turning
+touch down	verb	atterrir	9000	touched down,touches down,touching down
+tower over	verb	dominer	9000	towered over,towering over,towers over
+track down	verb	retrouver	7000	tracked down,tracking down,tracks down
+trade places	verb	échanger sa place	9000	traded places,trades places,trading places
+tried and tested	adj	éprouvé	15000
+trip over	verb	trébucher sur	7000	tripped over,tripping over,trips over
+truth be told	adv	à vrai dire	8000
+try out	verb	essayer	5000	tried out,tries out,trying out
+tuck away	verb	ranger	9000	tucked away,tucking away,tucks away
+tune out	verb	ne plus écouter	13000	tuned out,tunes out,tuning out
+turn a blind eye	verb	fermer les yeux	13000	turn the blind eye,turned a blind eye,turning a blind eye,turns a blind eye
+turn against	verb	se retourner contre	7000	turned against,turning against,turns against
+turn aside	verb	se détourner	11000	turned aside,turning aside,turns aside
+turn round	verb	se retourner	5000	turned round,turning round,turns round
+turn tail	verb	tourner les talons	13000	turned tail,turning tail,turns tail
+turn the tables	verb	renverser la situation	13000	turned the tables,turning the tables,turns the tables
+turn the tide	verb	renverser la situation	11000	turned the tide,turning the tide,turns the tide
+twiddle one's thumbs	verb	se tourner les pouces	14000	twiddled one's thumbs,twiddles one's thumbs,twiddling one's thumbs
+under lock and key	adv	sous clé	11000
+under one's belt	adv	à son actif	13500
+under one's breath	adv	à voix basse	7500
+under one's thumb	adv	sous sa coupe	14500
+under the radar	adv	discrètement	13000
+under wraps	adj	secret	13000
+until such time as	prep	jusqu'à ce que	12000
+up and about	adj	sur pied	11000
+up close	adv	de près	5000
+up to no good	adj	mijoter un mauvais coup	11000
+up to now	adv	jusqu'ici	6000
+up to scratch	adj	à la hauteur	14000
+up to speed	adj	au courant	13000
+upside down	adv	à l'envers	5500
+use up	verb	épuiser	6000	used up,uses up,using up
+used up	adj	épuisé	8000
+usher in	verb	inaugurer	15000	ushered in,ushering in,ushers in
+very same	adj	exactement le même	7000
+vouch for	verb	se porter garant de	13000	vouched for,vouches for,vouching for
+wade through	verb	patauger dans	13000	waded through,wades through,wading through
+walk free	verb	être libéré	13000	walked free,walking free,walks free
+walk in on	verb	surprendre	12000	walked in on,walking in on,walks in on
+wander off	verb	s'éloigner	8000	wandered off,wandering off,wanders off
+ward off	verb	repousser	13000	warded off,warding off,wards off
+wash down	verb	faire passer	12000	washed down,washes down,washing down
+waste away	verb	dépérir	13000	wasted away,wastes away,wasting away
+watch one's back	verb	couvrir ses arrières	9500	watched one's back,watches one's back,watching one's back
+watch one's step	verb	faire attention	9000	watched one's step,watches one's step,watching one's step
+watch one's tongue	verb	surveiller son langage	11500	watched one's tongue,watches one's tongue,watching one's tongue
+watch out	verb	faire attention	3500	watched out,watches out,watching out
+watch over	verb	veiller sur	6000	watched over,watches over,watching over
+wave away	verb	écarter d'un geste	10000	waved away,waves away,waving away
+wave off	verb	écarter d'un geste	14000	waved off,waves off,waving off
+wear down	verb	épuiser	9000	wearing down,wears down,wore down,worn down
+wear off	verb	se dissiper	9000	wearing off,wears off,wore off,worn off
+wear out	verb	épuiser	8000	wearing out,wears out,wore out,worn out
+weigh down	verb	alourdir	8000	weighed down,weighing down,weighs down
+well and truly	adv	bel et bien	13000
+well off	adj	aisé	8000
+well up	verb	monter	12000	welled up,welling up,wells up
+well versed	adj	très calé	14000
+wet oneself	verb	faire pipi sur soi	13000	wets oneself,wetted oneself,wetting oneself
+what a shame	intj	quel dommage	6000
+what in the world	intj	que diable	6000
+wheel about	verb	faire volte-face	15000	wheeled about,wheeling about,wheels about
+wheel around	verb	faire volte-face	13000	wheel round,wheeled around,wheeling around,wheels around
+which is to say	adv	c'est-à-dire	9000
+while away	verb	tuer le temps	15000	whiled away,whiles away,whiling away,wile away
+whip out	verb	dégainer	13000	whipped out,whipping out,whips out
+whisk away	verb	emmener vivement	15000	whisked away,whisking away,whisks away
+white as a sheet	adj	blanc comme un linge	12000
+whittle down	verb	réduire peu à peu	15000	whittled down,whittles down,whittling down
+wide awake	adj	bien réveillé	7000
+win out	verb	l'emporter	12000	winning out,wins out,won out
+wink out	verb	s'éteindre	15000	winked out,winking out,winks out
+wipe out	verb	anéantir	8000	wiped out,wipes out,wiping out
+with a vengeance	adv	de plus belle	13000
+with all one's might	adv	de toutes ses forces	8500
+with any luck	adv	avec un peu de chance	7000
+with bated breath	adv	en retenant son souffle	14000
+with child	adj	enceinte	14000
+with no further ado	adv	sans plus attendre	12000
+with regard to	prep	en ce qui concerne	8000
+without a hitch	adv	sans accroc	12000
+without batting an eye	adv	sans sourciller	13000
+without fail	adv	sans faute	11000
+without question	adv	sans discuter	8000
+woe is me	intj	pauvre de moi	12000
+wolf down	verb	engloutir	14000	wolfed down,wolfing down,wolfs down,wolve down
+work one's magic	verb	faire des merveilles	11500	worked one's magic,working one's magic,works one's magic
+work one's way up	verb	progresser	13000	worked one's way up,working one's way up,works one's way up
+worse for wear	adj	mal en point	13000
+worst comes to worst	adv	au pire	10000
+worth it	adj	valoir la peine	5000
+worth one's while	adj	valoir la peine	13000
+wrap one's head around	verb	comprendre	12500	wrap one's brain around,wrap one's mind around,wrapped one's head around,wrapping one's head around,wraps one's head around
+wreak havoc	verb	faire des ravages	11000	wreaked havoc,wreaking havoc,wreaks havoc,wrought havoc
+wriggle out of	verb	se défiler	15000	wriggled out of,wriggles out of
+yet again	adv	encore une fois	6000
+you bet	intj	et comment	7000
+yours truly	noun	moi-même	12000
+zero in	verb	cibler	14000	zeroed in,zeroes in,zeroing in,zeros in
+zoned out	adj	dans la lune	15000

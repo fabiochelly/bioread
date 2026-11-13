@@ -22,6 +22,11 @@ import java.nio.channels.FileChannel
  * traduit si son rang la dépasse. Les mots transparents (melancholy → mélancolie) ne sont
  * jamais traduits, les faux amis (library → bibliothèque) toujours.
  *
+ * Les expressions (gave up → abandonner, put up with → supporter) sont dans la même table, à
+ * chacune de leurs formes : un mot qui en commence une porte un drapeau, et seul ce mot-là fait
+ * chercher les mots qui le suivent. Le lecteur peut enfin écarter un mot qu'il connaît, ou
+ * demander qu'un mot courant soit toujours traduit (appui long, voir [choice]).
+ *
  * Le fichier est projeté en mémoire (non compressé dans l'APK) : rien n'est chargé dans le tas.
  */
 object WordWise {
@@ -46,12 +51,23 @@ object WordWise {
     private const val ADJ = 3
     private const val ADV = 4
     private const val TRANSPARENT = 8
+    private const val LEMMA = 16         // lecture d'une expression qui ne traduit pas : sa glose est sa forme de base (give up)
 
     // Contexte qui écarte ou appelle un verbe : « the stalk » est un nom, « to stalk » un verbe.
     private val DET = hashSetOf(
         "a", "an", "the", "my", "your", "his", "her", "its", "our", "their", "this", "that", "these", "those",
         "some", "any", "no", "every", "each", "such", "what", "which", "whose", "of", "very", "too", "so", "more", "most",
     )
+    // Particules des verbes à particule, seules admises après un pronom intercalé (gave it up).
+    private val PARTICLES = hashSetOf(
+        "up", "down", "out", "off", "in", "on", "over", "away", "back", "around", "round", "about",
+        "through", "along", "apart", "aside", "together", "forward", "behind", "across", "by",
+    )
+    // Possessifs et réfléchis : ils tiennent la place de one's et oneself dans les expressions.
+    private val POSS = hashSetOf("my", "your", "his", "her", "its", "our", "their")
+    private val REFL = hashSetOf("myself", "yourself", "himself", "herself", "itself", "ourselves", "yourselves", "themselves")
+    // Pronoms compléments, entre un verbe et sa particule : « gave it up ».
+    private val OBJECT = hashSetOf("it", "him", "her", "them", "me", "us", "you", "this", "that")
     // Pas « and », ni « was » ou « is » : ils précèdent aussi bien un adjectif (« and pale », « was pale »).
     private val BEFORE_VERB = hashSetOf(
         "to", "will", "would", "can", "could", "shall", "should", "may", "might", "must", "i", "you", "he", "she",
@@ -63,6 +79,8 @@ object WordWise {
     /** Au lancement : la table ne sera ouverte qu'à son premier usage. */
     fun init(c: Context) {
         app = c.applicationContext
+        known.addAll(Prefs.sp.getStringSet(KNOWN, emptySet())!!)
+        always.addAll(Prefs.sp.getStringSet(ALWAYS, emptySet())!!)
     }
 
     /** Un livre dans la langue [lang] reçoit-il les traductions (réglage actif, anglais vers français, table présente) ? */
@@ -79,7 +97,7 @@ object WordWise {
                     val m = ch.map(FileChannel.MapMode.READ_ONLY, fd.startOffset, fd.length)
                     m.order(ByteOrder.LITTLE_ENDIAN)
                     val magic = ByteArray(8) { m.get(it) }
-                    if (String(magic, Charsets.US_ASCII) != "BIOWW002") return false
+                    if (String(magic, Charsets.US_ASCII) != "BIOWW003") return false
                     blocks = m.getInt(12)
                     pIndex = m.getInt(16)
                     pBody = m.getInt(20)
@@ -124,8 +142,9 @@ object WordWise {
      * Fiche d'une forme : rang (celui de sa lecture la plus facile : le lecteur connaît-il le mot ?),
      * puis lectures (catégorie et drapeaux, rang propre, glose). Une lecture a son propre rang : le
      * verbe de tower (« dominer ») est bien plus rare que le nom. [top] : le rang de la plus rare.
+     * [head] : la forme commence au moins une expression (gave → gave up).
      */
-    private class Rec(val rank: Int, val kinds: IntArray, val ranks: IntArray, val gloss: IntArray) {
+    private class Rec(val rank: Int, val kinds: IntArray, val ranks: IntArray, val gloss: IntArray, val head: Boolean) {
         val top = ranks.maxOrNull() ?: rank
     }
 
@@ -172,7 +191,8 @@ object WordWise {
     private fun record(m: ByteBuffer, from: Int): Rec {
         val at = intArrayOf(from)
         val rank = varint(m, at)
-        val n = m.get(at[0]++).toInt() and 0xFF
+        val nb = m.get(at[0]++).toInt() and 0xFF
+        val n = nb and 0x7F
         val kinds = IntArray(n)
         val ranks = IntArray(n)
         val gl = IntArray(n)
@@ -181,7 +201,7 @@ object WordWise {
             ranks[r] = varint(m, at)
             gl[r] = varint(m, at)
         }
-        return Rec(rank, kinds, ranks, gl)
+        return Rec(rank, kinds, ranks, gl, nb and 0x80 != 0)
     }
 
     /** Glose désignée par sa position dans le réservoir (0 : la glose vide). */
@@ -267,43 +287,143 @@ object WordWise {
         }
     }
 
+    /** Mots d'un paragraphe, relevés une fois pour pouvoir regarder ceux qui suivent (expressions). */
+    private class Tok(val word: String, val key: String, val i: Int, val j: Int, val sentence: Boolean, val prev: String, val joined: Boolean) {
+        val clipped = word.indexOf('\'') >= 0 || word.indexOf('’') >= 0
+    }
+
     /**
      * Mots à traduire dans [text] pour le vocabulaire [level] : triplets (début, fin, glose) à plat.
-     * Les noms propres (majuscule hors début de phrase) sont ignorés.
+     * Les noms propres (majuscule hors début de phrase) sont ignorés. Une expression (gave up)
+     * est traduite d'un bloc, sous tous ses mots, et aucun d'eux n'est alors traduit seul.
      */
     fun marks(text: CharSequence, level: Int): Marks {
-        val out = ArrayList<Any>()
+        val toks = ArrayList<Tok>()
+        var end = 0
         scan(text) { word, i, j, sentence, prev ->
+            // Rien d'autre que des blancs depuis le mot précédent : il peut former une expression avec lui.
+            var joined = toks.isNotEmpty()
+            for (x in end until i) if (!Character.isWhitespace(text[x])) { joined = false; break }
+            toks.add(Tok(word, key(word), i, j, sentence, prev, joined))
+            end = j
+        }
+        val out = ArrayList<Any>()
+        var t = 0
+        while (t < toks.size) {
+            val tk = toks[t]
+            val word = tk.word
+            val k = tk.key
+            val i = tk.i
+            val j = tk.j
             val capital = Character.isUpperCase(word[0])
-            val k = key(word)
             // Majuscule en début de phrase sur un mot que le livre écrit ailleurs avec une majuscule
             // au milieu d'une phrase : un nom propre (Eve), pas le mot eve.
-            val name = capital && sentence && k in names
-            if (capital && !sentence || name || obvious(k, level, 0)) return@scan
+            val name = capital && tk.sentence && k in names
+            if (capital && !tk.sentence || name) { t++; continue }
             val r = rec(k)
+            // Un mot à apostrophe (what's, Harry's) n'entre dans aucune expression : « what's with » n'est pas « what with ».
+            if (r != null && r.head && !tk.clipped) {
+                val e = phrase(toks, t)
+                if (e != null) {
+                    val (last, x) = e
+                    val g = shown(x, 0)
+                    if (g >= 0 && x.ranks[0] > level && lemma(x) !in known) { out.add(i); out.add(toks[last].j); out.add(gloss(g)); out.add(lemma(x)) }
+                    t = last + 1
+                    continue
+                }
+            }
+            t++
+            if (obvious(k, level, 0)) continue
             // Repli sur une définition anglaise : mot absent de la table (très rare) ou mot plus
             // rare que le vocabulaire du lecteur sans traduction.
             val plain = !capital && word.length >= 5
             if (r != null && r.kinds.isNotEmpty() && r.top > level) {
                 // La lecture que le contexte désigne, si elle est elle-même plus rare que le
                 // vocabulaire du lecteur (« the tower » : non ; « towered over » : oui).
-                val x = pick(r, prev, word)
+                val x = pick(r, tk.prev, word)
                 val g = shown(r, x)
-                if (g >= 0 && r.ranks[x] > level) { out.add(i); out.add(j); out.add(gloss(g)) }
+                if (g >= 0 && r.ranks[x] > level) {
+                    if (known.isEmpty() || mine(known, k) == null) { out.add(i); out.add(j); out.add(gloss(g)); out.add(k) }
+                } else if (g >= 0) forced(r, x, k)?.let { out.add(i); out.add(j); out.add(it); out.add(k) }
+            } else if (r != null && r.kinds.isNotEmpty()) {
+                forced(r, pick(r, tk.prev, word), k)?.let { out.add(i); out.add(j); out.add(it); out.add(k) }
             } else if (r != null && r.kinds.isEmpty() && r.rank > level) {
-                if (plain) fallback(k)?.let { out.add(i); out.add(j); out.add(it) }
+                if (plain) fallback(k)?.let { out.add(i); out.add(j); out.add(it); out.add(k) }
             } else if (r == null && plain) {
-                fallback(k)?.let { out.add(i); out.add(j); out.add(it) }
+                fallback(k)?.let { out.add(i); out.add(j); out.add(it); out.add(k) }
             }
         }
-        val a = IntArray(out.size / 3 * 2)
-        val s = arrayOfNulls<String>(out.size / 3)
-        for (k in s.indices) {
-            a[2 * k] = out[3 * k] as Int
-            a[2 * k + 1] = out[3 * k + 1] as Int
-            s[k] = out[3 * k + 2] as String
+        val n = out.size / 4
+        val a = IntArray(2 * n)
+        val s = arrayOfNulls<String>(n)
+        val keys = arrayOfNulls<String>(n)
+        for (q in 0 until n) {
+            a[2 * q] = out[4 * q] as Int
+            a[2 * q + 1] = out[4 * q + 1] as Int
+            s[q] = out[4 * q + 2] as String
+            keys[q] = out[4 * q + 3] as String
         }
-        return Marks(level, a, s)
+        return Marks(level, gen, a, s, keys)
+    }
+
+    /** Glose d'un mot que le lecteur connaît d'après son vocabulaire, mais qu'il a demandé à voir toujours traduit. */
+    private fun forced(r: Rec, x: Int, k: String): String? {
+        if (always.isEmpty() || mine(always, k) == null) return null
+        val g = shown(r, x).takeIf { it >= 0 } ?: r.kinds.indices.map { shown(r, it) }.firstOrNull { it >= 0 } ?: return null
+        return gloss(g)
+    }
+
+    /**
+     * Expression qui commence au mot [t] de [toks] : la plus longue (cinq mots au plus) que la table
+     * connaisse, ses mots séparés par des blancs seulement. Un possessif peut tenir la place de
+     * « one's » (lost her temper → lose one's temper), un réfléchi celle de « oneself » (pulled
+     * himself together). Ou bien un verbe, un pronom, puis les particules de l'expression
+     * (« gave it up »). Rend l'indice de son dernier mot et sa fiche.
+     */
+    private fun phrase(toks: List<Tok>, t: Int): Pair<Int, Rec>? {
+        var best: Pair<Int, Rec>? = null
+        fun go(q: Int, s: String, n: Int) {
+            if (q >= toks.size || n >= 4) return
+            val x = toks[q]
+            if (!x.joined || x.clipped || Character.isUpperCase(x.word[0])) return
+            val slot = if (x.key in POSS) "one's" else if (x.key in REFL) "oneself" else null
+            for (o in if (slot == null) arrayOf(x.key) else arrayOf(x.key, slot)) {
+                val s2 = "$s $o"
+                expr(s2)?.let { r -> if (best.let { it == null || q > it.first }) best = q to r }
+                go(q + 1, s2, n + 1)
+            }
+        }
+        go(t + 1, toks[t].key, 0)
+        best?.let { return it }
+        if (t + 2 < toks.size && toks[t + 1].joined && toks[t + 1].key in OBJECT) {
+            var s = toks[t].key
+            for (q in t + 2 until minOf(toks.size, t + 4)) {
+                val x = toks[q]
+                // Seulement des particules après le pronom : « made her way » n'est pas « make way ».
+                if (!x.joined || x.clipped || Character.isUpperCase(x.word[0]) || x.key !in PARTICLES) break
+                s += " " + x.key
+                expr(s)?.let { r -> if (r.kinds.any { it and 7 == VERB }) best = q to r }
+            }
+        }
+        return best
+    }
+
+    /** Fiches d'expressions déjà cherchées (null : pas d'expression). */
+    private val exprs = HashMap<String, Rec?>()
+
+    @Synchronized
+    private fun expr(key: String): Rec? {
+        if (exprs.containsKey(key)) return exprs[key]
+        val r = find(key)?.takeIf { it.kinds.isNotEmpty() }
+        if (exprs.size > 5000) exprs.clear()
+        exprs[key] = r
+        return r
+    }
+
+    /** Forme de base d'une expression (give up pour gave up), celle que retient la liste des mots connus. */
+    private fun lemma(r: Rec): String {
+        for (x in r.kinds.indices) if (r.kinds[x] and LEMMA != 0) return gloss(r.gloss[x])
+        return ""
     }
 
     // Nombres écrits en lettres : jamais traduits, seuls ou en composés (forty-five).
@@ -426,7 +546,7 @@ object WordWise {
     private const val ENGLISH = "\u0001"
 
     /** Glose de la lecture [k] ; -1 si elle est transparente. */
-    private fun shown(r: Rec, k: Int) = if (r.kinds[k] and TRANSPARENT != 0 || r.gloss[k] == 0) -1 else r.gloss[k]
+    private fun shown(r: Rec, k: Int) = if (r.kinds[k] and (TRANSPARENT or LEMMA) != 0 || r.gloss[k] == 0) -1 else r.gloss[k]
 
     /** La lecture que désigne le mot qui précède (son indice). */
     private fun pick(r: Rec, prev: String, word: String): Int {
@@ -449,8 +569,96 @@ object WordWise {
         return best
     }
 
-    /** Mots à traduire d'un paragraphe : [at] = (début, fin) par mot, [gloss] leur traduction. */
-    class Marks(val level: Int, val at: IntArray, val gloss: Array<String?>)
+    /**
+     * Mots à traduire d'un paragraphe : [at] = (début, fin) par mot, [gloss] leur traduction, [keys]
+     * le mot ou l'expression traduits. [level] et [gen] : le réglage et la liste personnelle employés.
+     */
+    class Marks(val level: Int, val gen: Int, val at: IntArray, val gloss: Array<String?>, val keys: Array<String?>) {
+        fun fresh(level: Int) = this.level == level && gen == WordWise.gen
+    }
+
+    // ---------------------------------------------------------------- mots du lecteur
+
+    private const val KNOWN = "wwKnown"
+    private const val ALWAYS = "wwAlways"
+
+    /** Mots (formes de base) que le lecteur connaît : jamais traduits. */
+    private val known: MutableSet<String> = java.util.concurrent.ConcurrentHashMap.newKeySet()
+
+    /** Mots que le lecteur veut toujours voir traduits, même s'ils sont dans son vocabulaire. */
+    private val always: MutableSet<String> = java.util.concurrent.ConcurrentHashMap.newKeySet()
+
+    /** Change à chaque modification des listes : les mots repérés avant sont à refaire. */
+    @Volatile var gen = 0
+        private set
+
+    /**
+     * Formes de base possibles de [k] (stalked → stalk, stalke ; studies → study) : la liste retient
+     * la forme de base, pour que toute la famille du mot suive (stalks, stalking).
+     */
+    private fun bases(k: String): List<String> {
+        val out = ArrayList<String>(6)
+        out.add(k)
+        fun cut(suf: String, add: String = "") {
+            if (k.length > suf.length + 2 && k.endsWith(suf)) {
+                val st = k.substring(0, k.length - suf.length)
+                out.add(st + add)
+                // Consonne doublée : stopped → stop.
+                if (add.isEmpty() && st.length > 3 && st[st.length - 1] == st[st.length - 2]) out.add(st.dropLast(1))
+            }
+        }
+        cut("ies", "y"); cut("ied", "y"); cut("es"); cut("s"); cut("ed"); cut("ed", "e"); cut("ing"); cut("ing", "e")
+        cut("er"); cut("est")
+        return out
+    }
+
+    /** Celle des formes de base de [k] que contient la liste [set], ou null. */
+    private fun mine(set: Set<String>, k: String): String? = bases(k).firstOrNull { it in set }
+
+    /** Ce que l'appui long propose sur un mot : l'ajouter à une liste ([add]) ou l'en retirer. */
+    class Choice(val label: String, val key: String, val list: Int, val add: Boolean)
+
+    const val LIST_KNOWN = 1
+    const val LIST_ALWAYS = 2
+
+    /**
+     * Choix offert par la feuille d'un mot [start, end) du paragraphe [b] : ne plus traduire un mot
+     * ou une expression traduits ; traduire de nouveau un mot écarté ; toujours traduire un mot
+     * que le réglage laisse sans traduction. Null si le mot n'a pas de traduction dans la table.
+     */
+    fun choice(b: Block, start: Int, end: Int): Choice? {
+        if (!open()) return null
+        val m = b.ww?.takeIf { it.fresh(Prefs.wwLevel) }
+        if (m != null) for (q in m.gloss.indices) {
+            if (m.at[2 * q] > start || m.at[2 * q + 1] < end) continue
+            val k = m.keys[q] ?: return null
+            if (m.gloss[q]?.startsWith(ENGLISH) == true) return null
+            mine(always, k)?.let { return Choice("Ne plus forcer la traduction de « $it »", it, LIST_ALWAYS, false) }
+            val base = if (' ' in k) k else family(k)
+            return Choice("Je connais « $base » : ne plus le traduire", base, LIST_KNOWN, true)
+        }
+        val k = key(b.text.substring(start, end))
+        mine(known, k)?.let { return Choice("Traduire de nouveau « $it »", it, LIST_KNOWN, false) }
+        val r = rec(k) ?: return null
+        if (r.kinds.indices.none { shown(r, it) >= 0 }) return null
+        val base = family(k)
+        return Choice("Toujours traduire « $base »", base, LIST_ALWAYS, true)
+    }
+
+    /** Forme de base de [k] dans la table : celle qui en partage une traduction (stalked → stalk), sinon [k]. */
+    private fun family(k: String): String {
+        val r = rec(k) ?: return k
+        val gl = r.gloss.filter { it != 0 }.toSet()
+        return bases(k).drop(1).filter { b -> rec(b)?.gloss?.any { it in gl } == true }.minByOrNull { it.length } ?: k
+    }
+
+    /** Applique le choix [c] et le garde dans les réglages. */
+    fun apply(c: Choice) {
+        val set = if (c.list == LIST_KNOWN) known else always
+        if (c.add) set.add(c.key) else set.removeAll(bases(c.key).toSet() + c.key)
+        gen++
+        Prefs.sp.edit().putStringSet(if (c.list == LIST_KNOWN) KNOWN else ALWAYS, HashSet(set)).apply()
+    }
 
     // ---------------------------------------------------------------- tracé
 

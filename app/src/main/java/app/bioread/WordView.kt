@@ -95,6 +95,19 @@ class WordView(
             addView(IconButton(host, IconButton.CLOSE) { host.hideSheet() }.apply { contentDescription = "Fermer" })
         }
         panel.addView(head)
+        // Traduction sous les mots difficiles : écarter ce mot (connu), ou le faire toujours traduire.
+        if (reader.glossable()) WordWise.choice(hit.block, hit.start, hit.end)?.let { c ->
+            val v = TextView(host)
+            link(v, c.label) {
+                WordWise.apply(c)
+                host.hideSheet()
+                reader.glossChanged()
+            }
+            v.maxLines = 1
+            v.ellipsize = TextUtils.TruncateAt.END
+            v.setPadding(side, 0, side, 0)
+            panel.addView(v, LinearLayout.LayoutParams(-2, dp(36)))
+        }
 
         // Feuille compacte : une définition, une traduction. Chaque zone a son lien, qui la déroule
         // en entier à la place du reste ; le contenu défile alors, et un lien fixe permet de replier.

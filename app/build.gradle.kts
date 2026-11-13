@@ -63,4 +63,7 @@ dependencies {
     implementation("com.google.mlkit:translate:17.0.3")
     // Liseuses Onyx : leurs commandes d'écran (rafraîchissement complet) sont masquées aux apps.
     implementation("org.lsposed.hiddenapibypass:hiddenapibypass:6.1")
+    // Profil de démarrage (src/main/baseline-prof.txt) : installé au premier lancement, il fait
+    // compiler d'avance le code de l'app au lieu de l'interpréter pendant les premières pages.
+    implementation("androidx.profileinstaller:profileinstaller:1.4.1")
 }

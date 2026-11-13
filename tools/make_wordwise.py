@@ -29,6 +29,10 @@ Le rang se compte sur une population de vrais mots (ceux de l'étude et les mots
 fréquents qui y manquent) : les milliers de dérivés théoriques du Wiktionnaire (antipatent) ne
 gonflent pas l'échelle.
 
+EXPRESSIONS. tools/wordwise-phrases-<langue>.tsv donne les expressions (verbes à particule,
+locutions : give up, put up with, at once) relues à la main dans des romans, avec leur rang. Elles
+sont rangées dans la table à chacune de leurs formes (gave up), clés à espaces.
+
 TRADUCTION. Pour chaque mot de base et catégorie : le premier équivalent français du sens
 principal (Wiktionnaire anglais), sauf s'il est nettement plus rare qu'un autre ; à défaut,
 les pages françaises qui traduisent vers ce mot. Quand WordNet désigne un sens nettement plus
@@ -42,7 +46,7 @@ pas. Un faux ami ne l'est jamais, puisque sa traduction ne lui ressemble pas
 
 Format (entiers little-endian), lu par WordWise.kt :
 
-    0   8   magie « BIOWW002 » (le chiffre est la version du format)
+    0   8   magie « BIOWW003 » (le chiffre est la version du format)
     8   4   nombre de formes ; 12 : nombre de blocs
     16  4   position de l'index des blocs ; 20 : des blocs ; 24 : des fiches ; 28 : des gloses
     32  4   nombre de gloses ; 36 : position des métadonnées (JSON UTF-8) ; 40 : leur longueur
@@ -52,8 +56,10 @@ Format (entiers little-endian), lu par WordWise.kt :
             (nombre d'octets en commun avec la forme précédente, 0 pour la première d'un bloc),
             varint longueur de la suite, la suite (UTF-8), varint position de sa fiche (relative
             au début des fiches)
-    fiches  varint rang, octet n (0 : mot courant sans traduction, didn't), puis n lectures :
-            octet (catégorie 1 nom, 2 verbe, 3 adjectif, 4 adverbe, 5 préposition ; +8 si transparent),
+    fiches  varint rang, octet n (0 : mot courant sans traduction, didn't ; +128 si la forme
+            commence une expression), puis n lectures :
+            octet (catégorie 1 nom, 2 verbe, 3 adjectif, 4 adverbe, 5 préposition ; +8 si transparent ;
+            16 : forme de base d'une expression, give up pour gave up, à la place d'une glose),
             varint rang de cette lecture, varint position de sa glose (relative au début des gloses).
             Une fiche partagée par plusieurs formes (assess, assesses) n'est écrite qu'une fois.
     gloses  les chaînes (varint longueur + UTF-8) ; la première, vide, sert aux lectures sans glose
@@ -113,6 +119,7 @@ SKIP_POS = {"name", "prefix", "suffix", "infix", "affix", "symbol", "character",
             "proverb", "abbrev", "romanization", "combining_form", "interfix", "circumfix", "root", "syllable",
             "unknown", "letter"}
 POS = {"noun": 1, "verb": 2, "adj": 3, "adv": 4, "prep": 5}
+LEMMA = 16             # lecture d'une expression qui donne sa forme de base au lieu d'une traduction
 FR_POS = {"noun": 1, "verb": 2, "adj": 3, "adv": 4, "prep": 5}
 BAD_FORM = {"table-tags", "inflection-template", "class", "canonical", "romanization", "error-unknown-tag",
             "multiword-construction", "alternative"}
@@ -818,6 +825,49 @@ def build(a):
         if g != "-":
             reads.insert(0, (rr, POS[p], gloss_id(g), 1.0, 0))
         records[k] = (r, reads)
+
+    # ---- expressions (gave up, put up with) : relues à la main, une par ligne dans
+    # wordwise-phrases-<langue>.tsv (forme de base, catégorie, traduction, rang). Chaque forme du
+    # premier mot, s'il est un verbe, donne une entrée (gives up, giving up, gave up, given up) ; sa
+    # fiche a deux lectures : la traduction, puis la forme de base (LEMMA), que l'app retient quand
+    # le lecteur écarte l'expression. Les formes qui commencent une expression portent un drapeau.
+    heads = set()
+    px = os.path.join(os.path.dirname(os.path.abspath(__file__)), f"wordwise-phrases-{a.target}.tsv")
+    nph = 0
+    if os.path.exists(px):
+        verbs = {}
+        for f, lem in of.items():
+            for l, q in lem:
+                if q == "verb":
+                    verbs.setdefault(l, set()).add(f)
+        for line in open(px, encoding="utf-8"):
+            c = line.rstrip("\n").split("\t")
+            if len(c) < 4 or line.startswith("#") or not c[3].strip().isdigit():
+                continue
+            ph, p, g, r = norm(c[0].strip()), c[1].strip(), c[2].strip(), int(c[3])
+            w = ph.split()
+            # Seule apostrophe admise : celle de one's, que l'app met à la place d'un possessif.
+            if len(w) < 2 or "'" in ph.replace("one's", "") or not g:
+                continue
+            # Formes fléchies : celles du Wiktionnaire (5e colonne), sinon les formes régulières du
+            # premier mot. Jamais toutes les formes connues du verbe : toll, forme archaïque de
+            # tell, ferait lire « took a toll on » comme « tell on ».
+            if len(c) > 4 and c[4].strip():
+                keys = [ph] + [norm(x.strip()) for x in c[4].split(",") if x.strip()]
+            elif p == "verb":
+                keys = [ph] + [" ".join([f] + w[1:]) for f in regular(w[0]) if f in verbs.get(w[0], ())]
+            else:
+                keys = [ph]
+            reads = [(r, POS.get(p, 4), gloss_id(g), 1.0, 0), (0, LEMMA, gloss_id(ph), 0.0, 0)]
+            for k in keys:
+                records[k.encode("utf-8")] = (r, reads)
+                heads.add(k.split()[0].encode("utf-8"))
+            nph += 1
+        for h in heads:
+            if h not in records:
+                fq = wf.get(h.decode("utf-8"), 0.0)
+                records[h] = (lrank.get(h.decode("utf-8"), rank(math.log10(fq * 1e9)) if fq > 0 else 65000), [])
+    print(f"{nph} expressions, {len(heads)} formes qui en commencent une", flush=True)
     print(f"{len(records)} formes, {len(glosses)} gloses, {sum(1 for r in records.values() if r[1] and r[1][0][1] & 8)} transparentes", flush=True)
 
     # ---- écriture
@@ -825,7 +875,7 @@ def build(a):
             "sources": "Wiktionary (CC BY-SA 4.0, kaikki.org) · wordfreq (CC BY-SA 4.0) · SUBTLEX-US · "
                        "Brysbaert, Keuleers & Mandera 2020 (CC BY-NC-SA 4.0) · Kuperman et al. 2012"}
     out = a.asset.format(target=a.target)
-    write(out, records, glosses, meta)
+    write(out, records, glosses, meta, heads)
     print(f"{out} : {os.path.getsize(out) / 1e6:.2f} Mo, {time.time() - t0:.0f} s", flush=True)
 
     if a.dump:
@@ -846,7 +896,19 @@ def build(a):
 BLOCK = 16     # formes par bloc (voir le format en tête du fichier)
 
 
-def write(out, records, glosses, meta):
+def regular(v):
+    """Formes régulières d'un verbe (walk → walks, walked, walking ; try → tries, tried ; stop → stopped)."""
+    out = {v + "s", v + "es", v + "ed", v + "d", v + "ing"}
+    if v.endswith("y"):
+        out |= {v[:-1] + "ies", v[:-1] + "ied"}
+    if v.endswith("e"):
+        out.add(v[:-1] + "ing")
+    if len(v) > 2:
+        out |= {v + v[-1] + "ed", v + v[-1] + "ing"}
+    return out
+
+
+def write(out, records, glosses, meta, heads=frozenset()):
     """Écrit la table au format décrit en tête du fichier. records : forme (UTF-8) → (rang, lectures)."""
     # Gloses : désignées dans les fiches par leur position dans le réservoir (la glose n° 0, vide, en tête).
     gbody, gpos = bytearray(), []
@@ -860,7 +922,8 @@ def write(out, records, glosses, meta):
     body, index, prev = bytearray(), bytearray(), b""
     for i, k in enumerate(keys):
         r, reads = records[k]
-        v = varint(r) + bytes([len(reads)])
+        assert len(reads) < 128
+        v = varint(r) + bytes([len(reads) | (0x80 if k in heads else 0)])
         for rr, pos, g, _, _ in reads:
             v += bytes([pos]) + varint(rr) + varint(gpos[g])
         if v not in rpos:
@@ -884,7 +947,7 @@ def write(out, records, glosses, meta):
     p_meta = p_gbody + len(gbody)
     os.makedirs(os.path.dirname(out) or ".", exist_ok=True)
     with open(out + ".part", "wb") as f:
-        f.write(b"BIOWW002")
+        f.write(b"BIOWW003")
         f.write(struct.pack("<IIIIIIIIII", len(keys), len(index) // 4, p_index, p_body, p_recs, p_gbody, len(glosses),
                             p_meta, len(mb), BLOCK))
         f.write(index); f.write(body); f.write(recs); f.write(gbody); f.write(mb)

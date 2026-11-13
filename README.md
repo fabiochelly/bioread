@@ -52,6 +52,15 @@ Dans un livre anglais, l'option « Mots difficiles » (Options › Traduction) �
 sous chaque mot difficile, sa traduction française. Le curseur règle la taille du vocabulaire du
 lecteur (de 3 000 à 30 000 mots).
 
+Les expressions sont traduites d'un bloc, sous tous leurs mots : *gave up* → abandonner, *put up
+with* → supporter, *shrugged it off* → ignorer. Les quelque 1 400 expressions
+(`tools/wordwise-phrases-fr.tsv`) viennent du Wiktionnaire et ne sont gardées que si leur sens
+figuré l'emporte dans les romans relus.
+
+Un appui long sur un mot propose, dans sa fiche, de ne plus le traduire (« Je connais… ») ou, pour
+un mot que le curseur laisse sans traduction, de toujours le traduire ; le choix vaut pour toutes
+les formes du mot et se défait de la même façon.
+
 Le classement des mots est livré dans l'app (`app/src/main/assets/wordwise-en-fr.bin`) et se
 refabrique avec :
 
@@ -66,8 +75,9 @@ propre rang (le verbe de tower, « dominer », est bien plus rare que le nom). L
 pour un francophone (melancholy, curious) ne sont pas traduits ; les faux amis (library, agony,
 succeed) le sont. Le sens
 traduit est le plus courant d'après WordNet, et `tools/wordwise-fixes-fr.tsv` corrige à la main
-plus de 8 000 mots relus en contexte dans une trentaine de romans récents, recoupés avec deux
-dictionnaires indépendants (MUSE de Facebook, alignements des sous-titres OpenSubtitles d'OPUS). La
+plus de 10 000 mots : relus en contexte dans une trentaine de romans récents, recoupés avec deux
+dictionnaires indépendants (MUSE de Facebook, alignements des sous-titres OpenSubtitles d'OPUS),
+puis tous les mots de la table rencontrés dans ces romans et jamais relus. La
 méthode est décrite en tête du script. Les données de l'étude sur les non-natifs sont sous
 licence CC BY-NC-SA 4.0 : la table n'est utilisable qu'à des fins non commerciales.
 

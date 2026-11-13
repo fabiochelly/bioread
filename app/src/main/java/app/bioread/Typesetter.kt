@@ -517,39 +517,6 @@ class Typesetter(
         }
     }
 
-    /**
-     * Mot traduit (voir WordWise) sous le point (x, y) de la page [p] : le mot lui-même ou sa
-     * traduction, à [slop] pixels près. Null s'il n'y en a pas, ou si la page n'en porte pas.
-     */
-    fun glossAt(p: Page, x: Float, y: Float, slop: Float): WordHit? {
-        val gp = glossPaint ?: return null
-        val xx = x - mx
-        for (s in p.slices) {
-            val l = s.layout ?: continue
-            val m = s.block.ww ?: continue
-            if (m.level != Prefs.wwLevel || m.gloss.isEmpty()) continue
-            val dy = top + s.y - l.getLineTop(s.a)
-            for (line in s.a until s.b) {
-                val base = dy + l.getLineBaseline(line)
-                // Du haut des lettres au bas de la traduction.
-                if (y < base - textPx - slop || y > base + glossDrop + gp.descent() + slop) continue
-                val ls = l.getLineStart(line)
-                val le = l.getLineEnd(line)
-                for (k in m.gloss.indices) {
-                    val a = m.at[2 * k]
-                    val b = m.at[2 * k + 1]
-                    if (b <= ls || a >= le) continue
-                    val x0 = lineX(l, line, maxOf(a, ls))
-                    val x1 = lineX(l, line, minOf(b, le))
-                    val w = gp.measureText(m.gloss[k] ?: "")
-                    val c = (x0 + x1) / 2
-                    if (xx >= minOf(x0, c - w / 2) - slop && xx <= maxOf(x1, c + w / 2) + slop) return WordHit(s.block, a, b)
-                }
-            }
-        }
-        return null
-    }
-
     /** [glosses] : faux pour une page traduite (sa mise en page n'est pas celle du livre). */
     fun draw(c: Canvas, p: Page, epub: Epub?, glosses: Boolean = true) {
         c.drawColor(Theme.bg)
@@ -579,7 +546,7 @@ class Typesetter(
             l.draw(c)
             if (glossed) {
                 val b = s.block
-                val m = b.ww?.takeIf { it.level == level } ?: WordWise.marks(b.text, level).also { b.ww = it }
+                val m = b.ww?.takeIf { it.fresh(level) } ?: WordWise.marks(b.text, level).also { b.ww = it }
                 // Sous les jambages de la ligne, à la place de l'interligne ajouté.
                 WordWise.draw(c, l, s.a, s.b, m, gp!!, cw, glossDrop)
             }

@@ -1,0 +1,8 @@
+# Profil de démarrage : tout le code de l'app (et la bibliothèque Kotlin qu'il appelle) est compilé
+# d'avance à l'installation du profil, au lieu d'être interprété puis compilé à la volée pendant
+# l'ouverture du livre et les premières pages. Règles à motifs (voir developer.android.com,
+# « Baseline Profiles ») ; R8 les réécrit pour les noms raccourcis.
+HSPLapp/bioread/**;->**(**)**
+Lapp/bioread/**;
+HSPLkotlin/**;->**(**)**
+Lkotlin/**;
