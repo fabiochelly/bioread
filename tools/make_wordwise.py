@@ -628,7 +628,7 @@ def build(a):
     # ---- gloses et fiches par forme
     # Corrections faites à la main : forme, catégorie, traduction (ou « - » : jamais traduit). Une
     # correction notée sur une forme (assessed) vaut pour son lemme, donc pour toutes ses formes.
-    fixed, by_form = {}, {}
+    fixed, by_form, ranked = {}, {}, {}
     fx = os.path.join(os.path.dirname(os.path.abspath(__file__)), f"wordwise-fixes-{a.target}.tsv")
     if os.path.exists(fx):
         for line in open(fx, encoding="utf-8"):
@@ -637,6 +637,8 @@ def build(a):
                 continue
             f, p, g = norm(c[0].strip()), c[1], c[2].strip()
             by_form[(f, p)] = g
+            if len(c) > 3 and c[3].strip().isdigit():
+                ranked[f] = int(c[3])
             lems = [l for l, q in of.get(f, ()) if q == p] or [f]
             for l in lems:
                 fixed[(l, p)] = g
@@ -760,7 +762,10 @@ def build(a):
     # Les corrections l'emportent aussi sur les formes venues d'ailleurs (WordNet, mots rares).
     for (f, p), g in by_form.items():
         k = f.encode("utf-8")
-        r, reads = records.get(k, (lrank.get(f, 65000), []))
+        # Forme absente de la table : son propre rang d'après sa fréquence ; ou celui donné à la main.
+        fq = wf.get(f, 0.0)
+        r, reads = records.get(k, (lrank.get(f, rank(math.log10(fq * 1e9)) if fq > 0 else 65000), []))
+        r = ranked.get(f, r)
         # « - » : la forme n'est jamais traduite, quelle que soit sa catégorie.
         reads = [] if g == "-" else [x for x in reads if x[1] & 7 != POS[p]]
         if g != "-":

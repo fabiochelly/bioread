@@ -65,7 +65,8 @@ des locuteurs non natifs (Brysbaert, Keuleers & Mandera 2020) et l'âge d'acquis
 et al. 2012), par famille de mots (run, ran, running). Les mots transparents pour un francophone
 (melancholy, curious) ne sont pas traduits ; les faux amis (library, eventually) le sont. Le sens
 traduit est le plus courant d'après WordNet, et `tools/wordwise-fixes-fr.tsv` corrige à la main
-plus de 5 000 mots relus en contexte dans une vingtaine de romans récents. La
+plus de 7 500 mots relus en contexte dans une trentaine de romans récents, recoupés avec deux
+dictionnaires indépendants (MUSE de Facebook, alignements des sous-titres OpenSubtitles d'OPUS). La
 méthode est décrite en tête du script. Les données de l'étude sur les non-natifs sont sous
 licence CC BY-NC-SA 4.0 : la table n'est utilisable qu'à des fins non commerciales.
 
