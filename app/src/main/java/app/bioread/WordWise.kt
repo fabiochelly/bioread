@@ -701,11 +701,32 @@ object WordWise {
                     val x = ((x0 + x1) / 2 - w / 2).coerceAtMost(next - w).coerceAtLeast(lo)
                     c.drawText(t, x, y, p)
                     right = x + w
+                    // Expression (gave up) : un filet de part et d'autre de la traduction, sur toute
+                    // la largeur de ses mots, terminé par un petit crochet, montre le groupe traduit.
+                    if (m.keys[q]?.indexOf(' ') ?: -1 > 0) span(c, p, x0, x1, x, x + w, y)
                 }
                 q++
             }
         }
         p.textSkewX = 0f
+    }
+
+    /** Filets d'une expression : de [x0] à la traduction [g0, g1), puis jusqu'à [x1], à mi-hauteur des minuscules. */
+    private fun span(c: Canvas, p: TextPaint, x0: Float, x1: Float, g0: Float, g1: Float, y: Float) {
+        val pad = p.textSize * 0.3f
+        val mid = y - p.textSize * 0.28f
+        val tick = p.textSize * 0.3f
+        val sw = p.strokeWidth
+        p.strokeWidth = maxOf(1f, p.textSize * 0.07f)
+        if (g0 - pad - x0 > pad) {
+            c.drawLine(x0, mid, g0 - pad, mid, p)
+            c.drawLine(x0, mid, x0, mid - tick, p)
+        }
+        if (x1 - g1 - pad > pad) {
+            c.drawLine(g1 + pad, mid, x1, mid, p)
+            c.drawLine(x1, mid, x1, mid - tick, p)
+        }
+        p.strokeWidth = sw
     }
 
     /** Peinture des traductions : la police de l'interface, à un peu plus de la moitié du corps. */

@@ -14,8 +14,8 @@ android {
         targetSdk = 37
         versionCode = 1
         versionName = "0.1"
-        // ML Kit embarque du code natif : on ne garde que les architectures utiles.
-        // 64 bits seulement : le moteur de traduction hors-ligne pèse 12 Mo de plus en 32 bits.
+        // Code natif (moteur de traduction hors-ligne, app/src/main/jniLibs, voir
+        // tools/build_bergamot.sh) : 64 bits seulement.
         ndk { abiFilters += "arm64-v8a" }
     }
 
@@ -50,7 +50,7 @@ android {
     // propres, partagées, que le système peut reprendre) au lieu d'être décompressées : les
     // polices (environ 5,5 Mo de mémoire native épargnés) et la table des mots difficiles.
     androidResources {
-        noCompress += listOf("ttf", "bin")
+        noCompress += listOf("ttf", "bin", "spm")
     }
 
     compileOptions {
@@ -60,7 +60,6 @@ android {
 }
 
 dependencies {
-    implementation("com.google.mlkit:translate:17.0.3")
     // Liseuses Onyx : leurs commandes d'écran (rafraîchissement complet) sont masquées aux apps.
     implementation("org.lsposed.hiddenapibypass:hiddenapibypass:6.1")
     // Profil de démarrage (src/main/baseline-prof.txt) : installé au premier lancement, il fait

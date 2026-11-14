@@ -29,6 +29,8 @@ import kotlin.math.abs
 class ReaderView(private val host: MainActivity) : View(host) {
     private val fonts = host.fonts
     private val exec = Executors.newSingleThreadExecutor()
+    // Ajustement des pages traduites à la taille de la page (voir Typesetter.fit).
+    private val fitter = Executors.newSingleThreadExecutor()
     // Seul fil qui dessine les pages : une mise en page n'est jamais tracée par deux fils à la fois.
     private val painter = Executors.newSingleThreadExecutor { r ->
         Thread({
@@ -1079,24 +1081,38 @@ class ReaderView(private val host: MainActivity) : View(host) {
         val g = gen
         val tg = trGen
         Translator.translate(idx.map { segs[it].text }, contextBefore(lc, page), src, tgt) { res ->
-            if (g == gen && tg == trGen) {
-                if (res == null) page.trState = 3 else {
-                    for (k in idx.indices) {
-                        val o = segs[idx[k]]
-                        segs[idx[k]] = Block(o.kind, res[k], o.level, o.align, o.quote, o.gap, o.indent)
-                    }
-                    page.tr = t.fit(segs)
-                    page.trState = 2
+            if (g != gen || tg != trGen) return@translate
+            if (res == null) {
+                page.trState = 3
+                translated(page)
+                return@translate
+            }
+            for (k in idx.indices) {
+                val o = segs[idx[k]]
+                segs[idx[k]] = Block(o.kind, res[k], o.level, o.align, o.quote, o.gap, o.indent)
+            }
+            // L'ajustement à la page (plusieurs compositions d'essai) se fait hors du thread principal.
+            fitter.execute {
+                val tr = try { t.fit(segs) } catch (x: Exception) { null }
+                post {
+                    if (g != gen || tg != trGen) return@post
+                    if (tr == null) page.trState = 3 else { page.tr = tr; page.trState = 2 }
+                    translated(page)
                 }
-                // Les emplacements qui montrent ou attendent cette page sont retracés ; l'ancienne
-                // image reste affichée jusqu'à l'arrivée de la nouvelle.
-                for (s in bmp.indices) {
-                    if (held[s] === page) request(s, heldLc[s]!!, heldP[s], true)
-                    else jobs[s]?.let { if (it.page === page) request(s, it.lc, it.p, true) }
-                }
-                if (held[1] === page) { updateFooter(); if (!animating) present() }
             }
         }
+    }
+
+    /**
+     * La traduction de [page] est arrivée (ou a échoué) : les emplacements qui la montrent ou
+     * l'attendent sont retracés ; l'ancienne image reste affichée jusqu'à l'arrivée de la nouvelle.
+     */
+    private fun translated(page: Page) {
+        for (s in bmp.indices) {
+            if (held[s] === page) request(s, heldLc[s]!!, heldP[s], true)
+            else jobs[s]?.let { if (it.page === page) request(s, it.lc, it.p, true) }
+        }
+        if (held[1] === page) { updateFooter(); if (!animating) present() }
     }
 
     // ---------------------------------------------------------------- affichage

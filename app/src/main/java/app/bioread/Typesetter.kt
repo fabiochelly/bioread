@@ -233,15 +233,17 @@ class Typesetter(
         }
     }
 
-    private fun lineHeight(p: TextPaint, tr: Boolean): Int {
+    /** [tight] : interligne resserré d'une page traduite (1 : celui du réglage, voir [fit]). */
+    private fun lineHeight(p: TextPaint, tr: Boolean, tight: Float = 1f): Int {
         val fm = p.fontMetricsInt
-        return Math.round((fm.descent - fm.ascent) * mult + if (tr) 0f else glossAdd)
+        return Math.round((fm.descent - fm.ascent) * mult * tight + if (tr) 0f else glossAdd)
     }
 
-    private fun layout(b: Block, scale: Float, tr: Boolean): StaticLayout {
+    private fun layout(b: Block, scale: Float, tr: Boolean, tight: Float = 1f): StaticLayout {
         val head = b.kind == Block.HEAD
         val p = if (head) headPaint(b.level, scale, tr) else bodyPaint(scale, tr)
         val add = if (tr) 0f else glossAdd
+        val mult = mult * tight
         b.css?.let { return styled.layout(b, it, p, cw, mult, add) }
         val t = b.text
         val sb = StaticLayout.Builder.obtain(t, 0, t.length, p, cw).setIncludePad(false)
@@ -334,16 +336,44 @@ class Typesetter(
         return out
     }
 
-    /** Met [blocks] sur une seule page en réduisant le corps si nécessaire (page traduite). */
+    /**
+     * Met [blocks] (une page traduite, souvent plus longue que l'originale) sur une seule page,
+     * au plus près de la mise en page du livre : d'abord en resserrant l'interligne, jusqu'à
+     * 115 % du corps au plus serré, puis en réduisant le corps, du strict nécessaire (au centième
+     * près). Chaque essai ne compose que deux pages au plus. Hors du thread principal.
+     */
     fun fit(blocks: List<Block>): Page {
-        var scale = 1f
-        var pages = paginate(blocks, scale, null, true, false)
-        var tries = 0
-        while (pages.size > 1 && tries++ < 9) {
-            scale *= 0.94f
-            pages = paginate(blocks, scale, null, true, false)
+        fun one(scale: Float, tight: Float) = paginate(blocks, scale, null, true, false, maxPages = 2, tight = tight)
+        var pages = one(1f, 1f)
+        if (pages.size == 1) return pages[0]
+        // Interligne le plus serré admis : 115 % du corps, et jamais moins de 85 % du réglage.
+        val tmin = maxOf(0.85f, 1.15f / (Prefs.lineSpacing / 100f)).coerceAtMost(1f)
+        if (tmin < 1f) {
+            pages = one(1f, tmin)
+            if (pages.size == 1) {
+                // L'interligne suffit : le moins serré qui tient (dichotomie, à 1 % près).
+                var best = pages[0]
+                var lo = tmin
+                var hi = 1f
+                while (hi - lo > 0.01f) {
+                    val m = (lo + hi) / 2
+                    val r = one(1f, m)
+                    if (r.size == 1) { best = r[0]; lo = m } else hi = m
+                }
+                return best
+            }
         }
-        return pages[0]
+        // Puis le corps, à l'interligne le plus serré : le plus grand qui tient, au centième près
+        // (des corps arrondis : leurs peintures sont gardées en mémoire).
+        var best: Page? = null
+        var lo = 50
+        var hi = 100    // en centièmes ; 100 ne tient pas
+        while (hi - lo > 1) {
+            val m = (lo + hi) / 2
+            val r = one(m / 100f, tmin)
+            if (r.size == 1) { best = r[0]; lo = m } else hi = m
+        }
+        return best ?: one(lo / 100f, tmin)[0]
     }
 
     /**
@@ -353,12 +383,12 @@ class Typesetter(
     private fun paginate(
         blocks: List<Block>, scale: Float, epub: Epub?, tr: Boolean, parallel: Boolean,
         done: Array<StaticLayout?>? = null, fromBlock: Int = 0, fromLine: Int = 0, maxPages: Int = Int.MAX_VALUE,
-        stop: (() -> Boolean)? = null,
+        stop: (() -> Boolean)? = null, tight: Float = 1f,
     ): ArrayList<Page> {
         val ready = if (parallel && WORKERS > 0 && blocks.size >= 24) layoutAll(blocks, scale, tr, done, stop) else done
         val pages = ArrayList<Page>()
         var cur = Page()
-        val bodyLH = lineHeight(bodyPaint(scale, tr), tr)
+        val bodyLH = lineHeight(bodyPaint(scale, tr), tr, tight)
         var y = 0
         var after = 0   // marge basse du bloc précédent
 
@@ -388,7 +418,7 @@ class Typesetter(
                 after = bodyLH / 2
                 continue
             }
-            val l = ready?.get(index) ?: layout(b, scale, tr).also { if (ready != null) ready[index] = it }
+            val l = ready?.get(index) ?: layout(b, scale, tr, tight).also { if (ready != null) ready[index] = it }
             val head = b.kind == Block.HEAD
             var m = when {
                 y == 0 -> 0

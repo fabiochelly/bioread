@@ -1,6 +1,5 @@
 package app.bioread
 
-import android.app.DownloadManager
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
@@ -9,12 +8,6 @@ import android.os.Looper
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.util.LruCache
-import com.google.android.gms.tasks.Task
-import com.google.mlkit.common.MlKit
-import com.google.mlkit.common.model.DownloadConditions
-import com.google.mlkit.nl.translate.TranslateLanguage
-import com.google.mlkit.nl.translate.Translation
-import com.google.mlkit.nl.translate.TranslatorOptions
 import org.json.JSONArray
 import org.json.JSONObject
 import java.net.HttpURLConnection
@@ -25,8 +18,8 @@ import java.util.concurrent.Executors
 
 /**
  * Traduction de paragraphes avec cache. DeepL si une clé est renseignée et que le réseau
- * répond (italique et gras conservés, contexte du passage transmis), sinon ML Kit sur
- * l'appareil (hors-ligne une fois le modèle téléchargé).
+ * répond (italique et gras conservés, contexte du passage transmis), sinon le moteur de Firefox
+ * Translations sur l'appareil (voir [Offline] ; anglais → français livré dans l'app).
  */
 object Translator {
     val LANGS = arrayOf("fr", "en", "es", "de", "it", "pt", "nl")
@@ -38,12 +31,9 @@ object Translator {
     private val cache = LruCache<String, CharSequence>(800)
     private val io = Executors.newSingleThreadExecutor()
     private val main = Handler(Looper.getMainLooper())
-    private val clients = HashMap<String, com.google.mlkit.nl.translate.Translator>()
-    private val models = HashMap<String, Task<Void>>()
     private var deeplRetryAt = 0L
     private lateinit var app: Context
     private lateinit var fonts: Fonts
-    private var started = false
 
     /**
      * Boîte de message au centre de l'écran : (titre, détails). Un titre nul la referme.
@@ -56,16 +46,11 @@ object Translator {
         fonts = f
     }
 
-    private fun closeClients() {
-        for (c in clients.values) try { c.close() } catch (e: Exception) {}
-        clients.clear()
-        models.clear()
-    }
-
     /** Délestage : traduction coupée, le moteur hors-ligne et les traductions gardées sont rendus. */
     fun trim() {
         if (Prefs.translate) return
-        closeClients()
+        // Sur le fil de traduction : une traduction en cours se termine avant que son modèle soit rendu.
+        io.execute { Offline.trim() }
         cache.evictAll()
     }
 
@@ -89,16 +74,22 @@ object Translator {
         }
         val todo = missing.map { texts[it] }
         val done = { res: List<CharSequence>? ->
-            if (res == null) cb(null) else {
-                for (k in missing.indices) {
-                    val r = if (tgt == "fr") frenchTypography(res[k]) else res[k]
-                    out[missing[k]] = r
-                    cache.put("$tgt|$mode|${todo[k]}", r)
+            // Une traduction ratée laisse la page dans sa langue ; elle ne fait jamais tomber l'app.
+            val all = try {
+                if (res == null) null else {
+                    for (k in missing.indices) {
+                        val r = if (tgt == "fr") frenchTypography(res[k]) else res[k]
+                        out[missing[k]] = r
+                        cache.put("$tgt|$mode|${todo[k]}", r)
+                    }
+                    out.map { it!! }
                 }
-                cb(out.map { it!! })
+            } catch (e: Exception) {
+                null
             }
+            cb(all)
         }
-        val offline = { mlkit(todo.map { it.toString() }, src, tgt, done) }
+        val offline = { offline(todo.map { it.toString() }, src, tgt, done) }
         val key = Prefs.deeplKey.trim()
         // Le lecteur choisit son moteur : DeepL n'est utilisé que s'il est sélectionné et qu'une clé existe.
         if (key.isEmpty() || Prefs.engine == 1 || System.currentTimeMillis() < deeplRetryAt) {
@@ -253,7 +244,8 @@ object Translator {
         var i = 0
         while (i < sb.length) {
             val ch = sb[i]
-            val prev = if (i > 0) sb[i - 1] else ' '
+            // Début du texte : pas de caractère avant (un segment peut commencer par « » » ou « ? »).
+            val prev = if (i > 0) sb[i - 1] else '\u0000'
             val next = if (i + 1 < sb.length) sb[i + 1] else ' '
             when {
                 ch == '"' -> {
@@ -272,7 +264,7 @@ object Translator {
                 ch == '«' -> if (next == ' ') sb.replace(i + 1, i + 2, NBSP.toString())
                 else if (next != NBSP && next != NNBSP) sb.insert(i + 1, NBSP.toString())
                 ch == '»' -> if (prev == ' ') sb.replace(i - 1, i, NBSP.toString())
-                else if (prev != NBSP && prev != NNBSP) { sb.insert(i, NBSP.toString()); i++ }
+                else if (i > 0 && prev != NBSP && prev != NNBSP) { sb.insert(i, NBSP.toString()); i++ }
                 ch == '\'' && prev.isLetter() && next.isLetter() -> sb.replace(i, i + 1, "’")
                 ch == ';' || ch == '!' || ch == '?' || (ch == ':' && (next == ' ' || next == NBSP)) -> {
                     if (prev == ' ') sb.replace(i - 1, i, NNBSP.toString())
@@ -291,77 +283,30 @@ object Translator {
         return sb
     }
 
-    // ---------------------------------------------------------------- ML Kit (hors-ligne)
+    // ---------------------------------------------------------------- hors-ligne (Firefox Translations)
 
-    private fun mlkit(texts: List<String>, src: String, tgt: String, cb: (List<CharSequence>?) -> Unit) {
-        val s = TranslateLanguage.fromLanguageTag(src)
-        val t = TranslateLanguage.fromLanguageTag(tgt)
-        if (s == null || t == null) {
-            box?.invoke("Traduction impossible", "Langue non prise en charge hors-ligne : $src → $tgt")
-            cb(null)
-            return
-        }
-        if (!started) {
-            // ML Kit n'est plus initialisé au lancement de l'app, seulement à la première traduction.
-            started = true
-            try { MlKit.initialize(app) } catch (e: Exception) {}
-        }
-        val key = "$s>$t"
-        // Un seul moteur chargé à la fois : chaque paire de langues garde son modèle en mémoire native.
-        if (!clients.containsKey(key)) closeClients()
-        val client = clients.getOrPut(key) {
-            Translation.getClient(TranslatorOptions.Builder().setSourceLanguage(s).setTargetLanguage(t).build())
-        }
-        // Une seule préparation de modèle par paire de langues, partagée par toutes les pages.
-        val model = models.getOrPut(key) {
-            val since = System.currentTimeMillis()
-            val task = client.downloadModelIfNeeded(DownloadConditions.Builder().build())
-            // Le premier appel télécharge le modèle (~30 Mo par langue) : si cela dure, une boîte
-            // affiche l'avancement réel, relu chaque seconde auprès du système.
+    /**
+     * Traduction sur l'appareil (voir [Offline]), sur le fil de traduction ; [cb] sur le thread
+     * principal. Un modèle à télécharger (autre sens que anglais → français) montre son avancement.
+     */
+    private fun offline(texts: List<String>, src: String, tgt: String, cb: (List<CharSequence>?) -> Unit) {
+        io.execute {
             var shown = false
-            val poll = object : Runnable {
-                override fun run() {
-                    if (task.isComplete) return
-                    val waited = (System.currentTimeMillis() - since) / 1000
-                    val title = if (waited < 120) "Téléchargement du modèle de traduction" else "Téléchargement du modèle bloqué"
+            val res: List<CharSequence>? = try {
+                Offline.translate(app, src, tgt, texts) { msg ->
                     shown = true
-                    box?.invoke(title, diagnostics("$src → $tgt", waited))
-                    main.postDelayed(this, 1000)
+                    main.post { box?.invoke("Téléchargement du modèle de traduction", msg) }
                 }
+            } catch (e: Throwable) {
+                val why = "${e.javaClass.simpleName} : ${e.message}" + if (shown) "\n\n${network()}" else ""
+                main.post { box?.invoke("Traduction hors-ligne indisponible", why) }
+                null
             }
-            main.postDelayed(poll, 1500)
-            task.addOnCompleteListener { done ->
-                main.removeCallbacks(poll)
-                if (done.isSuccessful) {
-                    if (shown) box?.invoke(null, "")   // ne referme que la boîte de téléchargement
-                } else {
-                    models.remove(key)   // nouvel essai possible en réactivant la traduction
-                    val e = done.exception
-                    box?.invoke(
-                        "Traduction hors-ligne indisponible",
-                        "${e?.javaClass?.name} : ${e?.message}\n\n" +
-                            diagnostics("$src → $tgt", (System.currentTimeMillis() - since) / 1000),
-                    )
-                }
+            main.post {
+                if (shown && res != null) box?.invoke(null, "")
+                cb(res)
             }
-            task
         }
-        model.addOnSuccessListener {
-            val res = ArrayList<CharSequence>(texts.size)
-            fun step() {
-                if (res.size == texts.size) {
-                    cb(res)
-                    return
-                }
-                client.translate(texts[res.size])
-                    .addOnSuccessListener { res.add(it); step() }
-                    .addOnFailureListener { e ->
-                        box?.invoke("Erreur de traduction", "${e.javaClass.name} : ${e.message}")
-                        cb(null)
-                    }
-            }
-            step()
-        }.addOnFailureListener { cb(null) }
     }
 
     private fun network(): String = try {
@@ -381,57 +326,6 @@ object Translator {
         }
     } catch (e: Exception) {
         "Réseau : état illisible (${e.message})"
-    }
-
-    /** Tout ce que l'app peut observer d'un téléchargement de modèle, pour comprendre un blocage. */
-    private fun diagnostics(pair: String, waited: Long): String {
-        val sb = StringBuilder()
-        sb.append("Langues : $pair\nAttente : $waited s\n").append(network()).append('\n')
-        try {
-            val v = app.packageManager.getPackageInfo("com.google.android.gms", 0).versionName
-            sb.append("Services Google Play : présents ($v)\n")
-        } catch (e: Exception) {
-            sb.append("Services Google Play : absents ou désactivés\n")
-        }
-        sb.append("Espace libre : ${app.filesDir.usableSpace / (1024 * 1024)} Mo\n")
-        try {
-            val dm = app.getSystemService(DownloadManager::class.java)
-            var n = 0
-            dm.query(DownloadManager.Query()).use { c ->
-                while (c.moveToNext()) {
-                    n++
-                    val status = c.getInt(c.getColumnIndexOrThrow(DownloadManager.COLUMN_STATUS))
-                    val reason = c.getInt(c.getColumnIndexOrThrow(DownloadManager.COLUMN_REASON))
-                    val got = c.getLong(c.getColumnIndexOrThrow(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR))
-                    val total = c.getLong(c.getColumnIndexOrThrow(DownloadManager.COLUMN_TOTAL_SIZE_BYTES))
-                    val what = when (status) {
-                        DownloadManager.STATUS_PENDING -> "en file d'attente"
-                        DownloadManager.STATUS_RUNNING -> "en cours"
-                        DownloadManager.STATUS_PAUSED -> "en pause : " + when (reason) {
-                            DownloadManager.PAUSED_WAITING_FOR_NETWORK -> "attend le réseau"
-                            DownloadManager.PAUSED_QUEUED_FOR_WIFI -> "attend le Wi-Fi"
-                            DownloadManager.PAUSED_WAITING_TO_RETRY -> "nouvel essai en attente"
-                            else -> "raison $reason"
-                        }
-                        DownloadManager.STATUS_SUCCESSFUL -> "terminé"
-                        DownloadManager.STATUS_FAILED -> "échec : " + when (reason) {
-                            DownloadManager.ERROR_INSUFFICIENT_SPACE -> "espace insuffisant"
-                            DownloadManager.ERROR_FILE_ERROR -> "erreur d'écriture du fichier"
-                            DownloadManager.ERROR_DEVICE_NOT_FOUND -> "stockage introuvable"
-                            DownloadManager.ERROR_CANNOT_RESUME -> "reprise impossible"
-                            DownloadManager.ERROR_HTTP_DATA_ERROR -> "erreur de transfert"
-                            else -> "code $reason"
-                        }
-                        else -> "état $status"
-                    }
-                    sb.append("Téléchargement $n : $what, ${got / 1024} Ko sur ${if (total > 0) "${total / 1024} Ko" else "taille inconnue"}\n")
-                }
-            }
-            if (n == 0) sb.append("Téléchargements système : aucun enregistré (la demande n'a pas atteint le gestionnaire de téléchargements d'Android)\n")
-        } catch (e: Exception) {
-            sb.append("Gestionnaire de téléchargements : inaccessible (${e.javaClass.simpleName} : ${e.message})\n")
-        }
-        return sb.toString().trimEnd()
     }
 
     // ---------------------------------------------------------------- découpage

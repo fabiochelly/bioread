@@ -14,11 +14,6 @@
         android:icon="@drawable/ic_leaf"
         android:label="Bioread"
         android:theme="@style/App">
-        <!-- ML Kit est initialisé à la première traduction, pas à chaque lancement de l'app. -->
-        <provider
-            android:name="com.google.mlkit.common.internal.MlKitInitProvider"
-            android:authorities="${applicationId}.mlkitinitprovider"
-            tools:node="remove" />
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|uiMode|smallestScreenSize"
