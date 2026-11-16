@@ -49,7 +49,8 @@ object Theme {
         IconButton.LEADING -> ORANGE
         IconButton.MARGINS -> AMBER
         IconButton.WEIGHT -> GREEN
-        IconButton.SPACING -> BLUE
+        IconButton.PARAGRAPH -> TEAL
+        IconButton.INDENT -> BLUE
         IconButton.WIDTH -> VIOLET
         IconButton.GLOBE -> TEAL
         IconButton.KEY -> AMBER
@@ -63,6 +64,8 @@ object Theme {
         IconButton.PREV_CHAPTER -> ORANGE
         IconButton.CONTENTS -> GREEN
         IconButton.NEXT_CHAPTER -> BLUE
+        IconButton.MARKS -> AMBER
+        IconButton.SYNC -> TEAL
         // Recherche
         IconButton.SEARCH -> PINK
         IconButton.EYE -> BLUE
@@ -92,8 +95,8 @@ object Theme {
 
     /**
      * Texte courant, à appeler une fois la taille fixée : graisse (trait épaissi par pas très
-     * fins), espacement des lettres et largeur des lettres, tous réglables dans les Options.
-     * La graisse n'élargit pas les lignes ; l'espacement et la largeur, si.
+     * fins) et largeur des lettres, réglables dans les Options.
+     * La graisse n'élargit pas les lignes ; la largeur, si.
      */
     fun tune(p: TextPaint) {
         hint(p)
@@ -102,7 +105,6 @@ object Theme {
             p.strokeWidth = p.textSize * 0.002f * Prefs.weight
             p.strokeJoin = Paint.Join.ROUND
         }
-        p.letterSpacing = Prefs.spacing / 1000f
         p.textScaleX = Prefs.stretch / 100f
     }
 }

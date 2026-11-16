@@ -43,13 +43,15 @@ class MainActivity : Activity() {
     private var search: SearchView? = null
     private var mark: View? = null
     private var sheet: View? = null   // fenêtre de note ou feuille de mot, posée sur la page
+    private var catalog: OpdsView? = null   // catalogues en ligne, par-dessus l'accueil
     private var message: View? = null
     private var messageTitle: TextView? = null
     private var messageBody: TextView? = null
     private var dismissed = ""   // titre du message que l'utilisateur a fermé : on ne le rouvre pas
     private var toast: Toast? = null
     private var shownAccess = false
-    private var insetTop = 0
+    var insetTop = 0
+        private set
     var insetBottom = 0
         private set
     // Vignettes de l'accueil, bornées en octets (et non en nombre) : 12 Mo sur liseuse, 24 sur smartphone.
@@ -71,6 +73,8 @@ class MainActivity : Activity() {
         Perf.time("start.library") { Library.init(this) }
         Translator.init(this, fonts)
         WordWise.init(this)
+        Hyphen.init(this)
+        Highlights.init(this)
         importKey()
         Translator.box = { title, details -> if (title == null) hideMessage() else showMessage(title, details) }
         if (Build.VERSION.SDK_INT >= 30) window.setDecorFitsSystemWindows(false)
@@ -156,6 +160,7 @@ class MainActivity : Activity() {
         hideSheet()
         hideSearch()
         hideMark()
+        reader.syncPush()
         reader.visibility = View.GONE
         reader.trim(false)   // le livre reste chargé sous l'accueil, mais avec sa seule page courante
         immersive(false)
@@ -183,6 +188,7 @@ class MainActivity : Activity() {
      */
     private fun importKey() {
         Dict.install(this)   // dictionnaires déposés dans Download/ (bioread-dict-fr.bin…)
+        importSync()
         try {
             if (!Library.hasAccess(this)) return
             @Suppress("DEPRECATION")
@@ -200,8 +206,29 @@ class MainActivity : Activity() {
         }
     }
 
+    /** Compte de synchronisation déposé dans Download/bioread-sync.txt (voir [KoSync.importFile]). */
+    private fun importSync() {
+        try {
+            if (!Library.hasAccess(this)) return
+            @Suppress("DEPRECATION")
+            val f = java.io.File(android.os.Environment.getExternalStorageDirectory(), "Download/bioread-sync.txt")
+            if (f.exists()) KoSync.importFile(f) { error -> toast(error ?: "Synchronisation activée (${Prefs.syncUser})") }
+        } catch (e: Exception) {
+        }
+    }
+
+    /** Question à deux réponses, au centre de l'écran ; [yes] est appelé si la première est choisie. */
+    fun ask(title: String, details: String, accept: String, refuse: String, yes: () -> Unit) {
+        if (isFinishing || isDestroyed) return
+        AlertDialog.Builder(this).setTitle(title).setMessage(details)
+            .setPositiveButton(accept) { _, _ -> yes() }
+            .setNegativeButton(refuse, null).show()
+    }
+
     override fun onPause() {
-        // La position est écrite avec un léger différé pendant la lecture : on la fixe ici.
+        // La position est écrite avec un léger différé pendant la lecture : on la fixe ici,
+        // et elle part au serveur de synchronisation s'il y en a un.
+        reader.syncPush()
         reader.flushPosition()
         Diag.flush()
         super.onPause()
@@ -263,6 +290,21 @@ class MainActivity : Activity() {
 
     override fun onRequestPermissionsResult(code: Int, permissions: Array<out String>, results: IntArray) {
         if (code == 2 && library != null) { renderLibrary(); rescan() }
+    }
+
+    /** Catalogues en ligne (OPDS), ouverts depuis l'accueil. */
+    private fun showCatalog() {
+        if (catalog != null) return
+        hideMenu()
+        catalog = OpdsView(this).also { root.addView(it) }
+    }
+
+    fun hideCatalog() {
+        val c = catalog ?: return
+        root.removeView(c)
+        catalog = null
+        // Les livres téléchargés entre-temps apparaissent.
+        if (library != null) renderLibrary()
     }
 
     fun showOptions() {
@@ -418,6 +460,7 @@ class MainActivity : Activity() {
         when {
             message?.parent != null -> { dismissed = messageTitle?.text.toString(); hideMessage() }
             search?.parent != null -> if (search?.back() != true) hideSearch()
+            catalog != null -> if (catalog?.back() != true) hideCatalog()
             sheet != null -> hideSheet()
             menu != null -> hideMenu()
             nav != null -> hideNav()
@@ -579,13 +622,14 @@ class MainActivity : Activity() {
             gravity = Gravity.CENTER_VERTICAL
             setPadding(dp(20), dp(12), dp(8), dp(8))
             addView(text("Bibliothèque", 24f, true), LinearLayout.LayoutParams(0, -2, 1f))
-            // Tri, ajouter un EPUB, options, quitter.
+            // Tri, catalogues en ligne, ajouter un EPUB, options, quitter.
             addView(IconButton(this@MainActivity, IconButton.SORT) {
                 Prefs.sort = (Prefs.sort + 1) % 3
                 Prefs.save()
                 toast("Tri : " + arrayOf("dernière lecture", "titre", "auteur")[Prefs.sort])
                 renderLibrary()
             }.apply { thin = true })
+            addView(IconButton(this@MainActivity, IconButton.CATALOG) { showCatalog() }.apply { thin = true; contentDescription = "Catalogues en ligne" })
             addView(IconButton(this@MainActivity, IconButton.PLUS) { pick() }.apply { thin = true })
             addView(IconButton(this@MainActivity, IconButton.OPTIONS) { showOptions() }.apply { thin = true })
             addView(IconButton(this@MainActivity, IconButton.EXIT) { finishAndRemoveTask() }.apply { thin = true })

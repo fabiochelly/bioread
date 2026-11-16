@@ -28,14 +28,19 @@ object Prefs {
      */
     var pace = 82
 
-    /** Durée du balayage sur liseuse (ms) et nombre de bandes : environ une bande par image d'écran. */
+    /**
+     * Durée du balayage sur liseuse (ms) et nombre de bandes : environ une bande par image d'écran.
+     * Essayé : une bande toutes les deux images (4 bandes de 50 ms), que l'encre suit mieux en
+     * théorie ; à l'œil, le balayage paraissait haché et plus lent. Abandonné.
+     */
     val wipeMs get() = Math.round((400f - 350f * pace.coerceIn(0, 99) / 99f) / 10f) * 10f   // par pas de 10 ms
     val wipeSteps get() = Math.round(wipeMs / 27f).coerceIn(3, 10)
 
     /** Durée du glissement sur smartphone (ms). */
     val slideMs get() = Math.round((300f - 200f * pace.coerceIn(0, 99) / 99f) / 10f) * 10f
     var weight = 0          // graisse ajoutée au texte, par pas de 0,2 % du corps (0 = police d'origine)
-    var spacing = 0         // espacement des lettres, en millièmes de cadratin
+    var paraGap = 0         // blanc ajouté entre deux paragraphes, en dixièmes de ligne
+    var indent = 13         // alinéa (retrait de première ligne), en dixièmes de cadratin ; 0 = aucun
     var stretch = 100       // largeur des lettres, en %
     var epdWipe = -1        // essai Onyx : mode d'écran pendant le balayage (-1 = celui du système)
     var epdRead = -1        // essai Onyx : mode d'écran pendant la lecture (-1 = celui du système)
@@ -52,6 +57,13 @@ object Prefs {
     var faithful = false    // « Fidèle au livre » : la mise en forme voulue par l'éditeur (CSS) est respectée
     var wordwise = false    // traduction sous les mots difficiles (livres anglais, voir WordWise)
     var wwLevel = 8000      // vocabulaire du lecteur : les mots de rang supérieur sont traduits
+    // Synchronisation de la position (voir KoSync) : serveur, identifiant, empreinte du mot de passe, cet appareil.
+    var syncServer = ""
+    var syncBioread = false // le serveur est une page Bioread (index.php), pas un serveur KOReader
+    var syncUser = ""
+    var syncKey = ""
+    var syncDevice = ""
+    var catalogs = ""       // catalogues OPDS enregistrés, en JSON (voir Opds)
 
     fun init(c: Context) {
         app = c.applicationContext
@@ -65,7 +77,8 @@ object Prefs {
         pace = sp.getInt("pace", if (sp.contains("animSpeed")) intArrayOf(100, 45, 82, 90, 99)[sp.getInt("animSpeed", 2).coerceIn(0, 4)] else pace)
         // Par défaut, un léger renfort sur liseuse (l'anticrénelage y amaigrit les lettres).
         weight = sp.getInt("weight", if (Theme.eink) 7 else 0)
-        spacing = sp.getInt("spacing", spacing)
+        paraGap = sp.getInt("paraGap", paraGap)
+        indent = sp.getInt("indent", indent)
         stretch = sp.getInt("stretch", stretch)
         sharp = 0   // le rendu « net » (hinting) a été retiré : toujours lissé
         epdWipe = sp.getInt("epdWipe", epdWipe)
@@ -81,6 +94,12 @@ object Prefs {
         font = sp.getString("font", font)!!
         wordwise = sp.getBoolean("wordwise", wordwise)
         wwLevel = sp.getInt("wwLevel", wwLevel)
+        syncServer = sp.getString("syncServer", syncServer)!!
+        syncBioread = sp.getBoolean("syncBioread", syncBioread)
+        syncUser = sp.getString("syncUser", syncUser)!!
+        syncKey = sp.getString("syncKey", syncKey)!!
+        syncDevice = sp.getString("syncDevice", syncDevice)!!
+        catalogs = sp.getString("catalogs", catalogs)!!
     }
 
     /** Une fois : sort du fichier des réglages ce que les versions précédentes y rangeaient par livre. */
@@ -111,7 +130,8 @@ object Prefs {
             .putInt("margin", margin)
             .putInt("pace", pace)
             .putInt("weight", weight)
-            .putInt("spacing", spacing)
+            .putInt("paraGap", paraGap)
+            .putInt("indent", indent)
             .putInt("stretch", stretch)
             .putInt("sharp", sharp)
             .putInt("epdWipe", epdWipe)
@@ -127,6 +147,12 @@ object Prefs {
             .putString("font", font)
             .putBoolean("wordwise", wordwise)
             .putInt("wwLevel", wwLevel)
+            .putString("syncServer", syncServer)
+            .putBoolean("syncBioread", syncBioread)
+            .putString("syncUser", syncUser)
+            .putString("syncKey", syncKey)
+            .putString("syncDevice", syncDevice)
+            .putString("catalogs", catalogs)
             .apply()
     }
 }

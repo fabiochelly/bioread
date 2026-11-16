@@ -10,7 +10,7 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Process
 import android.os.SystemClock
-import android.text.StaticLayout
+import android.text.Layout
 import android.view.Choreographer
 import android.view.MotionEvent
 import android.view.View
@@ -94,6 +94,11 @@ class ReaderView(private val host: MainActivity) : View(host) {
     private var quickShown: CountDownLatch? = null
     private var openT0 = 0L
     private var benched = false
+    // Synchronisation (voir KoSync) : position à demander au serveur une fois le livre affiché,
+    // date de la dernière lecture avant cette ouverture, dernière position envoyée.
+    private var syncDue = false
+    private var readBefore = 0L
+    private var pushed = ""
 
     /** Diagnostic : mesure une fois, plus tard et hors du passage, ce que l'appareil sait faire. */
     private fun bench(t: Typesetter, lc: LaidChapter, e: Epub) {
@@ -188,8 +193,10 @@ class ReaderView(private val host: MainActivity) : View(host) {
     /** Géométrie et réglages dont dépend la composition. */
     private fun layoutKey(w: Int, h: Int, top: Int) =
         "$w,$h,$top,${Prefs.fontSize},${Prefs.lineSpacing},${Prefs.margin}," +
-            "${Prefs.weight},${Prefs.spacing},${Prefs.stretch},${Prefs.sharp},${fonts.family.id}" + (if (Prefs.faithful) ",css" else "") +
-            if (Prefs.wordwise) ",ww" else ""
+            "${Prefs.weight},${Prefs.paraGap},${Prefs.indent},${Prefs.stretch},${Prefs.sharp},${fonts.family.id}" + (if (Prefs.faithful) ",css" else "") +
+            (if (Prefs.wordwise) ",ww" else "") +
+            // Le compositeur de paragraphes coupe les lignes autrement : pages comptées à refaire.
+            if (KpLayout.enabled) ",kp1" else ""
 
     private fun setTypesetter(w: Int, h: Int, top: Int, lang: String) {
         ts = Typesetter(fonts, w, h, top, density, lang)
@@ -200,6 +207,9 @@ class ReaderView(private val host: MainActivity) : View(host) {
         close()
         WordWise.forgetNames()
         book = b
+        Highlights.open(b)
+        syncDue = true
+        readBefore = b.lastRead
         val g = gen
         val file = Library.file(b)
         // Au lancement, la vue n'a pas encore de taille : celle de la dernière séance permet de
@@ -256,12 +266,14 @@ class ReaderView(private val host: MainActivity) : View(host) {
     }
 
     fun close() {
+        syncPush()
         flushPosition()
         gen++
         val old = epub
         if (old != null) exec.execute { try { old.close() } catch (x: Exception) {} }
         epub = null
         book = null
+        Highlights.close()
         pageTouch.jumped()
         ts = null
         tsKey = ""
@@ -557,6 +569,9 @@ class ReaderView(private val host: MainActivity) : View(host) {
         post(prepareR)
     }
 
+    /** Un surlignage a été ajouté, modifié ou retiré : les pages sont retracées, la mise en page reste. */
+    fun marksChanged() = glossChanged()
+
     /** Le livre ouvert reçoit-il les traductions sous les mots difficiles ? */
     fun glossable(): Boolean = book?.let { WordWise.applies(it.lang) } ?: false
 
@@ -597,6 +612,11 @@ class ReaderView(private val host: MainActivity) : View(host) {
             present()
         }
         savePosition()
+        if (syncDue) {
+            syncDue = false
+            pushed = syncKey(lc)
+            syncPull()
+        }
         val d = pendingTurn
         pendingTurn = 0
         if (d != 0) turn(d) else post(prepareR)
@@ -648,13 +668,13 @@ class ReaderView(private val host: MainActivity) : View(host) {
             }
             // Noms propres du chapitre (Eve) : jamais traduits, même quand ils ouvrent une phrase.
             if (book?.let { WordWise.applies(it.lang) } == true) WordWise.learnNames(ch.blocks)
-            var done: Array<StaticLayout?>? = null
+            var done: Array<Layout?>? = null
             if (quick >= 0) {
                 done = arrayOfNulls(ch.blocks.size)
                 val page = Perf.time("page.quick $i") { t.quickPage(ch, quick, e, done) }
                 if (page != null) {
                     val b = Bitmap.createBitmap(t.w, t.h, pageConfig)
-                    Perf.time("page.render (d'avance)") { t.draw(Canvas(b), page, e) }
+                    Perf.time("page.render (d'avance)") { t.draw(Canvas(b), page, e, true, i) }
                     val shown = CountDownLatch(1)
                     post {
                         quickShown = shown
@@ -678,7 +698,10 @@ class ReaderView(private val host: MainActivity) : View(host) {
             if (g == gen) {
                 loading.remove(i)
                 chapters[i] = lc
-                if (lc.chapter.blocks.isNotEmpty()) parsed[i] = lc.chapter
+                if (lc.chapter.blocks.isNotEmpty()) {
+                    parsed[i] = lc.chapter
+                    Highlights.anchor(i, lc.chapter)
+                }
                 if (i < counts.size) counts[i] = lc.pages.size
                 if (Perf.recording && !benched && lc.chapter.blocks.size >= 8) bench(t, lc, e)
                 if (i == ci && pendingPos != null) applyPending(lc)
@@ -781,7 +804,7 @@ class ReaderView(private val host: MainActivity) : View(host) {
         if (!ready || pendingPos != null) return
         val t0 = if (Perf.on) System.nanoTime() else 0L
         // Tap pendant un balayage : on le termine d'un coup avant d'enchaîner.
-        if (animating && eink) wipe.finish()
+        if (animating && eink) wipe.finish("nouveau tour de page")
         animating = false
         val loc = locate(d)
         if (loc == null) {
@@ -826,11 +849,13 @@ class ReaderView(private val host: MainActivity) : View(host) {
                 choreographer.removeFrameCallback(slideR)
                 choreographer.postFrameCallback(slideR)
             }
-            // La page d'après se trace pendant l'animation (glissement ou balayage), sans en
-            // attendre la fin, deux images plus tard : le bitmap libéré n'est alors plus
-            // référencé par l'affichage. Son envoi au processeur graphique attend, lui, la fin
-            // de l'animation (voir [landed]).
-            frames(2) { prerender() }
+            // Smartphone : la page d'après se trace pendant le glissement, sans en attendre la
+            // fin, deux images plus tard : le bitmap libéré n'est alors plus référencé par
+            // l'affichage. Son envoi au processeur graphique attend, lui, la fin de l'animation
+            // (voir [landed]). Liseuse : le tracé attend la fin du balayage ([prepare]) ; mené
+            // en même temps, il retardait des bandes, que l'écran fusionnait alors en un seul
+            // rafraîchissement : la page semblait tourner d'un coup.
+            if (!eink) frames(2) { prerender() }
         } else {
             present()
             // Même délai : la page d'après reprend l'image libérée au lieu d'en créer une.
@@ -862,7 +887,7 @@ class ReaderView(private val host: MainActivity) : View(host) {
                 try {
                     Perf.time("page.render") {
                         canvas.setBitmap(dst)
-                        t.draw(canvas, shown, e, shown === page)
+                        t.draw(canvas, shown, e, shown === page, if (shown === page) lc.index else -1)
                         canvas.setBitmap(null)
                     }
                 } catch (x: Throwable) {
@@ -953,6 +978,16 @@ class ReaderView(private val host: MainActivity) : View(host) {
         return j
     }
 
+    /** Tracés arrivés pendant un balayage, posés à sa fin (voir [landed]). */
+    private val late = ArrayList<Job>(2)
+
+    private fun landLate() {
+        if (late.isEmpty()) return
+        val l = ArrayList(late)
+        late.clear()
+        for (j in l) landed(j)
+    }
+
     /** Un tracé est terminé (thread principal). */
     private fun landed(j: Job) {
         if (j.taken) return
@@ -962,6 +997,13 @@ class ReaderView(private val host: MainActivity) : View(host) {
             j.taken = true
             if (s >= 0) jobs[s] = null
             j.b?.let { release(it) }
+            return
+        }
+        // Page courante ou quittée retracée pendant un balayage (traduction arrivée) : la nouvelle
+        // image attend sa fin. Posée tout de suite, elle relançait la transition de l'encre sur
+        // des bandes en cours de transition, ou coupait le balayage (page quittée).
+        if (eink && animating && (s == 1 || s == 1 - animDir)) {
+            if (j !in late) late.add(j)
             return
         }
         install(s, j)
@@ -985,9 +1027,9 @@ class ReaderView(private val host: MainActivity) : View(host) {
     private fun install(s: Int, j: Job) {
         j.taken = true
         jobs[s] = null
-        // L'image remplacée peut encore être sous un balayage en cours (pas celle d'après :
-        // elle n'est jamais affichée).
-        if (eink && animating && s != AHEAD && bmp[s] != null) wipe.finish()
+        // Pendant un balayage, les bandes pas encore passées montrent la page quittée : son image
+        // ne peut pas être remplacée sans finir le balayage. La page courante, si (voir [landed]).
+        if (eink && animating && s == 1 - animDir && bmp[s] != null) wipe.finish("page quittée retracée")
         retire(bmp[s])
         bmp[s] = j.b
         held[s] = j.page
@@ -1052,6 +1094,89 @@ class ReaderView(private val host: MainActivity) : View(host) {
         // Avec les réglages de composition : à la réouverture, la page s'affiche sans attendre le
         // chapitre. Une seule écriture pour les deux.
         Library.savePosition(b, if (tsKey.isNotEmpty()) "$tsKey|${b.spine}|${b.offset}|$pi" else null)
+    }
+
+    // ---------------------------------------------------------------- synchronisation
+
+    private fun syncKey(lc: LaidChapter) = "${book?.id},${lc.index},${lc.pages[pi.coerceIn(0, lc.pages.size - 1)].start}"
+
+    /** Part du livre (0 à 1) lue au caractère [offset] du chapitre [spine], long de [length] caractères. */
+    private fun fraction(e: Epub, spine: Int, offset: Int, length: Int): Double {
+        val inChapter = if (length > 0) offset.toDouble() / length else 0.0
+        return (e.cum[spine] + (e.cum[spine + 1] - e.cum[spine]) * inChapter) / e.total
+    }
+
+    /**
+     * Envoie la position au serveur de synchronisation si elle a changé depuis le dernier envoi
+     * (ou depuis l'ouverture : un livre seulement rouvert n'écrase pas la position des autres
+     * appareils). Appelé quand on quitte le livre ou l'app.
+     */
+    fun syncPush() {
+        if (!KoSync.configured || !ready || pendingPos != null || partial != null) return
+        val b = book ?: return
+        val e = epub ?: return
+        val lc = chapters[ci] ?: return
+        val key = syncKey(lc)
+        if (key == pushed || syncDue) return
+        pushed = key
+        val off = lc.pages[pi].start
+        KoSync.push(b, ci, e.spine[ci], lc.chapter, off, fraction(e, ci, off, lc.chapter.length))
+    }
+
+    /**
+     * Le livre vient de s'afficher : si un autre appareil est allé ailleurs depuis la dernière
+     * lecture faite ici, propose d'y aller. La position reçue (un chemin dans le XHTML du
+     * chapitre) est convertie hors du thread principal.
+     */
+    private fun syncPull() {
+        val b = book ?: return
+        val e = epub ?: return
+        val since = readBefore
+        KoSync.pull(b) { r ->
+            if (r == null || book !== b || epub !== e || KoSync.mine(r) || r.timestamp * 1000 <= since) return@pull
+            Thread({
+                var spine = XPointer.spine(r.progress)
+                var offset = -1
+                try {
+                    if (spine >= 0 && spine < e.spine.size) {
+                        val html = e.read(e.spine[spine]) ?: ""
+                        val n = XPointer.read(html, r.progress)
+                        if (n >= 0) offset = parseChapter(html, e.spine[spine], fonts, e.styles()).offsetOfLetter(n)
+                    }
+                } catch (x: Throwable) {
+                    // Livre fermé entre-temps, chapitre illisible : le pourcentage servira.
+                }
+                post {
+                    if (book !== b || epub !== e || !ready) return@post
+                    var frac = -1.0
+                    if (offset < 0) {
+                        // Position illisible (autre format de chemin) : le pourcentage du livre.
+                        val at = (r.percentage.coerceIn(0.0, 1.0) * e.total).toLong()
+                        spine = 0
+                        while (spine < e.spine.size - 1 && e.cum[spine + 1] <= at) spine++
+                        frac = ((at - e.cum[spine]).toDouble() / (e.cum[spine + 1] - e.cum[spine])).coerceIn(0.0, 1.0)
+                    }
+                    // Déjà sur cette page : rien à proposer.
+                    val here = chapters[ci]
+                    if (spine == ci && here != null) {
+                        val p = if (offset >= 0) here.pageFor(offset) else (frac * here.pages.size).toInt()
+                        if (p == pi) return@post
+                    }
+                    val there = Math.round(r.percentage * 100).toInt()
+                    val date = java.text.SimpleDateFormat("d MMM 'à' HH:mm", java.util.Locale.FRENCH).format(java.util.Date(r.timestamp * 1000))
+                    val from = if (r.device.isEmpty()) "un autre appareil" else "« ${r.device} »"
+                    val to = spine
+                    host.ask(
+                        "Reprendre à $there % ?",
+                        "Dernière lecture sur $from, le $date. Ici, vous en êtes à ${percent()} %.",
+                        "Y aller", "Rester ici",
+                    ) {
+                        if (book !== b) return@ask
+                        if (offset >= 0) goToOffset(to, offset) else show(to) { lc -> (frac * lc.pages.size).toInt() }
+                    }
+                }
+            }, "sync").start()
+        }
     }
 
     // ---------------------------------------------------------------- traduction
@@ -1173,6 +1298,7 @@ class ReaderView(private val host: MainActivity) : View(host) {
         private var dir = 1
         private var interval = 0f     // ms entre deux bandes : un nombre entier d'images
         private var startNs = 0L      // image qui a montré la première bande
+        private var lastNs = 0L       // image qui a montré la dernière bande
         private var running = false
         private val tickR = Choreographer.FrameCallback { ns -> tick(ns) }
 
@@ -1191,6 +1317,7 @@ class ReaderView(private val host: MainActivity) : View(host) {
             dir = d
             shown = 0
             startNs = 0
+            lastNs = 0
             running = true
             reveal()
             choreographer.postFrameCallback(tickR)
@@ -1207,29 +1334,41 @@ class ReaderView(private val host: MainActivity) : View(host) {
             if (startNs == 0L) {
                 // Image où la première bande est dessinée : origine des temps.
                 startNs = ns
-            } else if (shown < childCount && (ns - startNs) / 1e6f + frameMs / 2 >= shown * interval) reveal()
+                lastNs = ns
+            } else if (shown < childCount && (ns - lastNs) / 1e6f + frameMs / 2 >= interval) {
+                // Chaque bande attend un intervalle entier après la précédente, sans rattrapage :
+                // après une image en retard, deux bandes envoyées coup sur coup (7 ms d'écart
+                // mesurés sur la Boox) étaient fusionnées par l'écran en un seul rafraîchissement.
+                // Le balayage s'allonge alors d'une image, mais garde des pas égaux.
+                lastNs = ns
+                reveal()
+            }
             if (shown < childCount) choreographer.postFrameCallback(tickR)
             else {
+                if (Perf.on) Perf.log("balayage complet : ${Math.round((ns - startNs) / 1e6f)} ms pour ${Math.round((childCount - 1) * interval)} ms prévus")
                 running = false
                 animating = false
+                landLate()
                 showAll()   // l'heure a pu changer pendant le balayage ; sinon rien n'est redessiné
                 this@ReaderView.post(prepareR)
             }
         }
 
-        /** Termine d'un coup un balayage en cours. */
-        fun finish() {
+        /** Termine d'un coup un balayage en cours ; [why] est noté dans les mesures. */
+        fun finish(why: String = "interrompu") {
             if (!running) return
+            if (Perf.on) Perf.log("balayage coupé à la bande $shown/$childCount : $why")
             running = false
             choreographer.removeFrameCallback(tickR)
             animating = false
+            landLate()
             showAll()
             this@ReaderView.post(prepareR)
         }
 
         /** Toutes les bandes sur la page courante (ou le fond s'il n'y en a pas). */
         fun showAll() {
-            if (running) { finish(); return }
+            if (running) { finish("page affichée d'un coup"); return }
             if (childCount == 0) ensure(if (Prefs.anim) Prefs.wipeSteps else 1)
             refreshClock()
             for (i in 0 until childCount) (getChildAt(i) as Band).show()

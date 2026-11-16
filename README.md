@@ -28,6 +28,50 @@ Bookerly-Regular.ttf  Bookerly-Italic.ttf  Bookerly-Bold.ttf  Bookerly-BoldItali
 Sans eux, l'app se compile et utilise la police serif du système. Les titres et l'interface
 utilisent Inter (licence OFL), fournie dans le dépôt.
 
+## Composition des paragraphes
+
+Le texte justifié est composé par l'algorithme de Knuth et Plass (celui de TeX) : les coupures de
+ligne sont choisies sur le paragraphe entier, pour des blancs réguliers et peu de mots coupés. La
+césure suit les motifs de TeX (projet [hyph-utf8](https://github.com/hyphenation/tex-hyphen),
+licences MIT et BSD, rappelées dans `app/src/main/assets/hyph/LICENCES.txt`), identiques sur tous
+les appareils ; `tools/fetch_hyph.sh` les retélécharge. En bout de ligne, le trait d'union et la
+ponctuation débordent légèrement dans la marge (marge optique). Les titres, les textes centrés,
+les vers et les écritures non latines restent composés par le système.
+
+Pour comparer avec la composition du système : `adb shell setprop debug.bioread.kp 0`, puis
+relancer l'app.
+
+## Surlignages et notes
+
+Appui long sur un mot, puis « Surligner » : le passage part de ce mot, et toucher un autre mot de
+la page l'étend jusqu'à lui (ou le raccourcit) ; « Phrase » l'arrondit aux phrases entières,
+« Note » y attache un texte. La liste des surlignages du livre s'ouvre par le crayon du panneau de
+navigation (pied de page). Une copie en Markdown est tenue à jour dans
+`Download/bioread-notes/<titre>.md`.
+
+## Synchronisation de la position
+
+Options › Synchronisation : un compte sur un serveur de synchronisation de KOReader (kosync),
+`https://sync.koreader.rocks` ou le vôtre. La position part quand on quitte le livre ; à
+l'ouverture, si un autre appareil est allé plus loin, l'app propose de l'y rejoindre. Compatible
+avec KOReader pour un même fichier EPUB. Sans clavier : déposez `Download/bioread-sync.txt`
+(trois lignes : serveur, identifiant, mot de passe), lu une fois puis supprimé.
+
+Serveur à soi, sans KOReader : `server/bioread-sync/index.php`, une seule page PHP à déposer
+dans un dossier de son site, accessible en écriture. Comptes et positions sont gardés en JSON
+dans `bioread-data.php`, à côté (protégé de la lecture depuis le web par sa première ligne).
+Dans l'app, l'adresse du dossier à la place de celle du serveur KOReader : Bioread reconnaît
+seul une page Bioread. Le premier compte se crée depuis l'app (« Créer le compte ») ; les
+suivants s'ajoutent dans le fichier, mot de passe en clair, remplacé par son empreinte à la
+première connexion.
+
+## Catalogues en ligne (OPDS)
+
+L'icône du nuage, à l'accueil, ouvre les catalogues OPDS : projet Gutenberg et Ebooks libres et
+gratuits d'origine, et les vôtres (Calibre : `http://adresse-du-pc:8080/opds`, Calibre-Web, Kavita,
+Komga…), avec identifiant et mot de passe s'il en faut. Un toucher sur un livre le télécharge dans
+la bibliothèque.
+
 ## Dictionnaire
 
 Un appui long sur un mot affiche sa définition (dictionnaire unilingue, hors-ligne) au-dessus de

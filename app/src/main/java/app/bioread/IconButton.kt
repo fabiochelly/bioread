@@ -113,11 +113,17 @@ class IconButton(
                 m(7f, 5f); l(12.5f, 5f); path.cubicTo(17.5f, 5f, 17.5f, 12f, 12.5f, 12f); l(7f, 12f)
                 m(12.5f, 12f); path.cubicTo(18.5f, 12f, 18.5f, 19f, 12.5f, 19f); l(7f, 19f)
             }
-            SPACING -> {   // deux jambages qui s'écartent
-                m(4f, 5f); l(4f, 19f); m(20f, 5f); l(20f, 19f)
-                m(8f, 12f); l(16f, 12f)
-                m(10.5f, 9.5f); l(8f, 12f); l(10.5f, 14.5f)
-                m(13.5f, 9.5f); l(16f, 12f); l(13.5f, 14.5f)
+            PARAGRAPH -> { // deux paragraphes séparés d'un blanc, double flèche verticale
+                m(10f, 4f); l(21f, 4f); m(10f, 8f); l(17f, 8f)
+                m(10f, 16f); l(21f, 16f); m(10f, 20f); l(17f, 20f)
+                m(5f, 9f); l(5f, 15f)
+                m(3f, 11f); l(5f, 9f); l(7f, 11f)
+                m(3f, 13f); l(5f, 15f); l(7f, 13f)
+            }
+            INDENT -> {    // première ligne en retrait, flèche vers la droite
+                m(13f, 5f); l(21f, 5f); m(3f, 11f); l(21f, 11f); m(3f, 17f); l(21f, 17f)
+                m(3f, 5f); l(9f, 5f)
+                m(7f, 3f); l(9f, 5f); l(7f, 7f)
             }
             WIDTH -> {     // lettre étirée
                 m(5f, 14.5f); l(12f, 3.5f); l(19f, 14.5f); m(8f, 10.5f); l(16f, 10.5f)
@@ -137,6 +143,23 @@ class IconButton(
             MOON -> {           // croissant : chaleur du soir
                 m(19.5f, 14.5f); path.cubicTo(13.5f, 17f, 7f, 11f, 9.8f, 4.5f)
                 path.cubicTo(3f, 6.8f, 2.8f, 16.5f, 9.5f, 19.6f); path.cubicTo(13.8f, 21.5f, 18.2f, 18.8f, 19.5f, 14.5f)
+            }
+            MARKS -> {          // surlignages et notes : un crayon et son trait
+                m(4.5f, 19.5f); l(5.5f, 15.5f); l(16.5f, 4.5f); l(19.5f, 7.5f); l(8.5f, 18.5f); path.close()
+                m(14f, 7f); l(17f, 10f)
+                m(13.5f, 19.5f); l(20f, 19.5f)
+            }
+            CATALOG -> {        // catalogues en ligne : un nuage et une flèche qui en descend
+                m(7.5f, 16f); path.cubicTo(2.5f, 16f, 2.5f, 9.5f, 7.5f, 9.5f)
+                path.cubicTo(8f, 3.5f, 16.5f, 3.5f, 17f, 9.5f); path.cubicTo(21.5f, 9.5f, 21.5f, 16f, 17f, 16f)
+                m(12f, 11.5f); l(12f, 20.5f)
+                m(9f, 17.5f); l(12f, 20.5f); l(15f, 17.5f)
+            }
+            SYNC -> {           // synchronisation : deux flèches qui se suivent en rond
+                m(19.5f, 10.5f); path.cubicTo(18f, 3.5f, 8f, 3f, 5f, 9f)
+                m(19.8f, 5.5f); l(19.5f, 10.5f); l(14.8f, 9.8f)
+                m(4.5f, 13.5f); path.cubicTo(6f, 20.5f, 16f, 21f, 19f, 15f)
+                m(4.2f, 18.5f); l(4.5f, 13.5f); l(9.2f, 14.2f)
             }
             SORT -> {           // tri : lignes de longueur décroissante
                 m(4f, 6.5f); l(20f, 6.5f); m(4f, 12f); l(15f, 12f); m(4f, 17.5f); l(10f, 17.5f)
@@ -206,12 +229,16 @@ class IconButton(
         const val LEADING = 8
         const val MARGINS = 9
         const val WEIGHT = 10
-        const val SPACING = 11
+        const val PARAGRAPH = 11
+        const val INDENT = 38
         const val WIDTH = 12
         const val KEY = 13
         const val TURN = 14
         const val GLOBE = 15
         const val SORT = 33
+        const val MARKS = 35
+        const val CATALOG = 36
+        const val SYNC = 37
         const val MOON = 34
         const val PREV_CHAPTER = 30
         const val NEXT_CHAPTER = 31

@@ -168,6 +168,9 @@ class MenuView(private val host: MainActivity, private val reader: ReaderView, i
     }
 
     /** Range les pavés sur trois colonnes (deux sur un écran étroit). */
+    /** 13 → « 1,3 ». */
+    private fun tenths(v: Int) = if (v % 10 == 0) "${v / 10}" else "${v / 10},${v % 10}"
+
     private fun grid(cells: List<View>) {
         val columns = if (resources.displayMetrics.widthPixels / d >= 340) 3 else 2
         var i = 0
@@ -309,9 +312,10 @@ class MenuView(private val host: MainActivity, private val reader: ReaderView, i
                 stepper(IconButton.MARGINS, "Marges", { Prefs.margin }, { Prefs.margin = it }, 4, 4, 72) { "$it" },
                 // 0 = police d'origine ; chaque pas épaissit le trait de 0,2 % du corps.
                 stepper(IconButton.WEIGHT, "Graisse", { Prefs.weight }, { Prefs.weight = it }, 1, 0, 20) { "$it" },
-                stepper(IconButton.SPACING, "Espacement", { Prefs.spacing }, { Prefs.spacing = it }, 5, -30, 100) {
-                    if (it > 0) "+$it" else "$it"
-                },
+                // Blanc entre deux paragraphes, en dixièmes de ligne.
+                stepper(IconButton.PARAGRAPH, "Paragraphes", { Prefs.paraGap }, { Prefs.paraGap = it }, 1, 0, 20) { tenths(it) },
+                // Alinéa, en dixièmes de cadratin : 0 le supprime.
+                stepper(IconButton.INDENT, "Alinéa", { Prefs.indent }, { Prefs.indent = it }, 1, 0, 30) { tenths(it) },
                 stepper(IconButton.WIDTH, "Largeur", { Prefs.stretch }, { Prefs.stretch = it }, 1, 90, 120) { "$it %" },
             )
         )
@@ -457,6 +461,57 @@ class MenuView(private val host: MainActivity, private val reader: ReaderView, i
             panel.addView(bar, LinearLayout.LayoutParams(-1, -2))
             panel.addView(status)
         }
+        sync()
+    }
+
+    /**
+     * Synchronisation de la position de lecture entre appareils (voir [KoSync]) : une boîte qui
+     * dit l'état du compte ; un toucher ouvre sa saisie.
+     */
+    private fun sync() {
+        section(IconButton.SYNC, "Synchronisation")
+        fun state() = if (KoSync.configured) "${Prefs.syncUser}  ·  ${Prefs.syncServer.substringAfter("://")}" else "Position de lecture : non synchronisée"
+        lateinit var name: TextView
+        val box = select(state(), 14f) {
+            val server = field(Prefs.syncServer.ifEmpty { KoSync.DEFAULT_SERVER }, "Serveur", InputType.TYPE_TEXT_VARIATION_URI)
+            val user = field(Prefs.syncUser, "Identifiant", InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS)
+            val pass = field("", "Mot de passe", InputType.TYPE_TEXT_VARIATION_PASSWORD)
+            val form = LinearLayout(host).apply {
+                orientation = LinearLayout.VERTICAL
+                setPadding(dp(20), dp(8), dp(20), 0)
+                addView(server); addView(user); addView(pass)
+            }
+            fun submit(create: Boolean) {
+                val u = user.text.toString().trim()
+                val p = pass.text.toString()
+                if (u.isEmpty() || p.isEmpty()) {
+                    host.toast("Identifiant et mot de passe requis")
+                    return
+                }
+                host.toast("Connexion…")
+                KoSync.login(server.text.toString(), u, p, create) { error ->
+                    host.toast(error ?: "Synchronisation activée")
+                    name.text = state()
+                }
+            }
+            val dialog = AlertDialog.Builder(host).setTitle("Synchronisation (KOReader ou Bioread)").setView(form)
+                .setPositiveButton("Se connecter") { _, _ -> submit(false) }
+                .setNeutralButton("Créer le compte") { _, _ -> submit(true) }
+            if (KoSync.configured) dialog.setNegativeButton("Déconnecter") { _, _ ->
+                KoSync.logout()
+                name.text = state()
+            } else dialog.setNegativeButton("Annuler", null)
+            dialog.show()
+        }
+        name = box.getChildAt(0) as TextView
+        panel.addView(box, LinearLayout.LayoutParams(-1, dp(44)))
+    }
+
+    private fun field(value: String, what: String, type: Int) = EditText(host).apply {
+        setText(value)
+        hint = what
+        inputType = InputType.TYPE_CLASS_TEXT or type
+        setSingleLine()
     }
 
     /**

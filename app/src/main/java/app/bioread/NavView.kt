@@ -101,6 +101,7 @@ class NavView(private val host: MainActivity, private val reader: ReaderView) : 
         }
         add(icon(IconButton.PREV_CHAPTER, "Chapitre précédent") { reader.chapterStep(-1) }, true)
         add(icon(IconButton.CONTENTS, "Sommaire") { showToc() }, false)
+        add(icon(IconButton.MARKS, "Surlignages et notes") { showMarks() }, false)
         add(icon(IconButton.NEXT_CHAPTER, "Chapitre suivant") { reader.chapterStep(1) }, false)
         panel.addView(row)
         refresh()
@@ -116,6 +117,67 @@ class NavView(private val host: MainActivity, private val reader: ReaderView) : 
         where?.text = "${positionText(page)}  ·  ${reader.percent()} %"
         sb.max = maxOf(1, total - 1)
         sb.progress = page - 1
+    }
+
+    /** Surlignages et notes du livre, dans l'ordre du texte : un toucher y mène, un appui long retire. */
+    private fun showMarks() {
+        val items = Highlights.list
+        if (items.isEmpty()) {
+            host.toast("Aucun surlignage : appui long sur un mot, puis « Surligner »")
+            return
+        }
+        panel.removeAllViews()
+        chapter = null
+        where = null
+        seek = null
+        val head = LinearLayout(host).apply {
+            gravity = Gravity.CENTER_VERTICAL
+            setPadding(dp(20), dp(14), dp(20), 0)
+            addView(label("Surlignages et notes (${items.size})", true, 17f), LinearLayout.LayoutParams(0, -2, 1f))
+            addView(IconButton(host, IconButton.BACK) { showPosition() })
+        }
+        panel.addView(head)
+        val path = Highlights.exportPath()
+        if (path.isNotEmpty()) panel.addView(label("Copie : $path", false, 12f, 2).apply { setPadding(dp(20), 0, dp(20), dp(8)) })
+        val list = ListView(host)
+        list.divider = null
+        list.adapter = object : BaseAdapter() {
+            override fun getCount() = items.size
+            override fun getItem(i: Int) = items[i]
+            override fun getItemId(i: Int) = i.toLong()
+            override fun getView(i: Int, v: View?, parent: ViewGroup): View {
+                val cell = (v as? LinearLayout) ?: LinearLayout(host).apply {
+                    orientation = LinearLayout.VERTICAL
+                    setPadding(dp(20), dp(10), dp(20), dp(10))
+                    addView(label("", false, 15f, 3).apply { typeface = host.fonts.regular; setLineSpacing(0f, 1.2f) })
+                    addView(label("", false, 14f, 3).apply { typeface = host.fonts.italic; setPadding(0, dp(3), 0, 0) })
+                    addView(label("", true, 12f).apply { setPadding(0, dp(3), 0, 0) })
+                }
+                val h = items[i]
+                (cell.getChildAt(0) as TextView).text = h.text.replace('\n', ' ')
+                (cell.getChildAt(1) as TextView).apply {
+                    text = "✎ ${h.note}"
+                    visibility = if (h.note.isEmpty()) View.GONE else View.VISIBLE
+                }
+                (cell.getChildAt(2) as TextView).text = if (h.chapter.isEmpty()) "${h.percent} %" else "${h.chapter}  ·  ${h.percent} %"
+                return cell
+            }
+        }
+        list.setOnItemClickListener { _, _, i, _ ->
+            host.hideNav()
+            reader.goToOffset(items[i].spine, items[i].start)
+        }
+        list.setOnItemLongClickListener { _, _, i, _ ->
+            android.app.AlertDialog.Builder(host).setMessage("Retirer ce surlignage ?")
+                .setPositiveButton("Retirer") { _, _ ->
+                    Highlights.remove(items[i])
+                    reader.marksChanged()
+                    if (Highlights.list.isEmpty()) showPosition() else showMarks()
+                }
+                .setNegativeButton("Annuler", null).show()
+            true
+        }
+        panel.addView(list, LinearLayout.LayoutParams(-1, (resources.displayMetrics.heightPixels * 0.6f).toInt()))
     }
 
     private fun showToc() {

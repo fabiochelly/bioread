@@ -95,7 +95,21 @@ class WordView(
             addView(IconButton(host, IconButton.CLOSE) { host.hideSheet() }.apply { contentDescription = "Fermer" })
         }
         panel.addView(head)
-        // Traduction sous les mots difficiles : écarter ce mot (connu), ou le faire toujours traduire.
+        // Sous le mot, deux liens : surligner le passage (ou revoir son surlignage), et, avec la
+        // traduction sous les mots difficiles, écarter ce mot (connu) ou le faire toujours traduire.
+        val links = LinearLayout(host)
+        links.gravity = Gravity.CENTER_VERTICAL
+        links.setPadding(side, 0, side, 0)
+        val at = hit.block.start + hit.start
+        val marked = Highlights.at(shown.lc.index, at)
+        val mark = TextView(host)
+        link(mark, if (marked == null) "Surligner" else if (marked.note.isEmpty()) "Surlignage" else "Surlignage et note") {
+            host.showSheet(
+                HighlightView(host, reader, shown, marked?.start ?: at, marked?.end ?: (hit.block.start + hit.end), marked, lang)
+            )
+        }
+        mark.maxLines = 1
+        links.addView(mark, LinearLayout.LayoutParams(-2, dp(36)).apply { rightMargin = dp(20) })
         if (reader.glossable()) WordWise.choice(hit.block, hit.start, hit.end)?.let { c ->
             val v = TextView(host)
             link(v, c.label) {
@@ -105,9 +119,9 @@ class WordView(
             }
             v.maxLines = 1
             v.ellipsize = TextUtils.TruncateAt.END
-            v.setPadding(side, 0, side, 0)
-            panel.addView(v, LinearLayout.LayoutParams(-2, dp(36)))
+            links.addView(v, LinearLayout.LayoutParams(0, dp(36), 1f))
         }
+        panel.addView(links)
 
         // Feuille compacte : une définition, une traduction. Chaque zone a son lien, qui la déroule
         // en entier à la place du reste ; le contenu défile alors, et un lien fixe permet de replier.

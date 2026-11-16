@@ -229,6 +229,7 @@ fun Typesetter.markRects(p: Page, offset: Int, length: Int): ArrayList<RectF> {
  * espaces qui précèdent, comme au tracé.
  */
 internal fun lineX(l: Layout, line: Int, offset: Int): Float {
+    if (l is KpLayout) return l.xAt(line, offset)
     val t = l.text
     val start = l.getLineStart(line)
     var end = l.getLineEnd(line)

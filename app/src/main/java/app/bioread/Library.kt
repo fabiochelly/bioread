@@ -282,6 +282,21 @@ object Library {
         }
     }
 
+    /** Range dans la bibliothèque un EPUB déjà téléchargé dans [tmp] (catalogue en ligne). Hors du thread principal. */
+    fun adopt(tmp: File): File? {
+        val f = File(own, java.lang.Long.toString(System.nanoTime(), 36) + ".epub")
+        return try {
+            if (!tmp.renameTo(f)) tmp.copyTo(f, true)
+            val e = Epub(f)
+            val ok = e.spine.isNotEmpty()
+            e.close()
+            if (ok) f else { f.delete(); null }
+        } catch (e: Exception) {
+            f.delete()
+            null
+        }
+    }
+
     fun delete(b: BookEntry) {
         books.remove(b)
         indexStale = true

@@ -41,6 +41,7 @@ class BlockStyle {
     @JvmField var leftP = 0f         // parts proportionnelles à la largeur du texte
     @JvmField var rightP = 0f
     @JvmField var indent = 0f        // retrait de première ligne (négatif = sommaire, pour les vers)
+    @JvmField var house = false      // alinéa de la maison : celui du réglage, lu à la composition
     @JvmField var top = 0f           // blanc avant le bloc
     @JvmField var pageBreak = false
     @JvmField var ratio = 1f         // corps, par rapport au texte courant
@@ -563,8 +564,9 @@ class StyleScan(private val css: BookCss, html: String, base: String, private va
             prose && prevProse && same && gap <= ref.margin / ref.size + 0.01f -> 0f
             else -> minOf(gap, 3f)
         }
+        css.house = prose && prevPara && prevAlign != 1 && prevAlign != 2 && css.top == 0f && !b.gap && !(b.text.length > 1 && b.text[0] == '•')
         css.indent = when {
-            prose -> if (prevPara && prevAlign != 1 && prevAlign != 2 && css.top == 0f && !b.gap && !(b.text.length > 1 && b.text[0] == '•')) 1.3f * ratio else 0f
+            prose -> if (css.house) 1.3f * ratio else 0f
             al == 1 || al == 2 -> 0f
             else -> st.indent / ref.size
         }
@@ -633,7 +635,7 @@ class Styled {
     }
 
     /** [base] : peinture du texte courant (ou du titre) à cette échelle ; [cw] : largeur du texte. */
-    fun layout(b: Block, st: BlockStyle, base: TextPaint, cw: Int, mult: Float, add: Float = 0f): StaticLayout {
+    fun layout(b: Block, st: BlockStyle, base: TextPaint, cw: Int, mult: Float, add: Float, hyphen: Hyphen?, locale: java.util.Locale): Layout {
         if (b.kind == Block.HEAD) {
             val t = b.text
             val center = if (st.align < 0) b.level <= 2 else st.align == 1
@@ -647,6 +649,21 @@ class Styled {
         val p = paint(base, st)
         val em = base.textSize
         var t = b.text
+        // Marges du livre, à l'intérieur de celles du lecteur ; le bloc garde au moins 55 % de la largeur.
+        var l = st.left * em + st.leftP * cw
+        var r = st.right * em + st.rightP * cw
+        val max = cw * 0.45f
+        if (l + r > max) {
+            val k = max / (l + r)
+            l *= k
+            r *= k
+        }
+        val ind = if (st.house) Prefs.indent / 10f * st.ratio else st.indent
+        val first = (l + ind * em).coerceIn(0f, l + cw * 0.25f)
+        // Paragraphe justifié sans lignes marquées : coupure optimale (voir KpLayout).
+        if (st.align == 0 && !st.marks) {
+            KpLayout.make(t, p, cw, first.toInt(), l.toInt(), r.toInt(), mult, add, if (st.noHyphen) null else hyphen, locale)?.let { return it }
+        }
         if (st.marks && t is Spanned) {
             val sp = SpannableString(t)
             val half = cw / 2
@@ -668,16 +685,6 @@ class Styled {
             3 -> {}
             else -> sb.setJustificationMode(Layout.JUSTIFICATION_MODE_INTER_WORD)
         }
-        // Marges du livre, à l'intérieur de celles du lecteur ; le bloc garde au moins 55 % de la largeur.
-        var l = st.left * em + st.leftP * cw
-        var r = st.right * em + st.rightP * cw
-        val max = cw * 0.45f
-        if (l + r > max) {
-            val k = max / (l + r)
-            l *= k
-            r *= k
-        }
-        val first = (l + st.indent * em).coerceIn(0f, l + cw * 0.25f)
         if (l >= 1f || r >= 1f || first >= 1f) sb.setIndents(intArrayOf(first.toInt(), l.toInt()), intArrayOf(r.toInt(), r.toInt()))
         return sb.build()
     }

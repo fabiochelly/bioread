@@ -140,6 +140,9 @@ class Typesetter(
     private val locale: Locale = if (lang.isEmpty()) Locale.getDefault() else Locale.forLanguageTag(lang)
     // Les pages traduites sont coupées selon les règles de césure de la langue cible.
     private val targetLocale: Locale = Locale.forLanguageTag(Prefs.target)
+    // Motifs de césure du compositeur de paragraphes, lus au premier paragraphe (hors du thread principal).
+    private val hyphen by lazy { Hyphen.of(lang.ifEmpty { Locale.getDefault().language }) }
+    private val targetHyphen by lazy { Hyphen.of(Prefs.target) }
     private val textPx = Prefs.fontSize * density
     // Interligne : chaque police a sa propre hauteur de ligne naturelle (de 1,2 à 1,5 fois le
     // corps). Elle est ramenée à celle de Bookerly, pour qu'un même réglage donne le même
@@ -239,13 +242,19 @@ class Typesetter(
         return Math.round((fm.descent - fm.ascent) * mult * tight + if (tr) 0f else glossAdd)
     }
 
-    private fun layout(b: Block, scale: Float, tr: Boolean, tight: Float = 1f): StaticLayout {
+    private fun layout(b: Block, scale: Float, tr: Boolean, tight: Float = 1f): Layout {
         val head = b.kind == Block.HEAD
         val p = if (head) headPaint(b.level, scale, tr) else bodyPaint(scale, tr)
         val add = if (tr) 0f else glossAdd
         val mult = mult * tight
-        b.css?.let { return styled.layout(b, it, p, cw, mult, add) }
+        b.css?.let { return styled.layout(b, it, p, cw, mult, add, if (tr) targetHyphen else hyphen, if (tr) targetLocale else locale) }
         val t = b.text
+        if (!head && b.align != 1 && b.align != 2) {
+            // Texte courant justifié : coupure optimale sur le paragraphe entier (voir KpLayout).
+            val q = (b.quote * 1.6f * p.textSize).toInt()
+            val ind = if (b.indent) (Prefs.indent / 10f * p.textSize).toInt() else 0
+            KpLayout.make(t, p, cw, q + ind, q, q, mult, add, if (tr) targetHyphen else hyphen, if (tr) targetLocale else locale)?.let { return it }
+        }
         val sb = StaticLayout.Builder.obtain(t, 0, t.length, p, cw).setIncludePad(false)
         if (head) {
             sb.setLineSpacing(0f, 1.15f)
@@ -262,7 +271,7 @@ class Typesetter(
                 else -> sb.setJustificationMode(Layout.JUSTIFICATION_MODE_INTER_WORD)
             }
             val q = (b.quote * 1.6f * p.textSize).toInt()
-            val ind = if (b.indent) (1.3f * p.textSize).toInt() else 0
+            val ind = if (b.indent) (Prefs.indent / 10f * p.textSize).toInt() else 0
             if (q > 0 || ind > 0) sb.setIndents(intArrayOf(q + ind, q), intArrayOf(q, q))
         }
         return sb.build()
@@ -275,7 +284,7 @@ class Typesetter(
      * livre fermé), le travail est abandonné par une [java.util.concurrent.CancellationException].
      */
     fun layoutChapter(
-        index: Int, c: Chapter, epub: Epub, parallel: Boolean = false, done: Array<StaticLayout?>? = null,
+        index: Int, c: Chapter, epub: Epub, parallel: Boolean = false, done: Array<Layout?>? = null,
         stop: (() -> Boolean)? = null,
     ) = LaidChapter(index, c, paginate(c.blocks, 1f, epub, false, parallel, done, stop = stop))
 
@@ -285,7 +294,7 @@ class Typesetter(
      * prêt. Rend null si aucune ligne ne commence exactement là (réglages changés depuis).
      * Les paragraphes composés sont rangés dans [done] pour la composition complète.
      */
-    fun quickPage(c: Chapter, offset: Int, epub: Epub, done: Array<StaticLayout?>): Page? {
+    fun quickPage(c: Chapter, offset: Int, epub: Epub, done: Array<Layout?>): Page? {
         val blocks = c.blocks
         var lo = 0
         var hi = blocks.size - 1
@@ -316,9 +325,9 @@ class Typesetter(
      * partagent les blocs un par un, le fil appelant participe.
      */
     private fun layoutAll(
-        blocks: List<Block>, scale: Float, tr: Boolean, done: Array<StaticLayout?>?, stop: (() -> Boolean)?,
-    ): Array<StaticLayout?> {
-        val out = done ?: arrayOfNulls<StaticLayout>(blocks.size)
+        blocks: List<Block>, scale: Float, tr: Boolean, done: Array<Layout?>?, stop: (() -> Boolean)?,
+    ): Array<Layout?> {
+        val out = done ?: arrayOfNulls<Layout>(blocks.size)
         val next = java.util.concurrent.atomic.AtomicInteger(0)
         val work = Runnable {
             while (true) {
@@ -339,15 +348,15 @@ class Typesetter(
     /**
      * Met [blocks] (une page traduite, souvent plus longue que l'originale) sur une seule page,
      * au plus près de la mise en page du livre : d'abord en resserrant l'interligne, jusqu'à
-     * 115 % du corps au plus serré, puis en réduisant le corps, du strict nécessaire (au centième
+     * 1,00 au plus serré (le corps reste ainsi le plus grand possible), puis en réduisant le corps, du strict nécessaire (au centième
      * près). Chaque essai ne compose que deux pages au plus. Hors du thread principal.
      */
     fun fit(blocks: List<Block>): Page {
         fun one(scale: Float, tight: Float) = paginate(blocks, scale, null, true, false, maxPages = 2, tight = tight)
         var pages = one(1f, 1f)
         if (pages.size == 1) return pages[0]
-        // Interligne le plus serré admis : 115 % du corps, et jamais moins de 85 % du réglage.
-        val tmin = maxOf(0.85f, 1.15f / (Prefs.lineSpacing / 100f)).coerceAtMost(1f)
+        // Interligne le plus serré admis : 1,00 (la hauteur de ligne naturelle de la police).
+        val tmin = (100f / Prefs.lineSpacing).coerceAtMost(1f)
         if (tmin < 1f) {
             pages = one(1f, tmin)
             if (pages.size == 1) {
@@ -382,13 +391,14 @@ class Typesetter(
      */
     private fun paginate(
         blocks: List<Block>, scale: Float, epub: Epub?, tr: Boolean, parallel: Boolean,
-        done: Array<StaticLayout?>? = null, fromBlock: Int = 0, fromLine: Int = 0, maxPages: Int = Int.MAX_VALUE,
+        done: Array<Layout?>? = null, fromBlock: Int = 0, fromLine: Int = 0, maxPages: Int = Int.MAX_VALUE,
         stop: (() -> Boolean)? = null, tight: Float = 1f,
     ): ArrayList<Page> {
         val ready = if (parallel && WORKERS > 0 && blocks.size >= 24) layoutAll(blocks, scale, tr, done, stop) else done
         val pages = ArrayList<Page>()
         var cur = Page()
         val bodyLH = lineHeight(bodyPaint(scale, tr), tr, tight)
+        val paraGap = bodyLH * Prefs.paraGap / 10   // blanc du réglage entre deux paragraphes
         var y = 0
         var after = 0   // marge basse du bloc précédent
 
@@ -423,13 +433,14 @@ class Typesetter(
             var m = when {
                 y == 0 -> 0
                 head -> maxOf(after, (bodyLH * 1.3f).toInt())
-                b.gap -> maxOf(after, bodyLH)
-                else -> after
+                b.gap -> maxOf(after, bodyLH, paraGap)
+                else -> after + paraGap
             }
             // Mode « Fidèle au livre » : saut de page ou blanc demandé par le livre.
             val st = b.css
             if (st != null && y > 0) {
-                if (st.pageBreak) { close(); y = 0; m = 0 } else if (st.top > 0f) m = maxOf(m, (st.top * textPx * scale).toInt())
+                // Blanc voulu par le livre : il remplace celui du réglage entre paragraphes.
+                if (st.pageBreak) { close(); y = 0; m = 0 } else if (st.top > 0f) m = maxOf(m - if (head) 0 else paraGap, (st.top * textPx * scale).toInt())
             }
             // Un titre ne reste jamais seul en bas de page.
             if (head && y > 0 && y + m + l.height + 2 * bodyLH > ch) { close(); y = 0; m = 0 }
@@ -547,9 +558,13 @@ class Typesetter(
         }
     }
 
-    /** [glosses] : faux pour une page traduite (sa mise en page n'est pas celle du livre). */
-    fun draw(c: Canvas, p: Page, epub: Epub?, glosses: Boolean = true) {
+    /**
+     * [glosses] : faux pour une page traduite (sa mise en page n'est pas celle du livre).
+     * [spine] : chapitre de la page, pour y tracer ses surlignages (-1 : aucun).
+     */
+    fun draw(c: Canvas, p: Page, epub: Epub?, glosses: Boolean = true, spine: Int = -1) {
         c.drawColor(Theme.bg)
+        if (spine >= 0) Highlights.draw(c, this, p, spine, density)
         val gp = if (glosses) glossPaint else null
         val level = Prefs.wwLevel
         for (s in p.slices) {
@@ -572,7 +587,8 @@ class Typesetter(
             val glossed = gp != null && s.block.kind == Block.PARA
             var clip = l.getLineBottom(s.b - 1)
             if (glossed) clip = maxOf(clip, l.getLineBaseline(s.b - 1) + glossBelow.toInt() + 2)
-            c.clipRect(0, t - slack, cw, clip)
+            // En largeur, jusque dans les marges : la ponctuation de bout de ligne y déborde (marge optique).
+            c.clipRect(-mx, t - slack, cw + mx, clip)
             l.draw(c)
             if (glossed) {
                 val b = s.block

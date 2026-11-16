@@ -679,6 +679,9 @@ object WordWise {
             var q = k
             val y = l.getLineBaseline(line) + drop
             while (q < m.gloss.size && m.at[2 * q] < e) {
+                // Mot coupé en fin de ligne (reflec-tively) : sa traduction n'est écrite qu'une fois,
+                // sous son début. Une expression à cheval sur deux lignes garde la sienne sous chaque partie.
+                if (m.at[2 * q] < s && (m.keys[q]?.indexOf(' ') ?: -1) <= 0) { q++; continue }
                 val ws = maxOf(m.at[2 * q], s)
                 val we = minOf(m.at[2 * q + 1], e)
                 // Positions après justification (voir lineX) : celles du système ignorent le blanc ajouté.
