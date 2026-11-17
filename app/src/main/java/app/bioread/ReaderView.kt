@@ -30,7 +30,14 @@ class ReaderView(private val host: MainActivity) : View(host) {
     private val fonts = host.fonts
     private val exec = Executors.newSingleThreadExecutor()
     // Ajustement des pages traduites à la taille de la page (voir Typesetter.fit).
-    private val fitter = Executors.newSingleThreadExecutor()
+    // Un peu en retrait du thread principal et du tracé : il ne leur prend pas le processeur
+    // pendant un glissement ou un balayage.
+    private val fitter = Executors.newSingleThreadExecutor { r ->
+        Thread({
+            try { Process.setThreadPriority(Process.THREAD_PRIORITY_DEFAULT + 4) } catch (x: Throwable) {}
+            r.run()
+        }, "ajustement")
+    }
     // Seul fil qui dessine les pages : une mise en page n'est jamais tracée par deux fils à la fois.
     private val painter = Executors.newSingleThreadExecutor { r ->
         Thread({
@@ -87,6 +94,12 @@ class ReaderView(private val host: MainActivity) : View(host) {
     private var ready = false
     private var pendingPos: ((LaidChapter) -> Int)? = null
     private var pendingTurn = 0
+    // Page tournée vers une page dont la traduction n'est pas arrivée : le tour attend (voir [waitFor]).
+    private var waitPage: Page? = null
+    private var waitDir = 0
+    private var waitMore = 0            // tours demandés en plus pendant l'attente, faits ensuite
+    private var gaveUp: Page? = null    // page dont la traduction a trop tardé : elle tourne sans
+    private val waitR = Runnable { resumeTurn(true) }
     // Réouverture : position enregistrée (-1 sinon) et page affichée avant que son chapitre soit composé.
     private var openOff = -1
     private var openPage = 0
@@ -98,6 +111,7 @@ class ReaderView(private val host: MainActivity) : View(host) {
     // date de la dernière lecture avant cette ouverture, dernière position envoyée.
     private var syncDue = false
     private var readBefore = 0L
+    private var lastLocal = 0L   // dernière lecture ici (page tournée ou position envoyée), en ms
     private var pushed = ""
 
     /** Diagnostic : mesure une fois, plus tard et hors du passage, ce que l'appareil sait faire. */
@@ -210,6 +224,7 @@ class ReaderView(private val host: MainActivity) : View(host) {
         Highlights.open(b)
         syncDue = true
         readBefore = b.lastRead
+        lastLocal = b.lastRead
         val g = gen
         val file = Library.file(b)
         // Au lancement, la vue n'a pas encore de taille : celle de la dernière séance permet de
@@ -541,6 +556,8 @@ class ReaderView(private val host: MainActivity) : View(host) {
             return
         }
         trGen++
+        cancelWait()
+        gaveUp = null
         for (lc in chapters.values) for (p in lc.pages) {
             if (p.trState == 3 || p.trState == 1) p.trState = if (p.tr != null) 2 else 0
         }
@@ -552,6 +569,29 @@ class ReaderView(private val host: MainActivity) : View(host) {
         updateFooter()
         present()
         post(prepareR)
+    }
+
+    /**
+     * Paragraphe d'exemple pour comparer les polices (voir FontCompare) : le premier paragraphe
+     * assez long à partir de la page affichée, ou plusieurs courts mis bout à bout (dialogues).
+     * Null hors d'un livre.
+     */
+    fun sample(): CharSequence? {
+        val page = held[1] ?: return null
+        val lc = heldLc[1] ?: return null
+        val blocks = lc.chapter.blocks
+        val first = page.slices.firstOrNull { it.layout != null }?.block ?: return null
+        val i0 = blocks.indexOf(first).coerceAtLeast(0)
+        val acc = android.text.SpannableStringBuilder()
+        for (i in i0 until minOf(blocks.size, i0 + 16)) {
+            val b = blocks[i]
+            if (b.kind != Block.PARA || b.text.isBlank()) continue
+            if (b.text.length >= 280) return b.text
+            if (acc.isNotEmpty()) acc.append(' ')
+            acc.append(b.text)
+            if (acc.length >= 280) break
+        }
+        return if (acc.length >= 120) acc else null
     }
 
     /**
@@ -753,6 +793,7 @@ class ReaderView(private val host: MainActivity) : View(host) {
     /** Charge les chapitres voisins et pré-rend les pages adjacentes, hors animation. */
     private fun prepare() {
         if (lean || !ready || animating || pendingPos != null) return
+        if (turnsSincePush >= SYNC_PAGES) syncPush()
         // Pages voisines tracées pendant l'animation qui vient de finir : envoyées maintenant au
         // processeur graphique (sans effet si elles y sont déjà).
         bmp[0]?.prepareToDraw()
@@ -781,9 +822,89 @@ class ReaderView(private val host: MainActivity) : View(host) {
         load(ci + lastDir)
         locate(lastDir)?.let { request(1 + lastDir, it.lc, it.p) }
         if (ahead) locate(2 * lastDir)?.let { request(AHEAD, it.lc, it.p) }
+        translateAhead()
     }
 
-    /** La page à [d] pages de la courante (|d| ≤ 2), dans ce chapitre ou un voisin déjà composé. */
+    /**
+     * Traductions d'avance : les [TR_AHEAD] pages qui suivent dans le sens de la lecture sont
+     * traduites (et ajustées), même celle dont l'image n'est pas tracée d'avance (smartphone).
+     * Le traducteur les prend dans l'ordre : la page courante, puis la suivante, et ainsi de suite.
+     */
+    private fun translateAhead() {
+        if (!Prefs.translate) return
+        for (k in 1..TR_AHEAD) {
+            val l = locate(k * lastDir) ?: break
+            requestTranslation(l.lc, l.lc.pages[l.p])
+        }
+    }
+
+    /**
+     * Page traduite pas encore prête : plutôt que de montrer un instant le texte d'origine, le
+     * tour attend sa traduction (« … » au pied de la page courante), [TR_WAIT] ms au plus.
+     * Vrai si le tour est mis en attente.
+     */
+    private fun waitFor(d: Int): Boolean {
+        if (waitPage != null && d != waitDir) {
+            // Demi-tour pendant l'attente : le tour en attente est abandonné, on reste sur la page.
+            cancelWait()
+            updateFooter()
+            present()
+            return true
+        }
+        if (!Prefs.translate) return false
+        val l = locate(d) ?: return false
+        val page = l.lc.pages[l.p]
+        if (page.tr != null || page === gaveUp) return false
+        requestTranslation(l.lc, page)
+        if (page.trState != 1) return false   // traduite à l'instant (cache), inutile ou en échec
+        waitDir = d
+        if (waitPage === page) waitMore++   // nouveau toucher pendant l'attente : une page de plus
+        else {
+            waitPage = page
+            waitMore = 0
+            removeCallbacks(waitR)
+            postDelayed(waitR, TR_WAIT)
+            if (!footLeft.endsWith("…")) {
+                footLeft += "  …"
+                if (!animating) present()   // sinon à la fin du glissement ou du balayage
+            }
+        }
+        return true
+    }
+
+    /** Reprend le tour mis en attente : traduction arrivée, ou attente trop longue ([timedOut]). */
+    private fun resumeTurn(timedOut: Boolean) {
+        val p = waitPage ?: return
+        val more = waitMore
+        cancelWait()
+        val l = locate(waitDir)
+        if (l == null || l.lc.pages[l.p] !== p) {
+            // Le livre a bougé entre-temps (saut, recomposition) : ce tour n'a plus de sens.
+            updateFooter()
+            present()
+            return
+        }
+        if (timedOut) gaveUp = p
+        val d = waitDir
+        turn(d)
+        // Touchers reçus pendant l'attente : autant de pages encore, chacune pouvant attendre à son tour.
+        if (more > 0) post { turnMore(d, more) }
+    }
+
+    private fun turnMore(d: Int, n: Int) {
+        for (k in 0 until n) {
+            turn(d)
+            if (waitPage != null) { waitMore += n - k - 1; return }
+        }
+    }
+
+    private fun cancelWait() {
+        waitPage = null
+        waitMore = 0
+        removeCallbacks(waitR)
+    }
+
+    /** La page à [d] pages de la courante (au plus un chapitre plus loin), dans ce chapitre ou un voisin déjà composé. */
     private fun locate(d: Int): Loc? {
         val lc = chapters[ci] ?: return null
         val p = pi + d
@@ -802,6 +923,8 @@ class ReaderView(private val host: MainActivity) : View(host) {
             return
         }
         if (!ready || pendingPos != null) return
+        if (waitFor(d)) return
+        if (waitPage != null) cancelWait()
         val t0 = if (Perf.on) System.nanoTime() else 0L
         // Tap pendant un balayage : on le termine d'un coup avant d'enchaîner.
         if (animating && eink) wipe.finish("nouveau tour de page")
@@ -815,7 +938,9 @@ class ReaderView(private val host: MainActivity) : View(host) {
         }
         val slot = 1 + d
         val page = loc.lc.pages[loc.p]
-        val waited = held[slot] !== page
+        // Image retracée en cours (traduction tout juste arrivée) : on l'attend plutôt que de
+        // montrer l'ancienne, que ce nouveau tracé ne remplacerait plus.
+        val waited = held[slot] !== page || jobs[slot]?.page === page
         if (waited) renderNow(slot, loc.lc, loc.p, false)
         if (held[slot] !== page) return
         val from = 1 - d   // la page quittée glisse vers l'emplacement opposé
@@ -837,6 +962,7 @@ class ReaderView(private val host: MainActivity) : View(host) {
             } else clearSlot(AHEAD)
         }
         lastDir = d
+        turnsSincePush++   // l'envoi éventuel attend la fin de l'animation (voir [prepare])
         if (Perf.on) turnNs = System.nanoTime()
         pageTouch.turned()
         updateFooter()
@@ -963,11 +1089,14 @@ class ReaderView(private val host: MainActivity) : View(host) {
         val t = ts ?: return null
         val page = lc.pages[p]
         if (!force) {
-            if (held[slot] === page) return null
             jobs[slot]?.let { if (it.page === page) return it }
+            if (held[slot] === page) return null
         }
         // Demandée avant le tracé : la réponse du traducteur peut arriver immédiatement (cache).
         if (Prefs.translate && page.tr == null) requestTranslation(lc, page)
+        // Page à venir dont la traduction est en route : pas de tracé du texte d'origine, qui
+        // serait aussitôt refait. Elle est tracée à l'arrivée de sa traduction (voir [translated]).
+        if (slot != 1 && !force && Prefs.translate && page.tr == null && page.trState == 1 && page !== gaveUp) return null
         val shown = if (Prefs.translate) page.tr ?: page else page
         val j = Job(page, shown, lc, p, t, epub, if (hwPages) null else obtain(t))
         jobs[slot] = j
@@ -1079,6 +1208,7 @@ class ReaderView(private val host: MainActivity) : View(host) {
         b.spine = ci
         b.offset = lc.pages[pi].start
         b.percent = percent(lc, pi)
+        lastLocal = System.currentTimeMillis()
         if (!saveDue) {
             saveDue = true
             postDelayed(saveR, 1000)
@@ -1109,9 +1239,12 @@ class ReaderView(private val host: MainActivity) : View(host) {
     /**
      * Envoie la position au serveur de synchronisation si elle a changé depuis le dernier envoi
      * (ou depuis l'ouverture : un livre seulement rouvert n'écrase pas la position des autres
-     * appareils). Appelé quand on quitte le livre ou l'app.
+     * appareils). Appelé quand on quitte le livre ou l'app (écran éteint compris), et pendant la
+     * lecture toutes les [SYNC_PAGES] pages tournées : la liseuse peut s'éteindre sans réseau.
+     * Un envoi manqué repart à l'occasion suivante.
      */
     fun syncPush() {
+        turnsSincePush = 0
         if (!KoSync.configured || !ready || pendingPos != null || partial != null) return
         val b = book ?: return
         val e = epub ?: return
@@ -1120,7 +1253,23 @@ class ReaderView(private val host: MainActivity) : View(host) {
         if (key == pushed || syncDue) return
         pushed = key
         val off = lc.pages[pi].start
-        KoSync.push(b, ci, e.spine[ci], lc.chapter, off, fraction(e, ci, off, lc.chapter.length))
+        KoSync.push(host, b, ci, e.spine[ci], lc.chapter, off, fraction(e, ci, off, lc.chapter.length)) { ok ->
+            pushFailed = !ok
+            if (!ok && pushed == key) pushed = ""
+        }
+    }
+
+    private var turnsSincePush = 0
+    private var pushFailed = false   // la dernière position n'a pas pu partir (réseau coupé)
+
+    /**
+     * L'app revient au premier plan (liseuse rallumée, retour d'une autre app) avec un livre
+     * ouvert : la position est redemandée au serveur, un autre appareil a pu lire entre-temps.
+     * Le réseau met souvent quelques secondes à revenir : une seconde tentative suit un échec.
+     */
+    fun syncResume() {
+        if (!KoSync.configured || !ready || syncDue || book == null || visibility != VISIBLE) return
+        syncPull(lastLocal, retry = true)
     }
 
     /**
@@ -1128,12 +1277,17 @@ class ReaderView(private val host: MainActivity) : View(host) {
      * lecture faite ici, propose d'y aller. La position reçue (un chemin dans le XHTML du
      * chapitre) est convertie hors du thread principal.
      */
-    private fun syncPull() {
+    private fun syncPull(since: Long = readBefore, retry: Boolean = false) {
         val b = book ?: return
         val e = epub ?: return
-        val since = readBefore
-        KoSync.pull(b) { r ->
-            if (r == null || book !== b || epub !== e || KoSync.mine(r) || r.timestamp * 1000 <= since) return@pull
+        val again: (() -> Unit)? = if (!retry) null else ({ postDelayed({ if (book === b) syncPull(since) }, 6000); Unit })
+        KoSync.pull(b, again) { r ->
+            if (book !== b || epub !== e) return@pull
+            if (r == null || KoSync.mine(r) || r.timestamp * 1000 <= since) {
+                // Personne n'a lu plus loin ailleurs : la position restée en attente ici peut partir.
+                if (pushFailed) syncPush()
+                return@pull
+            }
             Thread({
                 var spine = XPointer.spine(r.progress)
                 var offset = -1
@@ -1234,10 +1388,21 @@ class ReaderView(private val host: MainActivity) : View(host) {
      */
     private fun translated(page: Page) {
         for (s in bmp.indices) {
+            // Liseuse, page à venir, en plein balayage : un tracé maintenant retarderait des
+            // bandes. L'image est rendue ; [prepare] la retrace en français une fois le balayage fini.
+            if (eink && animating && s != 1 && s != 1 - animDir && waitPage !== page &&
+                (held[s] === page || jobs[s]?.page === page)) {
+                clearSlot(s)
+                continue
+            }
             if (held[s] === page) request(s, heldLc[s]!!, heldP[s], true)
             else jobs[s]?.let { if (it.page === page) request(s, it.lc, it.p, true) }
         }
         if (held[1] === page) { updateFooter(); if (!animating) present() }
+        if (waitPage === page) resumeTurn(false)
+        // Page à venir laissée sans image en attendant sa traduction : tracée maintenant (pendant
+        // une animation, [prepare] s'en charge à sa fin).
+        else if (!animating) prerender()
     }
 
     // ---------------------------------------------------------------- affichage
@@ -1566,6 +1731,9 @@ class ReaderView(private val host: MainActivity) : View(host) {
     }
 
     companion object {
+        /** Pages tournées entre deux envois de la position pendant la lecture (voir [syncPush]). */
+        private const val SYNC_PAGES = 20
+
         // Par vitesse (douce, normale, rapide, ultra) : durée du glissement sur smartphone, puis
         // nombre de bandes et durée du balayage sur liseuse. Moins de bandes = moins de
         // rafraîchissements partiels à enchaîner, donc une page affichée plus tôt.
@@ -1581,5 +1749,7 @@ class ReaderView(private val host: MainActivity) : View(host) {
         private val EINK_DURATION = floatArrayOf(240f, 110f, 80f, 50f)
         private const val QUICK_WAIT = 400L
         private const val AHEAD = 3      // emplacement de la page d'après la suivante
+        private const val TR_AHEAD = 2   // pages traduites d'avance
+        private const val TR_WAIT = 6000L   // attente maximale d'une traduction au tour de page (ms)
     }
 }

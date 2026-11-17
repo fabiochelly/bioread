@@ -50,7 +50,7 @@ android {
     // propres, partagées, que le système peut reprendre) au lieu d'être décompressées : les
     // polices (environ 5,5 Mo de mémoire native épargnés) et la table des mots difficiles.
     androidResources {
-        noCompress += listOf("ttf", "bin", "spm")
+        noCompress += listOf("ttf", "otf", "bin", "spm")
     }
 
     compileOptions {

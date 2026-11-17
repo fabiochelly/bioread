@@ -267,6 +267,7 @@ class MainActivity : Activity() {
     override fun onResume() {
         super.onResume()
         importKey()
+        reader.syncResume()
         // Retour des réglages (autorisation accordée) ou fichiers copiés entre-temps.
         if (library != null) {
             if (shownAccess != Library.hasAccess(this)) renderLibrary()
@@ -311,6 +312,20 @@ class MainActivity : Activity() {
         if (menu != null) return
         hideNav()
         menu = MenuView(this, reader, library == null).also { root.addView(it) }
+    }
+
+    /** Comparaison des polices, ouverte depuis les options (voir [FontCompare]). */
+    private var compare: FontCompare? = null
+
+    fun showCompare(v: FontCompare) {
+        hideCompare()
+        compare = v
+        root.addView(v)
+    }
+
+    fun hideCompare() {
+        compare?.let { root.removeView(it) }
+        compare = null
     }
 
     fun hideMenu() {
@@ -459,6 +474,7 @@ class MainActivity : Activity() {
     private fun back() {
         when {
             message?.parent != null -> { dismissed = messageTitle?.text.toString(); hideMessage() }
+            compare != null -> hideCompare()
             search?.parent != null -> if (search?.back() != true) hideSearch()
             catalog != null -> if (catalog?.back() != true) hideCatalog()
             sheet != null -> hideSheet()

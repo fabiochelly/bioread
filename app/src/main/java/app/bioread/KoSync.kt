@@ -1,6 +1,9 @@
 package app.bioread
 
+import android.content.Context
+import android.net.wifi.WifiManager
 import android.os.Build
+import android.os.PowerManager
 import android.os.Handler
 import android.os.Looper
 import org.json.JSONObject
@@ -65,6 +68,32 @@ object KoSync {
      * Empreinte du fichier, celle de KOReader (util.partialMD5) : 1024 octets lus aux positions
      * 0, 1 Ko, 4 Ko, 16 Ko… jusqu'à 1 Go, tant que le fichier va jusque-là. Gardée par livre.
      */
+    /**
+     * Identifiant du livre envoyé au serveur. KOReader : l'empreinte du fichier, seule qu'il
+     * connaisse. Page Bioread : le titre et l'auteur, pour que deux copies d'un même livre qui
+     * diffèrent (autre téléchargement, métadonnées retouchées, édition partielle « Titre - The
+     * Story So Far ») restent le même livre ; si leurs textes diffèrent, la position se retrouve
+     * par le pourcentage. Titre coupé au premier sous-titre, sans accents ni ponctuation ; auteur
+     * aux mots triés (« Connors, Antoine » = « Antoine Connors »).
+     */
+    private fun document(b: BookEntry): String? {
+        val t = bookTitle(b.title)
+        val a = words(b.author).sorted().joinToString(" ")
+        if (Perf.on) Perf.log("synchro : livre « $t » / « $a »")
+        return if (!Prefs.syncBioread || t.isEmpty()) digest(b) else md5("bioread|$t|$a")
+    }
+
+    private fun words(s: String): List<String> =
+        java.text.Normalizer.normalize(s.lowercase(), java.text.Normalizer.Form.NFD)
+            .replace(Regex("\\p{M}+"), "")
+            .split(Regex("[^\\p{L}\\p{N}]+")).filter { it.isNotEmpty() }
+
+    private fun bookTitle(title: String): String {
+        val cut = Regex("\\s[-–—]\\s|:|\\(|\\[").find(title)?.range?.first ?: -1
+        val main = if (cut > 0) title.substring(0, cut) else title
+        return words(main).ifEmpty { words(title) }.joinToString(" ")
+    }
+
     private fun digest(b: BookEntry): String? {
         val saved = Prefs.pos.getString("md5_${b.id}", null)?.split('|')
         if (saved != null && saved.size == 3 && saved[0] == b.size.toString() && saved[1] == b.mtime.toString()) return saved[2]
@@ -209,19 +238,24 @@ object KoSync {
         else done("bioread-sync.txt : trois lignes attendues (serveur, identifiant, mot de passe).")
     }
 
-    /** Demande la position gardée par le serveur pour [b] ; [done] reçoit null s'il n'y en a pas ou sans réseau. */
-    fun pull(b: BookEntry, done: (Remote?) -> Unit) {
+    /**
+     * Demande la position gardée par le serveur pour [b] ; [done] reçoit null s'il n'y en a pas,
+     * [failed] est appelé à la place si le serveur n'a pas pu être joint (réseau pas encore revenu).
+     */
+    fun pull(b: BookEntry, failed: (() -> Unit)? = null, done: (Remote?) -> Unit) {
         if (!configured) return
         io.execute {
+            var ok = true
             val r: Remote? = try {
-                val doc = digest(b)
+                val doc = document(b)
                 val j = if (doc == null) null else call("GET", "/syncs/progress/$doc", null).takeIf { it.code == 200 }?.json
                 if (j == null || !j.has("progress")) null
                 else Remote(j.optString("progress"), j.optDouble("percentage", 0.0), j.optString("device"), j.optString("device_id"), j.optLong("timestamp"))
             } catch (e: Exception) {
+                ok = false
                 null
             }
-            main.post { done(r) }
+            main.post { if (ok || failed == null) done(r) else failed() }
         }
     }
 
@@ -232,24 +266,47 @@ object KoSync {
      * Envoie la position de [b] : le caractère [offset] du chapitre [spine] (dont [ch] est
      * l'analyse et [path] le fichier dans l'EPUB), à [percentage] (0 à 1) du livre.
      */
-    fun push(b: BookEntry, spine: Int, path: String, ch: Chapter, offset: Int, percentage: Double) {
+    fun push(c: Context, b: BookEntry, spine: Int, path: String, ch: Chapter, offset: Int, percentage: Double, done: (Boolean) -> Unit) {
         if (!configured) return
         val file = Library.file(b)
         val id = deviceId()
+        // L'envoi part souvent au verrouillage : la liseuse s'endort et coupe son Wi-Fi aussitôt.
+        // Appareil et Wi-Fi restent éveillés le temps de l'envoi (15 s au plus).
+        val app = c.applicationContext
+        val wake = try {
+            (app.getSystemService(Context.POWER_SERVICE) as PowerManager)
+                .newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "bioread:sync").apply { setReferenceCounted(false); acquire(15_000) }
+        } catch (e: Exception) { null }
+        val wifi = try {
+            @Suppress("DEPRECATION")
+            (app.getSystemService(Context.WIFI_SERVICE) as WifiManager)
+                .createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "bioread:sync").apply { setReferenceCounted(false); acquire() }
+        } catch (e: Exception) { null }
         io.execute {
+            var ok = false
             try {
-                val doc = digest(b) ?: return@execute
+                val doc = document(b)
                 // Le fichier est rouvert ici : le livre a pu être fermé entre-temps sur le thread principal.
-                val html = ZipFile(file).use { z -> z.getEntry(path)?.let { e -> z.getInputStream(e).use { String(it.readBytes(), Charsets.UTF_8) } } } ?: return@execute
-                val xp = XPointer.make(html, spine, ch.lettersBefore(offset))
-                call(
-                    "PUT", "/syncs/progress",
-                    JSONObject().put("document", doc).put("progress", xp).put("percentage", percentage)
-                        .put("device", Build.MODEL ?: "Android").put("device_id", id),
-                )
+                val html = if (doc == null) null else ZipFile(file).use { z -> z.getEntry(path)?.let { e -> z.getInputStream(e).use { String(it.readBytes(), Charsets.UTF_8) } } }
+                if (doc == null || html == null) ok = true   // rien d'envoyable : inutile de réessayer
+                else {
+                    val body = JSONObject().put("document", doc).put("progress", XPointer.make(html, spine, ch.lettersBefore(offset)))
+                        .put("percentage", percentage).put("device", Build.MODEL ?: "Android").put("device_id", id)
+                    // Trois essais à 3 s d'intervalle : le réseau peut être en train de tomber ou de revenir.
+                    for (attempt in 1..3) {
+                        ok = try { call("PUT", "/syncs/progress", body).code in 200..299 } catch (e: Exception) { false }
+                        if (ok || attempt == 3) break
+                        Thread.sleep(3000)
+                    }
+                }
             } catch (e: Exception) {
-                // Hors ligne : la position partira à la prochaine occasion.
+                // Livre illisible : rien à envoyer.
+            } finally {
+                try { wifi?.release() } catch (e: Exception) {}
+                try { wake?.release() } catch (e: Exception) {}
             }
+            if (Perf.on) Perf.log("synchro : position ${if (ok) "envoyée" else "non envoyée"}")
+            main.post { done(ok) }
         }
     }
 }

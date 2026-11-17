@@ -29,7 +29,14 @@ object Translator {
     private val NNBSP = Char(0x202F)     // espace fine insécable
 
     private val cache = LruCache<String, CharSequence>(800)
-    private val io = Executors.newSingleThreadExecutor()
+    // Légèrement en retrait du thread principal et du tracé des pages (voir ReaderView.painter) :
+    // le moteur hors-ligne, gourmand, ne ralentit pas les tours de page.
+    private val io = Executors.newSingleThreadExecutor { r ->
+        Thread({
+            try { android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_DEFAULT + 4) } catch (x: Throwable) {}
+            r.run()
+        }, "traduction")
+    }
     private val main = Handler(Looper.getMainLooper())
     private var deeplRetryAt = 0L
     private lateinit var app: Context

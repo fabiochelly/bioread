@@ -19,8 +19,12 @@ import java.util.Locale
  * l'objet reste le même pour tous ceux qui le détiennent.
  */
 class Fonts(private val c: Context) {
-    /** Une police de texte livrée avec l'app. [variable] : un fichier par pente, graisse réglable. */
-    class Family(val id: String, val label: String, val file: String, val variable: Boolean)
+    /**
+     * Une police de texte livrée avec l'app. [variable] : un fichier par pente, graisse réglable.
+     * [opsz] : taille optique imposée (axe « opsz »), celle du texte courant ; sans elle, ces
+     * fichiers prennent par défaut un dessin de titre, plus serré et plus contrasté.
+     */
+    class Family(val id: String, val label: String, val file: String, val variable: Boolean, val opsz: Int = 0, val ext: String = "ttf")
 
     /** Polices disponibles : Bookerly seulement si ses fichiers ont été fournis à la compilation. */
     val families: List<Family> = FAMILIES.filter { it.id != "bookerly" || exists("Bookerly-Regular.ttf") }
@@ -53,6 +57,11 @@ class Fonts(private val c: Context) {
         regular = r; italic = i; bold = b; boldItalic = bi
     }
 
+    /** Les quatre styles (normal, italique, gras, gras italique) de la police [f] (voir FontCompare). */
+    fun faces(f: Family): Array<Typeface> =
+        if (f === family) arrayOf(regular, italic, bold, boldItalic)
+        else arrayOf(face(f, false, false), face(f, false, true), face(f, true, false), face(f, true, true))
+
     /** Le style normal de la police [f], pour l'afficher dans la liste de choix. */
     fun sample(f: Family): Typeface = if (f === family) regular else face(f, false, false)
 
@@ -61,9 +70,9 @@ class Fonts(private val c: Context) {
     private fun face(f: Family, b: Boolean, i: Boolean): Typeface = try {
         if (f.variable) {
             Typeface.Builder(c.assets, "fonts/${f.file}${if (i) "-Italic" else ""}.ttf")
-                .setFontVariationSettings("'wght' ${if (b) 700 else 400}").build()
+                .setFontVariationSettings("'wght' ${if (b) 700 else 400}" + if (f.opsz > 0) ", 'opsz' ${f.opsz}" else "").build()
         } else {
-            Typeface.createFromAsset(c.assets, "fonts/${f.file}-${if (b) (if (i) "BoldItalic" else "Bold") else (if (i) "Italic" else "Regular")}.ttf")
+            Typeface.createFromAsset(c.assets, "fonts/${f.file}-${if (b) (if (i) "BoldItalic" else "Bold") else (if (i) "Italic" else "Regular")}.${f.ext}")
         }
     } catch (e: Exception) {
         Typeface.create(Typeface.SERIF, (if (b) Typeface.BOLD else 0) or (if (i) Typeface.ITALIC else 0))
@@ -82,8 +91,20 @@ class Fonts(private val c: Context) {
         val FAMILIES = listOf(
             Family("bookerly", "Bookerly", "Bookerly", false),
             Family("literata", "Literata", "Literata", true),
+            Family("newsreader", "Newsreader", "Newsreader", true, 12),
+            Family("spectral", "Spectral", "Spectral", false),
         )
     }
+}
+
+/**
+ * Facteur d'interligne qui ramène la hauteur de ligne naturelle de [t] (de 1,2 à 1,5 fois le
+ * corps selon la police) à celle de Bookerly : un même réglage, le même écart entre les lignes.
+ */
+fun lineNorm(t: Typeface): Float {
+    val fm = Paint().apply { typeface = t; textSize = 100f }.fontMetrics
+    val natural = (fm.descent - fm.ascent) / 100f
+    return if (natural > 0.5f) (1.318f / natural).coerceIn(0.8f, 1.25f) else 1f
 }
 
 /** Italique / gras à l'intérieur d'un paragraphe, en choisissant la vraie graisse Bookerly. */
@@ -147,11 +168,7 @@ class Typesetter(
     // Interligne : chaque police a sa propre hauteur de ligne naturelle (de 1,2 à 1,5 fois le
     // corps). Elle est ramenée à celle de Bookerly, pour qu'un même réglage donne le même
     // écart entre les lignes quelle que soit la police choisie.
-    private val mult = Prefs.lineSpacing / 100f * run {
-        val fm = Paint().apply { typeface = f.regular; textSize = 100f }.fontMetrics
-        val natural = (fm.descent - fm.ascent) / 100f
-        if (natural > 0.5f) (1.318f / natural).coerceIn(0.8f, 1.25f) else 1f
-    }
+    private val mult = Prefs.lineSpacing / 100f * lineNorm(f.regular)
 
     // Traduction sous les mots difficiles (livre anglais, voir WordWise). Elle se loge sous les
     // jambages de la ligne, dans l'interligne : on n'ajoute que ce qui manque pour qu'elle ne
@@ -442,6 +459,9 @@ class Typesetter(
                 // Blanc voulu par le livre : il remplace celui du réglage entre paragraphes.
                 if (st.pageBreak) { close(); y = 0; m = 0 } else if (st.top > 0f) m = maxOf(m - if (head) 0 else paraGap, (st.top * textPx * scale).toInt())
             }
+            // Un titre de chapitre (niveau 1) qui suit du texte commence une page : fichier qui
+            // réunit plusieurs chapitres. Pas après une image (ornement de tête de chapitre).
+            if (head && b.level == 1 && y > 0 && index > 0 && blocks[index - 1].kind == Block.PARA) { close(); y = 0; m = 0 }
             // Un titre ne reste jamais seul en bas de page.
             if (head && y > 0 && y + m + l.height + 2 * bodyLH > ch) { close(); y = 0; m = 0 }
             val n = l.lineCount

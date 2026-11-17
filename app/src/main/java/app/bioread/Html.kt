@@ -1,6 +1,7 @@
 package app.bioread
 
 import android.text.SpannableString
+import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.style.RelativeSizeSpan
 import android.text.style.SubscriptSpan
@@ -249,6 +250,50 @@ private val INLINE_TAGS = hashSetOf(
     "i", "em", "cite", "var", "dfn", "b", "strong", "sup", "sub", "span", "a", "small", "u", "font", "q",
 )
 
+/**
+ * [a] (paragraphe précédent) s'arrête-t-il au milieu d'une phrase que [b] poursuit ? Oui si [a]
+ * n'a pas de ponctuation finale et que [b] commence par une minuscule. Une majuscule ne suffit
+ * pas, ni un guillemet ouvrant (un nom propre ou une réplique peuvent commencer un paragraphe) :
+ * il faut en plus que [a] finisse sur une virgule, un point-virgule ou une lettre minuscule, et
+ * que le chapitre ait déjà montré ce défaut ([established]). Les lignes courtes (vers, dédicaces, signatures) ne sont jamais recollées.
+ */
+internal fun continues(a: CharSequence, b: CharSequence, established: Boolean): Boolean {
+    var e = a.length
+    while (e > 0 && a[e - 1].isWhitespace()) e--
+    if (e < 40) return false
+    val c = a[e - 1]
+    if (c in ".!?…:\"”»’)]*") return false
+    var i = 0
+    while (i < b.length && b[i].isWhitespace()) i++
+    if (i >= b.length) return false
+    val f = b[i]
+    if (f.isLowerCase()) return true
+    if (!established || !(c == ',' || c == ';' || c.isLowerCase())) return false
+    // Nom propre, ou réplique ouverte au milieu de la phrase (« he heard her grunt out / “Go!” »).
+    return f.isUpperCase() || f in "“‘\"«"
+}
+
+/**
+ * Un titre qui a l'air d'une ligne de texte : il finit comme une phrase (. ! ? … guillemet,
+ * astérisque de bruitage) ou commence par une minuscule ou des points de suspension.
+ * « WHAM*! », « Viv… », « … with her Device called. » ; mais pas « TEMPORAL STEP: READY ».
+ */
+internal fun looksLikeLine(t: CharSequence): Boolean {
+    var e = t.length
+    while (e > 0 && t[e - 1].isWhitespace()) e--
+    if (e == 0) return false
+    var i = 0
+    while (i < e && t[i].isWhitespace()) i++
+    val f = t[i]
+    return t[e - 1] in ".!?…*”\"’" || f.isLowerCase() || f == '…'
+}
+
+/** Paragraphe qui n'est qu'un intitulé de chapitre (« CHAPTER 30 », « Chapitre XII — Le retour »). */
+internal val CHAPTER_LINE = Regex(
+    "(chapter|chapitre|cap[ií]tulo|capitolo|kapitel)\\s+([0-9]+|[ivxlcdm]+)\\b[^.!?]{0,50}",
+    RegexOption.IGNORE_CASE,
+)
+
 /** Transforme un document XHTML en une liste plate de blocs prêts à composer. */
 fun parseChapter(html: String, basePath: String, fonts: Fonts, css: BookCss? = null): Chapter {
     val t = Tok(html)
@@ -266,6 +311,8 @@ fun parseChapter(html: String, basePath: String, fonts: Fonts, css: BookCss? = n
     var bullet = false
     var prevKind = -1
     var prevCentered = false
+    var lastAnchor = -1                        // position de la dernière ancre rencontrée
+    var healed = 0                             // paragraphes recollés dans ce chapitre (voir [continues])
     val ls = LinkScan(basePath)                // liens, étendue des notes
     // Mode « Fidèle au livre » : suivi du CSS (null quand le mode est coupé, et rien n'est alors fait).
     val ss = if (css == null) null else try { StyleScan(css, html, basePath, fonts) } catch (e: Exception) { null }
@@ -307,12 +354,33 @@ fun parseChapter(html: String, basePath: String, fonts: Fonts, css: BookCss? = n
                 }
                 sp
             }
-            val align = if (aligns.isEmpty()) 0 else aligns[aligns.size - 1]
+            var align = if (aligns.isEmpty()) 0 else aligns[aligns.size - 1]
+            var level = heading
+            // Balisage approximatif (livres convertis d'un document de travail) : une phrase ou un
+            // bruitage stylé en sous-titre au milieu du texte devient une ligne centrée dans la
+            // police du livre ; un paragraphe seul « CHAPTER 30 » devient un titre de chapitre.
+            if (level >= 2 && prevKind == Block.PARA && looksLikeLine(text)) { level = 0; align = 1 }
+            else if (level == 0 && CHAPTER_LINE.matches(text.trim())) level = 1
             val first = prevKind != Block.PARA || gap || prevCentered
-            emit(
+            val last = blocks.lastOrNull()
+            // Paragraphe coupé au milieu d'une phrase (livre converti d'un PDF : une coupure à
+            // chaque fin de page) : la suite est recollée au paragraphe précédent, après une espace.
+            // Jamais en mode « Fidèle au livre », ni à travers un titre, une liste, une citation,
+            // un saut de scène, un lien ou une ancre.
+            if (ss == null && heading == 0 && level == 0 && !gap && !bullet && align == 0 && last != null &&
+                last.kind == Block.PARA && last.level == 0 && last.align == 0 && last.quote == quote &&
+                last.links == null && ls.idle() && lastAnchor < total && continues(last.text, text, healed >= 3)
+            ) {
+                val merged = SpannableStringBuilder(last.text).append(' ').append(text)
+                val b = Block(Block.PARA, merged, 0, 0, last.quote, last.gap, last.indent)
+                b.start = last.start
+                blocks[blocks.size - 1] = b
+                total += 1 + text.length
+                healed++
+            } else emit(
                 Block(
-                    if (heading > 0) Block.HEAD else Block.PARA, text, heading, align, quote, gap,
-                    indent = heading == 0 && align == 0 && !first && !bullet,
+                    if (level > 0) Block.HEAD else Block.PARA, text, level, align, quote, gap,
+                    indent = level == 0 && align == 0 && !first && !bullet,
                 )
             )
         }
@@ -351,7 +419,7 @@ fun parseChapter(html: String, basePath: String, fonts: Fonts, css: BookCss? = n
                     continue
                 }
                 val id = if (t.hasAttrs()) t.attr("id") else null
-                if (id != null) anchors[id] = total + sb.length
+                if (id != null) { anchors[id] = total + sb.length; lastAnchor = total + sb.length }
                 ss?.open(t, nm, sb)
                 when {
                     ss != null && ss.takes(nm, sb) -> {}    // <br> masqué par le livre

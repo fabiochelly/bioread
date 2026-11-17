@@ -97,6 +97,9 @@ class LinkScan(private val base: String) {
      * Fin d'un bloc de texte : [block] vient d'être créé avec les [e] premiers caractères lus
      * (null si le bloc était vide). Un lien encore ouvert se poursuit dans le bloc suivant.
      */
+    /** Aucun lien en cours ni en attente : le texte en cours peut être recollé au bloc précédent. */
+    fun idle() = href == null && pending == null
+
     fun flush(block: Block?, e: Int, sb: CharSequence) {
         val h = href
         if (h == null && pending == null) return

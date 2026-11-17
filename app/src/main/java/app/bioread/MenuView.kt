@@ -2,6 +2,7 @@ package app.bioread
 
 import android.app.AlertDialog
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
 import android.graphics.drawable.GradientDrawable
@@ -23,7 +24,18 @@ import android.widget.TextView
  */
 class MenuView(private val host: MainActivity, private val reader: ReaderView, inReader: Boolean) : FrameLayout(host) {
     private val d = resources.displayMetrics.density
+    // Habillage, déclaré avant [init] qui construit la feuille. Liseuse : traits et aplats noirs,
+    // nets sur l'encre. Smartphone : surfaces pleines aux coins arrondis, sans contour ; libellés
+    // et icônes d'un brun-gris discret ; une seule couleur d'accent (la terre cuite du pied de
+    // page) pour ce qui est actif.
+    private val flat = !Theme.eink
+    private val soft = if (flat) Color.rgb(0x8A, 0x78, 0x60) else Theme.ui
+    private val accent = if (flat) Theme.footIcon else Theme.ui
+    private val surface = Color.rgb(0xF2, 0xE3, 0xC4)
+    private val hair = if (flat) Color.rgb(0xE4, 0xD1, 0xAE) else Theme.ui
     private val panel = LinearLayout(host)
+    // Colonne de l'onglet en cours de construction : les briques ([section], [grid]…) y ajoutent.
+    private var col = panel
 
     init {
         setOnClickListener { host.hideMenu() }
@@ -83,7 +95,17 @@ class MenuView(private val host: MainActivity, private val reader: ReaderView, i
 
     private fun dp(v: Int) = (v * d).toInt()
 
-    private fun line(weight: Int, color: Int = Theme.ui) = View(host).apply { setBackgroundColor(color) }
+
+    private fun line(weight: Int, color: Int = hair) = View(host).apply { setBackgroundColor(color) }
+
+    /** Fond d'un pavé : surface pleine (smartphone) ou contour fin (liseuse) ; [active] le remplit d'accent. */
+    private fun box(active: Boolean = false) = if (!flat) outline(filled = active) else GradientDrawable().apply {
+        setColor(if (active) accent else surface)
+        cornerRadius = 12 * d
+    }
+
+    /** Icône secondaire : discrète sur smartphone, noire sur liseuse. */
+    private fun icon(kind: Int, box: Int, glyph: Int) = IconButton(host, kind, box, glyph).apply { if (flat) tint = soft }
 
     private fun outline(radius: Int = 9, filled: Boolean = false, color: Int = Theme.ui) = GradientDrawable().apply {
         setColor(if (filled) color else Theme.bg)
@@ -101,32 +123,32 @@ class MenuView(private val host: MainActivity, private val reader: ReaderView, i
     }
 
     /** Titre de groupe : icône, petites capitales espacées, filet qui court jusqu'au bord. */
-    private fun section(icon: Int, title: String, right: View? = null) {
+    private fun section(icon: Int, title: String, right: View? = null, top: Int = 12) {
         val row = LinearLayout(host)
         row.gravity = Gravity.CENTER_VERTICAL
-        row.setPadding(0, dp(12), 0, dp(8))
-        row.addView(IconButton(host, icon, 24, 20))
-        row.addView(label(title.uppercase(), true, 11.5f).apply { letterSpacing = 0.12f },
-            LinearLayout.LayoutParams(-2, -2).apply { leftMargin = dp(7); rightMargin = dp(12) })
+        row.setPadding(0, dp(top), 0, dp(8))
+        if (icon >= 0) row.addView(icon(icon, 24, 20))
+        row.addView(label(title.uppercase(), true, 11.5f).apply { letterSpacing = 0.12f; if (flat) setTextColor(soft) },
+            LinearLayout.LayoutParams(-2, -2).apply { leftMargin = if (icon >= 0) dp(7) else 0; rightMargin = dp(12) })
         row.addView(line(1), LinearLayout.LayoutParams(0, maxOf(1, dp(1)), 1f))
         if (right != null) row.addView(right, LinearLayout.LayoutParams(-2, -2).apply { leftMargin = dp(12) })
-        panel.addView(row)
+        col.addView(row)
     }
 
     /** Boîte de choix : la valeur à gauche, un chevron fin à droite ; un toucher ouvre la liste. */
     private fun select(value: String, size: Float, onClick: () -> Unit) = LinearLayout(host).apply {
         gravity = Gravity.CENTER_VERTICAL
-        background = outline()
+        background = box()
         setPadding(dp(16), 0, dp(10), 0)
         addView(label(value, false, size), LinearLayout.LayoutParams(0, -2, 1f))
-        addView(IconButton(host, IconButton.DOWN, 22, 16), LinearLayout.LayoutParams(-2, -2).apply { leftMargin = dp(8) })
+        addView(icon(IconButton.DOWN, 22, 16), LinearLayout.LayoutParams(-2, -2).apply { leftMargin = dp(8) })
         setOnClickListener { onClick() }
     }
 
     /** Pavé de réglage : icône et nom au-dessus, pastille « − valeur + » d'un seul tenant. */
     private fun stepper(icon: Int, name: String, get: () -> Int, set: (Int) -> Unit, step: Int, min: Int, max: Int, fmt: (Int) -> String): View {
         val value = label(fmt(get()), true, 15f).apply { gravity = Gravity.CENTER }
-        val color = Theme.tint(icon)   // contour, séparateurs et signes à la couleur du réglage
+        val color = if (flat) soft else Theme.tint(icon)   // signes « − » et « + »
         fun change(by: Int) {
             val v = (get() + by).coerceIn(min, max)
             if (v == get()) return
@@ -149,7 +171,7 @@ class MenuView(private val host: MainActivity, private val reader: ReaderView, i
                 return true
             }
         }
-        pill.background = outline(color = color)
+        pill.background = box()
         pill.gravity = Gravity.CENTER_VERTICAL
         pill.addView(sign(IconButton.MINUS), LinearLayout.LayoutParams(0, -1, 1f))
         pill.addView(value, LinearLayout.LayoutParams(0, -2, 1.5f))
@@ -157,8 +179,8 @@ class MenuView(private val host: MainActivity, private val reader: ReaderView, i
 
         val head = LinearLayout(host)
         head.gravity = Gravity.CENTER_VERTICAL
-        head.addView(IconButton(host, icon, 24, 20))
-        head.addView(label(name, false, 13f), LinearLayout.LayoutParams(-2, -2).apply { leftMargin = dp(6) })
+        head.addView(icon(icon, 24, 20))
+        head.addView(label(name, false, 13f).apply { setTextColor(soft) }, LinearLayout.LayoutParams(-2, -2).apply { leftMargin = dp(6) })
 
         val cell = LinearLayout(host)
         cell.orientation = LinearLayout.VERTICAL
@@ -167,10 +189,29 @@ class MenuView(private val host: MainActivity, private val reader: ReaderView, i
         return cell
     }
 
-    /** Range les pavés sur trois colonnes (deux sur un écran étroit). */
+    /** Pavé sans icône, aligné sur ceux des curseurs : nom au-dessus, [body] sur la hauteur d'une pastille. */
+    private fun cell(name: String, body: View, action: Int = -1, onAction: (() -> Unit)? = null): View {
+        val cell = LinearLayout(host)
+        cell.orientation = LinearLayout.VERTICAL
+        val head = LinearLayout(host)
+        head.gravity = Gravity.CENTER_VERTICAL
+        head.addView(label(name, false, 13f).apply { setTextColor(soft) }, LinearLayout.LayoutParams(0, -2, 1f))
+        if (onAction != null) {
+            // Action liée au réglage, au bout du nom : « Comparer » et son icône (l'icône seule
+            // sur un écran étroit). Toute la ligne du nom y répond.
+            if (resources.displayMetrics.widthPixels / d >= 480) head.addView(label("Comparer", false, 13f).apply { setTextColor(soft) })
+            head.addView(icon(action, 28, 18), LinearLayout.LayoutParams(-2, dp(24)).apply { leftMargin = dp(2) })
+            head.setOnClickListener { onAction() }
+        }
+        cell.addView(head, LinearLayout.LayoutParams(-1, dp(24)))
+        cell.addView(body, LinearLayout.LayoutParams(-1, dp(44)).apply { topMargin = dp(5) })
+        return cell
+    }
+
     /** 13 → « 1,3 ». */
     private fun tenths(v: Int) = if (v % 10 == 0) "${v / 10}" else "${v / 10},${v % 10}"
 
+    /** Range les pavés sur trois colonnes (deux sur un écran étroit). */
     private fun grid(cells: List<View>) {
         val columns = if (resources.displayMetrics.widthPixels / d >= 340) 3 else 2
         var i = 0
@@ -181,7 +222,7 @@ class MenuView(private val host: MainActivity, private val reader: ReaderView, i
                 if (k > 0) lp.leftMargin = dp(10)
                 row.addView(if (i + k < cells.size) cells[i + k] else View(host), lp)
             }
-            panel.addView(row, LinearLayout.LayoutParams(-1, -2).apply { bottomMargin = dp(10) })
+            col.addView(row, LinearLayout.LayoutParams(-1, -2).apply { bottomMargin = dp(10) })
             i += columns
         }
     }
@@ -194,24 +235,32 @@ class MenuView(private val host: MainActivity, private val reader: ReaderView, i
                 field = v
                 for ((i, t) in items.withIndex()) {
                     val on = i == v
-                    t.setBackgroundColor(if (on) Theme.ui else Theme.bg)
-                    t.setTextColor(if (on) Theme.bg else Theme.ui)
+                    if (flat) {
+                        // Choix actif : pastille d'accent posée dans la surface.
+                        t.background = if (on) GradientDrawable().apply { setColor(accent); cornerRadius = 10 * d } else null
+                        t.setTextColor(if (on) Color.WHITE else Theme.ui)
+                    } else {
+                        t.setBackgroundColor(if (on) Theme.ui else Theme.bg)
+                        t.setTextColor(if (on) Theme.bg else Theme.ui)
+                    }
                     t.typeface = if (on) host.fonts.uiBold else host.fonts.ui
                 }
             }
 
         init {
-            background = outline()
+            background = box()
             clipToOutline = true
-            // Le contour est redessiné par-dessus les segments, sinon l'aplat du choix actif le recouvre.
-            foreground = GradientDrawable().apply {
-                setColor(android.graphics.Color.TRANSPARENT)
+            if (flat) setPadding(dp(3), dp(3), dp(3), dp(3))
+            // Liseuse : le contour est redessiné par-dessus les segments, sinon l'aplat du choix
+            // actif le recouvre.
+            else foreground = GradientDrawable().apply {
+                setColor(Color.TRANSPARENT)
                 setStroke(maxOf(1, dp(1)), Theme.ui)
                 cornerRadius = 9 * d
             }
             val pad = maxOf(1, dp(1))
             for ((i, o) in options.withIndex()) {
-                if (i > 0) addView(View(host).apply { setBackgroundColor(Theme.ui) }, LayoutParams(pad, -1))
+                if (i > 0 && !flat) addView(View(host).apply { setBackgroundColor(Theme.ui) }, LayoutParams(pad, -1))
                 val t = label(o, false, 13f).apply {
                     gravity = Gravity.CENTER
                     setOnClickListener { if (onSelect(i)) this@Segmented.selected = i }
@@ -280,6 +329,17 @@ class MenuView(private val host: MainActivity, private val reader: ReaderView, i
         override fun onMeasure(w: Int, h: Int) = setMeasuredDimension(dp(54), dp(30))
 
         override fun onDraw(c: Canvas) {
+            if (flat) {
+                // Smartphone : piste pleine (accent quand active), pastille blanche.
+                r.set(0f, 0f, width.toFloat(), height.toFloat())
+                val rad = r.height() / 2
+                p.style = Paint.Style.FILL
+                p.color = if (on) accent else Color.rgb(0xE2, 0xCE, 0xA6)
+                c.drawRoundRect(r, rad, rad, p)
+                p.color = Color.WHITE
+                c.drawCircle(if (on) r.right - rad else r.left + rad, r.centerY(), rad - 3 * d, p)
+                return
+            }
             val s = maxOf(1f, 1.5f * d)
             r.set(s, s, width - s, height - s)
             val rad = r.height() / 2
@@ -302,10 +362,57 @@ class MenuView(private val host: MainActivity, private val reader: ReaderView, i
         val book = reader.book
 
         // Ni titre ni bouton de fermeture : un tap en dehors de la feuille la referme.
-        panel.addView(View(host), LinearLayout.LayoutParams(-1, dp(12)))
+        // Trois onglets (texte, traduction, page) : tout tient sans faire défiler la feuille.
+        val text = column()
+        val translation = column()
+        val page = column()
+        tabs(listOf(IconButton.SIZE to "Texte", IconButton.GLOBE to "Traduction", IconButton.TURN to "Page"),
+            listOf(text, translation, page))
+
+        col = text
+        col.addView(View(host), LinearLayout.LayoutParams(-1, dp(14)))
+
+        // Première ligne : la police, sa taille, et la mise en forme de l'éditeur (lettres, vers,
+        // épigraphes…) ; les six autres réglages suivent, deux rangées de trois.
+        val fonts = host.fonts
+        lateinit var fontName: TextView
+        fun choose(f: Fonts.Family) {
+            if (f === fonts.family) return
+            Prefs.font = f.id
+            Prefs.save()
+            fonts.select(f.id)
+            fontName.text = fonts.family.label
+            fontName.typeface = fonts.regular
+            reader.restyle()
+        }
+        val font = select(fonts.family.label, 14f) {
+            val list = fonts.families
+            AlertDialog.Builder(host).setItems(list.map { it.label }.toTypedArray()) { _, i -> choose(list[i]) }.show()
+        }
+        font.setPadding(dp(10), 0, dp(4), 0)
+        fontName = font.getChildAt(0) as TextView
+        fontName.typeface = fonts.regular        // le nom est écrit dans la police elle-même
+        (font.getChildAt(1).layoutParams as LinearLayout.LayoutParams).leftMargin = dp(2)
+        // La bascule, précédée d'une ligne qui dit ce qu'elle active ; un toucher sur le texte la bascule aussi.
+        val faithfulSwitch = Switch(Prefs.faithful) { on ->
+            Prefs.faithful = on
+            Prefs.save()
+            reader.restyle()
+        }
+        val faithful = LinearLayout(host)
+        faithful.gravity = Gravity.CENTER_VERTICAL
+        faithful.addView(label("Activer", false, 13f),
+            LinearLayout.LayoutParams(0, -2, 1f))
+        faithful.addView(faithfulSwitch, LinearLayout.LayoutParams(-2, -2).apply { leftMargin = dp(6) })
+        faithful.setOnClickListener { faithfulSwitch.performClick() }
         grid(
             listOf(
+                cell("Police", font, IconButton.EYE) {
+                    // Comparaison : le paragraphe de la page ouverte, dans toutes les polices.
+                    host.showCompare(FontCompare(host, reader.sample(), reader.book?.lang ?: "", reader.topInset) { choose(it) })
+                },
                 stepper(IconButton.SIZE, "Taille", { Prefs.fontSize }, { Prefs.fontSize = it }, 1, 10, 40) { "$it" },
+                cell("Fidèle au livre", faithful),
                 stepper(IconButton.LEADING, "Interligne", { Prefs.lineSpacing }, { Prefs.lineSpacing = it }, 5, 100, 200) {
                     "${it / 100},${(it % 100).toString().padStart(2, '0')}"
                 },
@@ -319,47 +426,11 @@ class MenuView(private val host: MainActivity, private val reader: ReaderView, i
                 stepper(IconButton.WIDTH, "Largeur", { Prefs.stretch }, { Prefs.stretch = it }, 1, 90, 120) { "$it %" },
             )
         )
-
-        // --- Mise en forme de l'éditeur (lettres, vers, épigraphes…) : la bascule est dans le titre
-        // Sur la même ligne, pour rester compact : le choix de la police, puis la bascule.
-        val fonts = host.fonts
-        lateinit var fontName: TextView
-        val font = select(fonts.family.label, 15f) {
-            val list = fonts.families
-            AlertDialog.Builder(host).setItems(list.map { it.label }.toTypedArray()) { _, i ->
-                if (list[i] !== fonts.family) {
-                    Prefs.font = list[i].id
-                    Prefs.save()
-                    fonts.select(list[i].id)
-                    fontName.text = fonts.family.label
-                    fontName.typeface = fonts.regular
-                    reader.restyle()
-                }
-            }.show()
-        }
-        fontName = font.getChildAt(0) as TextView
-        fontName.typeface = fonts.regular        // le nom est écrit dans la police elle-même
-        val faithful = LinearLayout(host)
-        faithful.gravity = Gravity.CENTER_VERTICAL
-        faithful.setPadding(0, dp(12), 0, dp(8))
-        faithful.addView(font, LinearLayout.LayoutParams(0, dp(44), 1f))
-        // Écran large (liseuse) : la police occupe la première moitié, la bascule la seconde.
-        // Écran étroit : la bascule prend sa place, la police le reste.
-        val wide = resources.displayMetrics.widthPixels / d >= 480
-        val right = LinearLayout(host)
-        right.gravity = Gravity.CENTER_VERTICAL or Gravity.END
-        right.addView(label("FIDÈLE AU LIVRE", true, 11.5f).apply { letterSpacing = 0.12f },
-            LinearLayout.LayoutParams(-2, -2).apply { leftMargin = dp(16); rightMargin = dp(12) })
-        right.addView(Switch(Prefs.faithful) { on ->
-            Prefs.faithful = on
-            Prefs.save()
-            reader.restyle()
-        })
-        faithful.addView(right, if (wide) LinearLayout.LayoutParams(0, -2, 1f) else LinearLayout.LayoutParams(-2, -2))
-        panel.addView(faithful)
+        col.addView(View(host), LinearLayout.LayoutParams(-1, dp(4)))
 
         // --- Traduction : moteur, langue et clé. L'activation se fait par l'icône du pied de page.
-        section(IconButton.GLOBE, "Traduction")
+        col = translation
+        section(-1, "Traduction complète")
         // Moteur : choix libre, même quand une clé DeepL est enregistrée.
         lateinit var engine: Segmented
         engine = Segmented(arrayOf("DeepL", "Hors-ligne"), if (Prefs.engine == 1 || Prefs.deeplKey.isBlank()) 1 else 0) { i ->
@@ -384,15 +455,18 @@ class MenuView(private val host: MainActivity, private val reader: ReaderView, i
         }
         languageName = language.getChildAt(0) as TextView
         val key = FrameLayout(host).apply {
-            background = outline(filled = Prefs.deeplKey.isNotBlank(), color = Theme.tint(IconButton.KEY))
             val icon = IconButton(host, IconButton.KEY, 30, 20)
-            icon.inverted = Prefs.deeplKey.isNotBlank()   // clé pleine = clé enregistrée
+            // Clé enregistrée : pavé plein (accent sur smartphone, noir sur liseuse).
+            fun mark(has: Boolean) {
+                background = box(active = has)
+                if (flat) icon.tint = if (has) Color.WHITE else soft else icon.inverted = has
+            }
+            mark(Prefs.deeplKey.isNotBlank())
             addView(icon, LayoutParams(-2, -2, Gravity.CENTER))
             setOnClickListener {
                 askKey {
                     val has = Prefs.deeplKey.isNotBlank()
-                    background = outline(filled = has, color = Theme.tint(IconButton.KEY))
-                    icon.inverted = has
+                    mark(has)
                     if (!has) engine.selected = 1
                     reader.translationChanged(true)
                 }
@@ -402,10 +476,11 @@ class MenuView(private val host: MainActivity, private val reader: ReaderView, i
         row.addView(engine, LinearLayout.LayoutParams(0, -1, 1f))
         row.addView(language, LinearLayout.LayoutParams(-2, -1).apply { leftMargin = dp(10) })
         row.addView(key, LinearLayout.LayoutParams(dp(44), -1).apply { leftMargin = dp(10) })
-        panel.addView(row, LinearLayout.LayoutParams(-1, dp(44)))
+        col.addView(row, LinearLayout.LayoutParams(-1, dp(44)))
         words()
 
-        // --- Page
+        // --- Page : animation, chaleur du soir, synchronisation
+        col = page
         val paceLabel = label("", true, 13f)
         section(IconButton.TURN, "Animation de page", paceLabel)
         // Curseur continu : de très douce (à gauche) à ultra, puis « sans animation » tout à droite.
@@ -418,7 +493,7 @@ class MenuView(private val host: MainActivity, private val reader: ReaderView, i
             else -> "Très douce"
         } + if (v < 100) "  ·  ${Math.round(if (Theme.eink) Prefs.wipeMs else Prefs.slideMs)} ms" else ""
         paceLabel.text = paceText(Prefs.pace)
-        val tc = Theme.tint(IconButton.TURN)
+        val tc = if (flat) accent else Theme.tint(IconButton.TURN)
         val pace = PageSlider(host)
         // Un cran = 10 ms, du plus lent au plus vif ; le dernier cran coupe l'animation.
         val slow = if (Theme.eink) 400 else 300
@@ -433,7 +508,7 @@ class MenuView(private val host: MainActivity, private val reader: ReaderView, i
             paceLabel.text = paceText(Prefs.pace)
         }
         pace.onStop = { Prefs.save() }
-        panel.addView(pace, LinearLayout.LayoutParams(-1, -2))
+        col.addView(pace, LinearLayout.LayoutParams(-1, -2))
 
         // --- Chaleur du soir (smartphone) : l'écran jaunit à l'approche du coucher du soleil.
         if (!Theme.eink) {
@@ -442,7 +517,7 @@ class MenuView(private val host: MainActivity, private val reader: ReaderView, i
             val amount = label("${Prefs.warm} %", true, 13f)
             section(IconButton.MOON, "Chaleur du soir", amount)
             val status = label(Warm.status(), false, 12f)
-            val c = Theme.tint(IconButton.MOON)
+            val c = if (flat) accent else Theme.tint(IconButton.MOON)
             val bar = PageSlider(host)
             bar.max = 100
             bar.progress = Prefs.warm
@@ -458,10 +533,66 @@ class MenuView(private val host: MainActivity, private val reader: ReaderView, i
                 Prefs.save()
                 status.text = Warm.status()
             }
-            panel.addView(bar, LinearLayout.LayoutParams(-1, -2))
-            panel.addView(status)
+            col.addView(bar, LinearLayout.LayoutParams(-1, -2))
+            col.addView(status)
         }
         sync()
+        col = panel
+    }
+
+    private fun column() = LinearLayout(host).apply { orientation = LinearLayout.VERTICAL }
+
+    /**
+     * Barre d'onglets (icône et nom, filet épais sous l'onglet actif) et leurs contenus,
+     * superposés : les onglets cachés restent mesurés, la feuille garde la hauteur du plus
+     * haut et ne saute pas d'un onglet à l'autre. Le dernier onglet ouvert est retenu.
+     */
+    private fun tabs(names: List<Pair<Int, String>>, pages: List<View>) {
+        val bar = LinearLayout(host)
+        val marks = ArrayList<View>()
+        val titles = ArrayList<TextView>()
+        val icons = ArrayList<IconButton>()
+        fun show(k: Int) {
+            tab = k
+            for (i in pages.indices) {
+                val on = i == k
+                pages[i].visibility = if (on) View.VISIBLE else View.INVISIBLE
+                marks[i].visibility = if (on) View.VISIBLE else View.INVISIBLE
+                titles[i].typeface = if (on) host.fonts.uiBold else host.fonts.ui
+                if (flat) {
+                    titles[i].setTextColor(if (on) Theme.ui else soft)
+                    icons[i].tint = if (on) accent else soft
+                }
+            }
+        }
+        for ((i, n) in names.withIndex()) {
+            val item = LinearLayout(host)
+            item.orientation = LinearLayout.VERTICAL
+            val head = LinearLayout(host)
+            head.gravity = Gravity.CENTER
+            val ic = IconButton(host, n.first, 24, 20)
+            icons.add(ic)
+            head.addView(ic)
+            val t = label(n.second, false, 14f)
+            titles.add(t)
+            head.addView(t, LinearLayout.LayoutParams(-2, -2).apply { leftMargin = dp(6) })
+            item.addView(head, LinearLayout.LayoutParams(-1, dp(44)))
+            val mark = line(3, accent)
+            marks.add(mark)
+            item.addView(mark, LinearLayout.LayoutParams(-1, dp(3)))
+            item.setOnClickListener { show(i) }
+            bar.addView(item, LinearLayout.LayoutParams(0, -2, 1f))
+        }
+        panel.addView(bar, LinearLayout.LayoutParams(-1, -2).apply { topMargin = dp(6) })
+        panel.addView(line(1), LinearLayout.LayoutParams(-1, maxOf(1, dp(1))))
+        val stack = FrameLayout(host)
+        for (p in pages) stack.addView(p, FrameLayout.LayoutParams(-1, -2))
+        panel.addView(stack, LinearLayout.LayoutParams(-1, -2))
+        show(tab.coerceIn(0, pages.size - 1))
+    }
+
+    companion object {
+        private var tab = 0   // onglet ouvert, retenu d'une ouverture des options à l'autre
     }
 
     /**
@@ -504,7 +635,7 @@ class MenuView(private val host: MainActivity, private val reader: ReaderView, i
             dialog.show()
         }
         name = box.getChildAt(0) as TextView
-        panel.addView(box, LinearLayout.LayoutParams(-1, dp(44)))
+        col.addView(box, LinearLayout.LayoutParams(-1, dp(44)))
     }
 
     private fun field(value: String, what: String, type: Int) = EditText(host).apply {
@@ -520,16 +651,19 @@ class MenuView(private val host: MainActivity, private val reader: ReaderView, i
      * curseur, le nombre de mots du chapitre ouvert qui seront traduits à ce réglage.
      */
     private fun words() {
+        // Deuxième réglage de l'onglet, sous son propre titre : la bascule, le niveau, le curseur.
+        section(-1, "Traduction des mots difficiles", top = 26)
         val head = LinearLayout(host)
         head.gravity = Gravity.CENTER_VERTICAL
-        head.setPadding(0, dp(14), 0, dp(4))
-        val level = label("", true, 13f).apply { gravity = Gravity.END }
-        head.addView(label("MOTS DIFFICILES", true, 11.5f).apply { letterSpacing = 0.12f })
-        head.addView(level, LinearLayout.LayoutParams(0, -2, 1f).apply { leftMargin = dp(12) })
+        head.setPadding(0, dp(2), 0, dp(4))
+        val level = label("", false, 14f)
+        head.addView(level, LinearLayout.LayoutParams(0, -2, 1f))
         val bar = PageSlider(host)
+        var levelText = ""
         fun visible(on: Boolean) {
             bar.visibility = if (on) VISIBLE else GONE
-            level.visibility = if (on) VISIBLE else INVISIBLE
+            level.text = if (on) levelText else "Désactivée"
+            level.setTextColor(if (on) Theme.ui else soft)
         }
         head.addView(Switch(Prefs.wordwise) { on ->
             Prefs.wordwise = on
@@ -538,17 +672,18 @@ class MenuView(private val host: MainActivity, private val reader: ReaderView, i
             if (on && reader.book != null && !reader.glossable()) host.toast("Pour les livres en anglais, traduits en français")
             reader.reflow()   // l'interligne change
         }, LinearLayout.LayoutParams(-2, -2).apply { leftMargin = dp(12) })
-        panel.addView(head)
+        col.addView(head)
 
         val min = WordWise.MIN.toDouble()
         val span = Math.log10(WordWise.MAX / min)
         fun levelOf(v: Int) = (Math.round(min * Math.pow(10.0, span * v / 100) / 500) * 500).toInt()
         fun show(n: Int) {
-            level.text = "${String.format("%,d", n).replace(',', ' ')} mots connus – ${WordWise.cefr(n)}"
+            levelText = "${String.format("%,d", n).replace(',', ' ')} mots connus – ${WordWise.cefr(n)}"
+            if (Prefs.wordwise) level.text = levelText
         }
         bar.max = 100
         bar.progress = Math.round(Math.log10(Prefs.wwLevel / min) / span * 100).toInt().coerceIn(0, 100)
-        bar.tint = Theme.tint(IconButton.GLOBE)
+        bar.tint = if (flat) accent else Theme.tint(IconButton.GLOBE)
         bar.pad = 12 * d
         bar.onChange = { v, _ ->
             Prefs.wwLevel = levelOf(v)
@@ -558,7 +693,7 @@ class MenuView(private val host: MainActivity, private val reader: ReaderView, i
             Prefs.save()
             reader.glossChanged()
         }
-        panel.addView(bar, LinearLayout.LayoutParams(-1, -2))
+        col.addView(bar, LinearLayout.LayoutParams(-1, -2))
         show(Prefs.wwLevel)
         visible(Prefs.wordwise)
     }

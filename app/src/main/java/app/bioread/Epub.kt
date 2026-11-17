@@ -116,6 +116,9 @@ class Epub(file: File) : Closeable {
         val index = HashMap<String, Int>()
         for (i in spine.indices) index[spine[i]] = i
         fun add(title: String, base: String, src: String, depth: Int) {
+            // Sous-titre qui n'en est pas un (bruitage, phrase isolée stylée en titre) : hors du
+            // sommaire, comme il est hors des titres dans le texte (voir [looksLikeLine]).
+            if (depth > 0 && looksLikeLine(title.trim())) return
             val s = index[resolvePath(base, src)] ?: return
             val h = src.indexOf('#')
             out.add(TocItem(title.trim(), s, if (h >= 0) src.substring(h + 1) else null, depth))
