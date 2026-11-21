@@ -54,6 +54,7 @@ A_GRAISSE = 1.5    # graisse horizontale minimale du a romain (voir build)
 ECHELLE = 1.065    # agrandissement de tout le dessin dans le cadratin (hauteur d'x de Bookerly à corps égal)
 SERRE = 1.0        # chasse de l'italique (1 = celle de Newsreader)
 HINT = False
+OUT = ""           # dossier de sortie ("" : celui des polices de l'app)
 BOLD_SHIFT = 0     # décalage de la graisse des gras (variantes)
 
 # (style, fichier source, graisse wght, italique)
@@ -391,6 +392,119 @@ def import_quotes(paths, f, style, wght, italic):
             paths[name] = (outline(gs, name, (k, 0, 0, k, 0, 0)), round(gs[name].width * k))
 
 
+# Queue du y romain : la bille de Newsreader remplacée par un dessin fait ici. Chaque variante
+# est une épine (x, y, épaisseur) en unités de Newsreader (cadratin de 2000), qui prolonge la
+# diagonale fine du y à partir de la ligne de base, et une terminaison : "pointe" (arrondie),
+# ("coupe", angle) : bout plat tourné de [angle] degrés par rapport à la perpendiculaire.
+Y_TAIL = "goutte2" # "" : la queue à bille d'origine ; sinon une clé de Y_TAILS
+Y_CUT = -40        # la queue d'origine est gardée au-dessus de cette hauteur
+Y_START = [(649, 100, 93), (608, 0, 93), (567, -100, 93)]   # la diagonale, reprise telle quelle
+Y_TAILS = {
+    # Effilée, à la Garamond : la courbe file vers la gauche et s'amincit jusqu'à une pointe.
+    "effilee": ([(520, -205, 90), (462, -300, 84), (388, -380, 74), (300, -436, 61), (205, -462, 46),
+                 (118, -462, 32)], "pointe"),
+    # Coupe franche, à la Bookerly / Literata : la courbe s'épaissit un peu et finit coupée net.
+    "coupe": ([(522, -205, 93), (470, -298, 96), (402, -374, 102), (318, -424, 110), (236, -440, 118)],
+              ("coupe", 14)),
+    # Droite, à la Charter : la diagonale continue tout droit et se pose sur un petit pied plat.
+    "droite": ([(526, -200, 93), (485, -300, 93), (456, -370, 93)], "pied"),
+    # Goutte discrète, à la Tiempos / Lyon : le crochet finit par un léger renflement.
+    "goutte": ([(520, -205, 90), (464, -302, 82), (394, -384, 72), (312, -438, 64), (236, -456, 70),
+                (176, -446, 88), (140, -424, 98)], "pointe"),
+    # Goutte moyenne : entre la goutte discrète et la bille de Newsreader, trait moins aminci.
+    "goutte2": ([(520, -205, 96), (464, -302, 100), (394, -384, 102), (312, -438, 102), (236, -458, 108),
+                 (180, -446, 130), (150, -418, 150)], "pointe"),
+    # Comme le j de la police : la queue s'incurve à peine et finit coupée en biais, sans crochet.
+    "j": ([(522, -202, 93), (472, -292, 94), (408, -372, 95), (330, -440, 96), (290, -470, 96)], ("coupe", 0)),
+    # Coupe évasée : le crochet de la coupe franche, qui s'élargit nettement avant la coupe.
+    "evasee": ([(522, -205, 92), (470, -298, 92), (402, -374, 96), (322, -424, 108), (250, -440, 128)],
+               ("coupe", 10)),
+    # Crochet relevé, à la Baskerville : la queue remonte en s'amincissant.
+    "crochet": ([(520, -205, 90), (466, -305, 84), (398, -392, 76), (312, -448, 68), (218, -462, 58),
+                 (142, -432, 44), (100, -370, 30)], "pointe"),
+}
+
+
+def spline(pen, pts, first=True):
+    """Catmull-Rom ouverte par [pts] (tangentes d'extrémité : celles des segments extrêmes)."""
+    if first:
+        pen.moveTo(pts[0])
+    else:
+        pen.lineTo(pts[0])
+    n = len(pts)
+    for i in range(n - 1):
+        p0, p1, p2, p3 = pts[max(0, i - 1)], pts[i], pts[i + 1], pts[min(n - 1, i + 2)]
+        pen.curveTo((p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6),
+                    (p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6), p2)
+
+
+def y_tail(key):
+    """Contour de la queue [key], de la diagonale du y à sa terminaison."""
+    spine, end = Y_TAILS[key]
+    spine = Y_START + spine
+    n = len(spine)
+    left, right, dirs = [], [], []
+    for i, (x, y, w) in enumerate(spine):
+        ax, ay = spine[max(0, i - 1)][:2]
+        bx, by = spine[min(n - 1, i + 1)][:2]
+        d = math.hypot(bx - ax, by - ay)
+        ux, uy = (bx - ax) / d, (by - ay) / d              # sens de la marche (vers le bas, la gauche)
+        dirs.append((ux, uy))
+        left.append((x + uy * w / 2, y - ux * w / 2))      # côté gauche du trait en descendant…
+        right.append((x - uy * w / 2, y + ux * w / 2))
+    path = pathops.Path()
+    pen = path.getPen()
+    (x, y, w), (ux, uy) = spine[-1], dirs[-1]
+    if end == "pied":
+        # Pied plat : le trait descend tout droit jusqu'à la base, d'où part un court
+        # empattement vers la gauche, raccordé au trait par un congé.
+        base, th, lg = y - 78, 64, 150
+        k = (base - right[-1][1]) / uy
+        foot = (right[-1][0] + ux * k, base)                 # le bord droit, prolongé jusqu'à la base
+        k = (base + th - left[-1][1]) / uy
+        heel = (left[-1][0] + ux * k, base + th)             # le bord gauche, à la hauteur du dessus du pied
+        spline(pen, right)
+        pen.lineTo(foot)
+        pen.lineTo((heel[0] - lg, base))
+        pen.curveTo((heel[0] - lg - 30, base), (heel[0] - lg - 30, base + th), (heel[0] - lg, base + th))
+        pen.lineTo((heel[0] - 70, base + th))
+        pen.curveTo((heel[0] - 22, base + th), (left[-1][0] - 6, left[-1][1] - 30), left[-1])
+        spline(pen, left[::-1], False)
+    elif end == "pointe":
+        spline(pen, right)
+        r = w / 2
+        tip = (x + ux * r, y + uy * r)
+        k = 0.5523 * r
+        pen.curveTo((right[-1][0] + ux * k, right[-1][1] + uy * k), (tip[0] - uy * k, tip[1] + ux * k), tip)
+        pen.curveTo((tip[0] + uy * k, tip[1] - ux * k), (left[-1][0] + ux * k, left[-1][1] + uy * k), left[-1])
+        spline(pen, left[::-1], False)
+    else:
+        # Coupe : les deux bords glissent le long de la marche, en sens contraires.
+        t = math.tan(math.radians(end[1])) * w / 2
+        right[-1] = (right[-1][0] + ux * t, right[-1][1] + uy * t)
+        left[-1] = (left[-1][0] - ux * t, left[-1][1] - uy * t)
+        spline(pen, right)
+        spline(pen, left[::-1], False)
+    pen.closePath()
+    return pathops.simplify(path, clockwise=True)
+
+
+def redraw_y(paths, f):
+    """Remplace la queue du y, et de ses formes accentuées, par [y_tail] (romain maigre seulement)."""
+    tail = y_tail(Y_TAIL)
+    glyf = f["glyf"]
+    names = ["y"] + [n for n in f.getGlyphOrder() if glyf[n].isComposite()
+                     and any(c.glyphName == "y" and (c.x, c.y) == (0, 0) for c in glyf[n].components)]
+    keep = pathops.Path()
+    pen = keep.getPen()
+    pen.moveTo((-4000, Y_CUT)); pen.lineTo((6000, Y_CUT)); pen.lineTo((6000, 4000)); pen.lineTo((-4000, 4000))
+    pen.closePath()
+    for name in names:
+        p, adv = paths[name]
+        p = pathops.op(p, keep, pathops.PathOp.INTERSECTION, fix_winding=True, clockwise=True)
+        paths[name] = (pathops.op(p, tail, pathops.PathOp.UNION, fix_winding=True, clockwise=True), adv)
+
+
 def build(style, src, wght, italic, family="Bioreader"):
     path_src = os.path.join(FONTS, src)
     if italic and SERRE < 1:
@@ -430,6 +544,8 @@ def build(style, src, wght, italic, family="Bioreader"):
     else:
         redraw_quotes(paths, (1, 0, t1, 1, 0, 0))   # dessin droit, incliné à la pente finale
     shrink_dots(paths, xh)
+    if Y_TAIL and style == "Regular":
+        redraw_y(paths, f)
 
     # Lettres supérieures : la lettre d'une graisse plus forte, réduite à la taille des
     # chiffres supérieurs et posée sur leur ligne de base (déplacée le long de la pente).
@@ -548,7 +664,7 @@ def build(style, src, wght, italic, family="Bioreader"):
     # Agrandissement : un cadratin plus petit, tout le reste (contours, chasses, crénage,
     # métriques verticales) reste en unités et grandit d'autant.
     f["head"].unitsPerEm = round(upm / ECHELLE)
-    out = os.path.join(FONTS, f"{family}-{style}.ttf")
+    out = os.path.join(OUT or FONTS, f"{family}-{style}.ttf")
     f.save(out)
     kern_f(out)
     if HINT:
