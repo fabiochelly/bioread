@@ -30,7 +30,13 @@ class FontCompare(
 ) : View(host) {
     private val d = resources.displayMetrics.density
     private val fonts = host.fonts
-    private val families = fonts.families
+    // Planches temporaires (variantes de Bioreader à l'essai) : un toucher sur le titre passe de
+    // l'une à l'autre. 0 : les polices ordinaires ; 1 : romain ; 2 : italique (paragraphe entier).
+    private var sheet = if (fonts.families.any { it.sheet > 0 }) 1 else 0
+    private var families = pick()
+    private fun pick() = fonts.families.filter {
+        if (sheet == 0) it.sheet == 0 else it.id == "bookerly" || it.id == "newsreader" || it.id == "bioreader" || it.sheet == sheet || it.sheet == 3
+    }
     private val text: CharSequence = sample ?: PROUST
     private val locale: Locale = if (sample == null) Locale.FRENCH else if (lang.isEmpty()) Locale.getDefault() else Locale.forLanguageTag(lang)
     private val hyphen by lazy { Hyphen.of(if (sample == null) "fr" else lang.ifEmpty { Locale.getDefault().language }) }
@@ -63,13 +69,19 @@ class FontCompare(
     override fun onSizeChanged(w: Int, h: Int, ow: Int, oh: Int) {
         if (w == 0 || h == 0 || w * 31 + h == computedFor) return
         computedFor = w * 31 + h
+        compose(w, h)
+    }
+
+    private fun compose(w: Int, h: Int) {
         entries = null
         val cw = (w - 2 * mx).toInt()
         val avail = h - headTop - headH - host.insetBottom - 16 * d
+        val fams = families
+        val sh = sheet
         // Composition hors du thread principal : une dizaine d'essais pour chacune des polices.
         work.execute {
-            val r = fit(cw, avail)
-            post { place(r, avail); invalidate() }
+            val r = fit(cw, avail, fams, sh)
+            post { if (fams === families) { place(r, avail); invalidate() } }
         }
     }
 
@@ -87,7 +99,7 @@ class FontCompare(
     }
 
     /** Les [n] premiers caractères, coupés à une fin de mot, avec leurs italiques et gras dans [faces]. */
-    private fun styled(faces: Array<Typeface>, n: Int): CharSequence {
+    private fun styled(faces: Array<Typeface>, n: Int, sh: Int): CharSequence {
         val end = if (n >= text.length) text.length else {
             var e = n
             while (e > 0 && !text[e - 1].isWhitespace()) e--
@@ -96,7 +108,7 @@ class FontCompare(
         }
         // Le dernier tiers de l'extrait (à partir d'un début de mot) en italique : le romain et
         // l'italique de chaque police se comparent dans le même bloc.
-        var it = end * 2 / 3
+        var it = if (sh == 2) 0 else end * 2 / 3
         while (it > 0 && !text[it - 1].isWhitespace()) it--
         val sb = SpannableStringBuilder(text.subSequence(0, end).toString())
         if (end < text.length) sb.append('…')
@@ -111,11 +123,11 @@ class FontCompare(
         return sb
     }
 
-    private fun layout(f: Fonts.Family, faces: Array<Typeface>, size: Float, n: Int, cw: Int): Layout {
+    private fun layout(f: Fonts.Family, faces: Array<Typeface>, size: Float, n: Int, cw: Int, sh: Int): Layout {
         val p = Theme.textPaint().apply {
             typeface = faces[0]
             textSize = size + boost(f)
-            Theme.tune(this)
+            Theme.tune(this, f.hinted)
             // Trait plus épais pour les polices au dessin trop clair (voir [HEAVIER]), comme
             // le ferait le réglage « Graisse » (0,2 % du corps par cran).
             val w = Prefs.weight + (HEAVIER[f.id] ?: 0)
@@ -126,7 +138,7 @@ class FontCompare(
             }
             textLocale = locale
         }
-        val t = styled(faces, n)
+        val t = styled(faces, n, sh)
         val mult = Prefs.lineSpacing / 100f * lineNorm(faces[0])
         val ind = (Prefs.indent / 10f * (size + boost(f))).toInt()
         KpLayout.make(t, p, cw, ind, 0, 0, mult, 0f, hyphen, locale)?.let { return it }
@@ -145,17 +157,17 @@ class FontCompare(
      */
     private fun boost(f: Fonts.Family) = if (f.id in BOOSTED) d else 0f
 
-    private class Fit(val size: Float, val n: Int, val layouts: List<Layout>)
+    private class Fit(val size: Float, val n: Int, val layouts: List<Layout>, val families: List<Fonts.Family>)
 
-    private fun fit(cw: Int, avail: Float): Fit {
+    private fun fit(cw: Int, avail: Float, families: List<Fonts.Family>, sh: Int): Fit {
         val all = families.map { fonts.faces(it) }
-        fun build(size: Float, n: Int) = families.indices.map { layout(families[it], all[it], size, n, cw) }
+        fun build(size: Float, n: Int) = families.indices.map { layout(families[it], all[it], size, n, cw, sh) }
         fun height(ls: List<Layout>) = ls.sumOf { it.height.toDouble() }.toFloat() + families.size * nameH + (families.size - 1) * minGap
         val full = text.length
         var size = Prefs.fontSize * d
         // 1. Au corps de lecture, le paragraphe entier si possible.
         var ls = build(size, full)
-        if (height(ls) <= avail) return Fit(size, full, ls)
+        if (height(ls) <= avail) return Fit(size, full, ls, families)
         // 2. Raccourci, au plus juste (recherche par dichotomie sur la longueur).
         val perLine = (cw / (size * 0.48f)).toInt().coerceAtLeast(20)
         val minN = minOf(full, perLine * 2)
@@ -168,17 +180,18 @@ class FontCompare(
             val t = build(size, mid)
             if (height(t) <= avail) { best = t; bestN = mid; lo = mid + 1 } else hi = mid - 1
         }
-        if (best != null) return Fit(size, bestN, best)
+        if (best != null) return Fit(size, bestN, best, families)
         // 3. Même deux lignes ne tiennent pas : le corps diminue, par pas d'un demi-point.
         while (size > 8 * d) {
             size -= 0.5f * d
             ls = build(size, minN)
-            if (height(ls) <= avail) return Fit(size, minN, ls)
+            if (height(ls) <= avail) return Fit(size, minN, ls, families)
         }
-        return Fit(size, minN, ls)
+        return Fit(size, minN, ls, families)
     }
 
     private fun place(r: Fit, avail: Float) {
+        val families = r.families
         shownSize = r.size
         val used = r.layouts.sumOf { it.height.toDouble() }.toFloat() + families.size * nameH
         // Blanc restant réparti entre les polices (sans dépasser trois lignes d'écart).
@@ -199,7 +212,8 @@ class FontCompare(
     override fun onDraw(c: Canvas) {
         val x = mx
         val cw = width - 2 * mx
-        c.drawText("Comparer les polices", x, headTop + titlePaint.textSize, titlePaint)
+        val title = when (sheet) { 1 -> "Planche Bioreader : romain  ›"; 2 -> "Planche Bioreader : italique  ›"; else -> "Comparer les polices" + if (fonts.families.any { it.sheet > 0 }) "  ›" else "" }
+        c.drawText(title, x, headTop + titlePaint.textSize, titlePaint)
         val pts = Math.round(shownSize / d)
         val hint = when {
             entries == null -> "Composition…"
@@ -220,7 +234,7 @@ class FontCompare(
             val cur = e.family === fonts.family
             val np = if (cur) nameBold else namePaint
             val heavier = HEAVIER[e.family.id]
-            val name = e.family.label + (if (e.family.id in BOOSTED) "  ·  corps ${pts + 1}" else "") +
+            val name = e.family.label + (if (boost(e.family) > 0f) "  ·  corps ${pts + 1}" else "") +
                 (if (heavier != null) "  ·  graisse +$heavier" else "") + (if (cur) "  ·  actuelle" else "")
             c.drawText(name, x, e.top + np.textSize, np)
             c.save()
@@ -234,6 +248,12 @@ class FontCompare(
         if (e.actionMasked != MotionEvent.ACTION_UP) return true
         if (e.y < headTop + headH - 10 * d) {
             if (e.x > width - mx - 60 * d) host.hideCompare()
+            else if (fonts.families.any { it.sheet > 0 }) {
+                sheet = (sheet + 1) % 3
+                families = pick()
+                compose(width, height)
+                invalidate()
+            }
             return true
         }
         val es = entries ?: return true

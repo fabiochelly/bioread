@@ -413,10 +413,10 @@ class MenuView(private val host: MainActivity, private val reader: ReaderView, i
                 },
                 stepper(IconButton.SIZE, "Taille", { Prefs.fontSize }, { Prefs.fontSize = it }, 1, 10, 40) { "$it" },
                 cell("Fidèle au livre", faithful),
-                stepper(IconButton.LEADING, "Interligne", { Prefs.lineSpacing }, { Prefs.lineSpacing = it }, 5, 100, 200) {
+                stepper(IconButton.LEADING, "Interligne", { Prefs.lineSpacing }, { Prefs.lineSpacing = it }, 5, 70, 200) {
                     "${it / 100},${(it % 100).toString().padStart(2, '0')}"
                 },
-                stepper(IconButton.MARGINS, "Marges", { Prefs.margin }, { Prefs.margin = it }, 4, 4, 72) { "$it" },
+                stepper(IconButton.MARGINS, "Marges", { Prefs.margin }, { Prefs.margin = it }, 1, 2, 72) { "$it" },
                 // 0 = police d'origine ; chaque pas épaissit le trait de 0,2 % du corps.
                 stepper(IconButton.WEIGHT, "Graisse", { Prefs.weight }, { Prefs.weight = it }, 1, 0, 20) { "$it" },
                 // Blanc entre deux paragraphes, en dixièmes de ligne.

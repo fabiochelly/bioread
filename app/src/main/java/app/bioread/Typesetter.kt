@@ -24,7 +24,13 @@ class Fonts(private val c: Context) {
      * [opsz] : taille optique imposée (axe « opsz »), celle du texte courant ; sans elle, ces
      * fichiers prennent par défaut un dessin de titre, plus serré et plus contrasté.
      */
-    class Family(val id: String, val label: String, val file: String, val variable: Boolean, val opsz: Int = 0, val ext: String = "ttf")
+    class Family(
+        val id: String, val label: String, val file: String, val variable: Boolean, val opsz: Int = 0, val ext: String = "ttf",
+        val italicFile: String = file,  // fichiers de l'italique, s'ils diffèrent (variantes à l'essai)
+        val hinted: Boolean = false,    // instructions de hinting appliquées (calage vertical au pixel)
+        val sheet: Int = 0,             // planche de comparaison temporaire : 1 romain, 2 italique, 3 les deux (0 : police ordinaire)
+        val wght: Int = 400,            // police variable : graisse du romain et de l'italique (le gras reste à 700)
+    )
 
     /** Polices disponibles : Bookerly seulement si ses fichiers ont été fournis à la compilation. */
     val families: List<Family> = FAMILIES.filter { it.id != "bookerly" || exists("Bookerly-Regular.ttf") }
@@ -50,6 +56,7 @@ class Fonts(private val c: Context) {
     fun select(id: String) {
         val f = families.firstOrNull { it.id == id } ?: families[0]
         family = f
+        Theme.bodyHinted = f.hinted
         val r = face(f, false, false)
         val i = face(f, false, true)
         val b = face(f, true, false)
@@ -70,9 +77,9 @@ class Fonts(private val c: Context) {
     private fun face(f: Family, b: Boolean, i: Boolean): Typeface = try {
         if (f.variable) {
             Typeface.Builder(c.assets, "fonts/${f.file}${if (i) "-Italic" else ""}.ttf")
-                .setFontVariationSettings("'wght' ${if (b) 700 else 400}" + if (f.opsz > 0) ", 'opsz' ${f.opsz}" else "").build()
+                .setFontVariationSettings("'wght' ${if (b) 700 else f.wght}" + if (f.opsz > 0) ", 'opsz' ${f.opsz}" else "").build()
         } else {
-            Typeface.createFromAsset(c.assets, "fonts/${f.file}-${if (b) (if (i) "BoldItalic" else "Bold") else (if (i) "Italic" else "Regular")}.${f.ext}")
+            Typeface.createFromAsset(c.assets, "fonts/${if (i) f.italicFile else f.file}-${if (b) (if (i) "BoldItalic" else "Bold") else (if (i) "Italic" else "Regular")}.${f.ext}")
         }
     } catch (e: Exception) {
         Typeface.create(Typeface.SERIF, (if (b) Typeface.BOLD else 0) or (if (i) Typeface.ITALIC else 0))
@@ -91,6 +98,7 @@ class Fonts(private val c: Context) {
         val FAMILIES = listOf(
             Family("bookerly", "Bookerly", "Bookerly", false),
             Family("literata", "Literata", "Literata", true),
+            Family("bioreader", "Bioreader", "Bioreader", false),
             Family("newsreader", "Newsreader", "Newsreader", true, 12),
             Family("spectral", "Spectral", "Spectral", false),
         )
@@ -246,7 +254,7 @@ class Typesetter(
             Theme.textPaint().apply {
                 typeface = f.uiBold
                 textSize = textPx * k * scale
-                Theme.hint(this)
+                Theme.hint(this, false)
                     textLocale = if (tr) targetLocale else locale
                 letterSpacing = -0.01f
             }

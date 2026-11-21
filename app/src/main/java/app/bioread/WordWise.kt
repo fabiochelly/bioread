@@ -737,7 +737,7 @@ object WordWise {
         typeface = f.ui
         textSize = maxOf(body * 0.5f, 8.5f * density)
         color = if (Theme.eink) Theme.fg else Theme.ui
-        Theme.hint(this)
+        Theme.hint(this, false)
         flags = flags or Paint.LINEAR_TEXT_FLAG
     }
 }

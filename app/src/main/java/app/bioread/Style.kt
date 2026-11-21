@@ -629,7 +629,7 @@ class Styled {
         p.textSize = base.textSize * st.ratio
         st.face?.let { p.typeface = it }
         // Graisse, espacement et largeur du lecteur, recalculés pour ce corps.
-        Theme.tune(p)
+        Theme.tune(p, st.face == null && Theme.bodyHinted)   // police propre au livre : sans hinting
         p.letterSpacing += st.spacing
         return paints.putIfAbsent(k, p) ?: p
     }

@@ -88,18 +88,22 @@ object Theme {
     ).also { it.color = fg }
 
     /** Sur encre électronique, pas de hinting : formes fidèles au dessin de la police à 300 ppp. */
-    fun hint(p: TextPaint) {
-        // Rendu « net » : on applique les instructions de hinting de la police.
-        if (Prefs.sharp == 1) p.hinting = Paint.HINTING_ON else if (eink) p.hinting = Paint.HINTING_OFF
+    fun hint(p: TextPaint, hinted: Boolean = bodyHinted) {
+        // Rendu « net » : on applique les instructions de hinting de la police. [hinted] : police
+        // du texte dont le hinting est voulu (calage vertical seulement, positions au sous-pixel).
+        if (Prefs.sharp == 1 || hinted) p.hinting = Paint.HINTING_ON else if (eink) p.hinting = Paint.HINTING_OFF
     }
+
+    /** La police du texte choisie demande son hinting (voir [Fonts.Family.hinted]). */
+    @Volatile var bodyHinted = false
 
     /**
      * Texte courant, à appeler une fois la taille fixée : graisse (trait épaissi par pas très
      * fins) et largeur des lettres, réglables dans les Options.
      * La graisse n'élargit pas les lignes ; la largeur, si.
      */
-    fun tune(p: TextPaint) {
-        hint(p)
+    fun tune(p: TextPaint, hinted: Boolean = bodyHinted) {
+        hint(p, hinted)
         if (Prefs.weight > 0) {
             p.style = Paint.Style.FILL_AND_STROKE
             p.strokeWidth = p.textSize * 0.002f * Prefs.weight
