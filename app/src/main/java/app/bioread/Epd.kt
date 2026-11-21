@@ -93,6 +93,16 @@ object Epd {
         }
     }
 
+    // Essai du 21 novembre 2026 (retiré) : mode rapide le temps du balayage, mode de lecture
+    // ensuite. Constats sur la Go 6 Gen II, à ne pas refaire à l'aveugle :
+    // - setAppScopeRefreshMode et applyAppScopeUpdate sont acceptés mais sans effet à l'écran ;
+    // - ViewUpdateHelper.applyTransientUpdate(UI_DU_MODE) donne un balayage très rapide, mais la
+    //   page reste dans son rendu rapide (pâle, traces) : retracer la même image ne change rien ;
+    // - clearTransientUpdate(true) nettoie la page par un flash noir à chaque tour ;
+    // - refreshScreen(vue, UI_REGAL_MODE ou UI_REGAL_PLUS_MODE) redessine le texte en un second
+    //   passage visible, sans effacer les traces ; UI_GU_MODE ne redessine rien ;
+    // - applyTransientUpdate(UI_A2_PERFORMANCE_MODE) fusionne les bandes : plus d'animation.
+
     // ---------------------------------------------------------------- diagnostic
 
     private fun describe(c: Class<*>, sb: StringBuilder) {

@@ -88,6 +88,11 @@ class ReaderView(private val host: MainActivity) : View(host) {
     @Volatile private var busy = -1
     // La vue a quitté sa fenêtre (activité détruite) : les travaux de fond n'ont plus à l'attendre.
     @Volatile private var detached = false
+    // Chapitre que le lecteur attend (saut, page tournée au-delà du chapitre composé), -1 sinon :
+    // tant qu'il y en a un, les travaux de fond ne cèdent plus la place (voir [yieldToTurn]).
+    @Volatile private var awaited = -1
+    // Fin prévue du glissement ou du balayage en cours (SystemClock.uptimeMillis).
+    @Volatile private var quietUntil = 0L
     private var trGen = 0
     private var ci = 0
     private var pi = 0
@@ -95,7 +100,7 @@ class ReaderView(private val host: MainActivity) : View(host) {
     private var pendingPos: ((LaidChapter) -> Int)? = null
     private var pendingTurn = 0
     // Page tournée vers une page dont la traduction n'est pas arrivée : le tour attend (voir [waitFor]).
-    private var waitPage: Page? = null
+    @Volatile private var waitPage: Page? = null   // lu aussi par le fil d'ajustement
     private var waitDir = 0
     private var waitMore = 0            // tours demandés en plus pendant l'attente, faits ensuite
     private var gaveUp: Page? = null    // page dont la traduction a trop tardé : elle tourne sans
@@ -202,6 +207,18 @@ class ReaderView(private val host: MainActivity) : View(host) {
 
     private class Loc(val lc: LaidChapter, val p: Int)
 
+    /**
+     * Appelé par les travaux de fond entre deux paragraphes (chapitre voisin composé d'avance,
+     * comptage des pages, ajustement d'une page traduite) : pendant qu'une page tourne, ils
+     * attendent la fin de l'animation, qui garde ainsi les cœurs et les verrous du moteur de
+     * texte. Sans attente dès que le lecteur attend lui-même un chapitre.
+     */
+    private fun yieldToTurn() {
+        while (awaited < 0 && !detached && SystemClock.uptimeMillis() < quietUntil) {
+            try { Thread.sleep(4) } catch (x: InterruptedException) { return }
+        }
+    }
+
     // ---------------------------------------------------------------- livre
 
     /** Géométrie et réglages dont dépend la composition. */
@@ -276,6 +293,7 @@ class ReaderView(private val host: MainActivity) : View(host) {
                 }
             }
             // Sans attendre le thread principal, occupé par le démarrage.
+            if (ok && t != null && g == gen) awaited = i
             if (ok && t != null) compose(e!!, t, i, g, null, if (i == b.spine) quick else -1)
         }
     }
@@ -284,6 +302,8 @@ class ReaderView(private val host: MainActivity) : View(host) {
         syncPush()
         flushPosition()
         gen++
+        awaited = -1
+        quietUntil = 0
         val old = epub
         if (old != null) exec.execute { try { old.close() } catch (x: Exception) {} }
         epub = null
@@ -391,7 +411,7 @@ class ReaderView(private val host: MainActivity) : View(host) {
                 if (c[i] > 0) continue
                 val pages = try {
                     val ch = parseChapter(e.read(e.spine[i]) ?: "", e.spine[i], fonts, e.styles())
-                    t2.layoutChapter(i, ch, e, stop = { g != gen || detached }).pages.size
+                    t2.layoutChapter(i, ch, e, stop = { yieldToTurn(); g != gen || detached }).pages.size
                 } catch (x: Throwable) {
                     if (g != gen || detached) return@Thread
                     1
@@ -623,7 +643,7 @@ class ReaderView(private val host: MainActivity) : View(host) {
         openOff = -1
         partial = null
         val lc = chapters[c]
-        if (lc != null) applyPending(lc) else load(c)
+        if (lc != null) applyPending(lc) else { awaited = c; load(c) }
     }
 
     private fun applyPending(lc: LaidChapter) {
@@ -725,7 +745,24 @@ class ReaderView(private val host: MainActivity) : View(host) {
                     try { shown.await(QUICK_WAIT, java.util.concurrent.TimeUnit.MILLISECONDS) } catch (x: InterruptedException) {}
                 }
             }
-            Perf.time("chapter.layout $i (${ch.blocks.size} blocs)") { t.layoutChapter(i, ch, e, true, done) { g != gen } }
+            val made = done ?: arrayOfNulls(ch.blocks.size)
+            Perf.time("chapter.layout $i (${ch.blocks.size} blocs)") {
+                var r: LaidChapter? = null
+                if (awaited < 0) {
+                    // Chapitre voisin préparé d'avance, que personne n'attend : un seul fil, en
+                    // retrait, qui s'arrête pendant les tours de page. Si le lecteur se met à
+                    // attendre un chapitre, ce passage est quitté et le chapitre fini ci-dessous,
+                    // sur tous les fils ; les paragraphes déjà composés (dans [made]) sont repris.
+                    try { Process.setThreadPriority(Process.THREAD_PRIORITY_DEFAULT + 5) } catch (x: Throwable) {}
+                    try {
+                        r = t.layoutChapter(i, ch, e, false, made) { yieldToTurn(); g != gen || awaited >= 0 }
+                    } catch (x: java.util.concurrent.CancellationException) {
+                    } finally {
+                        try { Process.setThreadPriority(Process.THREAD_PRIORITY_DEFAULT) } catch (x: Throwable) {}
+                    }
+                }
+                r ?: t.layoutChapter(i, ch, e, true, made) { g != gen }
+            }
         } catch (x: Throwable) {
             LaidChapter(i, Chapter(ArrayList(), HashMap(), 0), arrayListOf(Page()))
         }
@@ -736,6 +773,7 @@ class ReaderView(private val host: MainActivity) : View(host) {
         }
         post {
             if (g == gen) {
+                if (awaited == i) awaited = -1
                 loading.remove(i)
                 chapters[i] = lc
                 if (lc.chapter.blocks.isNotEmpty()) {
@@ -752,7 +790,9 @@ class ReaderView(private val host: MainActivity) : View(host) {
                 } else if (ready) {
                     // Pendant une animation, [prepare] attendrait sa fin : les pages qui
                     // dépendent de ce chapitre se tracent tout de suite.
-                    if (animating) prerender() else prepare()
+                    // Sauf sur liseuse, où un tracé pendant le balayage retarde des bandes :
+                    // [prepare] est appelé à sa fin.
+                    if (!animating) prepare() else if (!eink) prerender()
                 }
             }
             if (busy == i) busy = -1
@@ -933,7 +973,7 @@ class ReaderView(private val host: MainActivity) : View(host) {
         if (loc == null) {
             // Chapitre voisin pas encore composé : la page tournera dès qu'il sera prêt.
             val nc = ci + d
-            if (nc >= 0 && nc < (epub?.spine?.size ?: 0)) { pendingTurn = d; load(nc) }
+            if (nc >= 0 && nc < (epub?.spine?.size ?: 0)) { pendingTurn = d; awaited = nc; load(nc) }
             return
         }
         val slot = 1 + d
@@ -968,6 +1008,8 @@ class ReaderView(private val host: MainActivity) : View(host) {
         updateFooter()
         if (Prefs.anim) {
             animating = true
+            // Les travaux de fond laissent la place jusqu'à la fin de l'animation (voir [yieldToTurn]).
+            quietUntil = SystemClock.uptimeMillis() + (if (eink) Prefs.wipeMs else Prefs.slideMs).toLong() + 50
             animDir = d
             animStart = 0
             if (eink) wipe.start(d) else {
@@ -1372,6 +1414,8 @@ class ReaderView(private val host: MainActivity) : View(host) {
             }
             // L'ajustement à la page (plusieurs compositions d'essai) se fait hors du thread principal.
             fitter.execute {
+                // Sauf si le lecteur attend justement cette page, l'ajustement ne commence pas pendant un tour.
+                if (waitPage !== page) yieldToTurn()
                 val tr = try { t.fit(segs) } catch (x: Exception) { null }
                 post {
                     if (g != gen || tg != trGen) return@post
@@ -1656,14 +1700,14 @@ class ReaderView(private val host: MainActivity) : View(host) {
                 downX = e.x
                 downY = e.y
                 handled = false
-                // Bord droit (page suivante) et coin haut-gauche (page précédente), hors pied de
-                // page : la page tourne dès le contact, sans attendre que le doigt se lève. Le
-                // bas du bord gauche reste « page suivante », au lever du doigt, pour qu'un
-                // balayage vers la droite puisse encore partir de là.
+                // Tiers droit (page suivante) et tiers gauche (page précédente en haut, suivante
+                // en dessous), hors pied de page : la page tourne dès le contact, sans attendre
+                // que le doigt se lève. Mêmes zones que [zone] ; un balayage part donc du centre.
                 val t = ts
                 if (t == null || e.y <= height - t.footerZone) {
-                    val d = if (e.x > width * 0.75f) 1
-                    else if (e.x < width * 0.20f && e.y < height / 3f) -1 else 0
+                    val col = (e.x * 3 / width).toInt()
+                    val d = if (col >= 2) 1
+                    else if (col == 0) (if ((e.y * 3 / height).toInt() == 0) -1 else 1) else 0
                     // Exception : sur un appel de note, le geste se décide au lever du doigt. Les
                     // mots de ces zones se choisissent en glissant depuis le centre (voir PageTouch).
                     if (d != 0 && !pageTouch.note(e.x, e.y)) {
