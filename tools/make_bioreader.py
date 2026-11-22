@@ -412,8 +412,8 @@ Y_TAILS = {
     "goutte": ([(520, -205, 90), (464, -302, 82), (394, -384, 72), (312, -438, 64), (236, -456, 70),
                 (176, -446, 88), (140, -424, 98)], "pointe"),
     # Goutte moyenne : entre la goutte discrète et la bille de Newsreader, trait moins aminci.
-    "goutte2": ([(520, -205, 96), (464, -302, 100), (394, -384, 102), (312, -438, 102), (236, -458, 108),
-                 (180, -446, 130), (150, -418, 150)], "pointe"),
+    "goutte2": ([(520, -205, 110), (464, -302, 124), (394, -384, 132), (312, -438, 134), (236, -458, 138),
+                 (180, -446, 152), (150, -418, 166)], "pointe"),
     # Comme le j de la police : la queue s'incurve à peine et finit coupée en biais, sans crochet.
     "j": ([(522, -202, 93), (472, -292, 94), (408, -372, 95), (330, -440, 96), (290, -470, 96)], ("coupe", 0)),
     # Coupe évasée : le crochet de la coupe franche, qui s'élargit nettement avant la coupe.
