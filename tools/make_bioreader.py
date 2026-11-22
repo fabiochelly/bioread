@@ -396,10 +396,18 @@ def import_quotes(paths, f, style, wght, italic):
 # est une épine (x, y, épaisseur) en unités de Newsreader (cadratin de 2000), qui prolonge la
 # diagonale fine du y à partir de la ligne de base, et une terminaison : "pointe" (arrondie),
 # ("coupe", angle) : bout plat tourné de [angle] degrés par rapport à la perpendiculaire.
-Y_TAIL = "goutte2" # "" : la queue à bille d'origine ; sinon une clé de Y_TAILS
+Y_TAIL = "bec2"    # "" : la queue à bille d'origine ; sinon une clé de Y_TAILS
 Y_CUT = -40        # la queue d'origine est gardée au-dessus de cette hauteur
 Y_START = [(649, 100, 93), (608, 0, 93), (567, -100, 93)]   # la diagonale, reprise telle quelle
+# Variantes qui épaississent aussi la diagonale fine au-dessus de la ligne : leur épine part du
+# haut de la lettre, sous l'empattement, et recouvre le trait d'origine (93 à 113 de large).
+Y_STARTS = {
+    "bec2": [(946, 850, 122), (790, 455, 121), (649, 100, 120), (608, 0, 120), (567, -100, 120)],
+}
 Y_TAILS = {
+    # Bec à diagonale épaissie : le délié du y porté à l'épaisseur de ceux des lettres rondes.
+    "bec2": ([(520, -205, 122), (466, -300, 128), (398, -378, 136), (316, -428, 146), (240, -446, 160)],
+             ("coupe", 18)),
     # Effilée, à la Garamond : la courbe file vers la gauche et s'amincit jusqu'à une pointe.
     "effilee": ([(520, -205, 90), (462, -300, 84), (388, -380, 74), (300, -436, 61), (205, -462, 46),
                  (118, -462, 32)], "pointe"),
@@ -414,6 +422,25 @@ Y_TAILS = {
     # Goutte moyenne : entre la goutte discrète et la bille de Newsreader, trait moins aminci.
     "goutte2": ([(520, -205, 110), (464, -302, 124), (394, -384, 132), (312, -438, 134), (236, -458, 138),
                  (180, -446, 152), (150, -418, 166)], "pointe"),
+    # Essais stylisés (planche du 22 novembre 2026), à l'épaisseur de la goutte retenue.
+    # Plume, à la Garamond / Jenson : longue courbe qui file à gauche et s'effile.
+    "plume": ([(520, -205, 110), (462, -300, 122), (388, -378, 128), (300, -432, 120), (205, -460, 96),
+               (110, -466, 62), (40, -456, 30)], "pointe"),
+    # Bec, à la Minion / Caslon : la queue s'évase et finit taillée en biseau.
+    "bec": ([(520, -205, 110), (466, -300, 124), (398, -378, 134), (316, -428, 146), (240, -446, 160)],
+            ("coupe", 18)),
+    # Crosse, à la Baskerville : la queue remonte et s'enroule en s'amincissant.
+    "crosse": ([(520, -205, 110), (464, -304, 124), (394, -390, 130), (308, -446, 126), (216, -460, 112),
+                (140, -430, 92), (104, -366, 70), (122, -312, 52)], "pointe"),
+    # Larme, à la Didot / Bodoni : la queue s'affine en délié puis porte une goutte ronde.
+    "larme": ([(520, -205, 104), (466, -304, 96), (398, -388, 80), (316, -442, 62), (236, -458, 58),
+               (186, -444, 110), (160, -410, 176)], "pointe"),
+    # Paraphe, à la Cormorant : long trait presque horizontal qui passe sous la lettre d'avant.
+    "paraphe": ([(520, -205, 110), (462, -304, 122), (380, -384, 126), (280, -430, 116), (160, -446, 92),
+                 (40, -436, 64), (-70, -404, 38), (-130, -360, 22)], "pointe"),
+    # Trait de plume, à la Palatino : la diagonale continue presque droite, coupée en biais.
+    "trait": ([(526, -200, 108), (488, -290, 116), (450, -372, 114), (418, -436, 96), (398, -476, 74)],
+              ("coupe", 25)),
     # Comme le j de la police : la queue s'incurve à peine et finit coupée en biais, sans crochet.
     "j": ([(522, -202, 93), (472, -292, 94), (408, -372, 95), (330, -440, 96), (290, -470, 96)], ("coupe", 0)),
     # Coupe évasée : le crochet de la coupe franche, qui s'élargit nettement avant la coupe.
@@ -441,7 +468,7 @@ def spline(pen, pts, first=True):
 def y_tail(key):
     """Contour de la queue [key], de la diagonale du y à sa terminaison."""
     spine, end = Y_TAILS[key]
-    spine = Y_START + spine
+    spine = Y_STARTS.get(key, Y_START) + spine
     n = len(spine)
     left, right, dirs = [], [], []
     for i, (x, y, w) in enumerate(spine):
@@ -505,6 +532,35 @@ def redraw_y(paths, f):
         paths[name] = (pathops.op(p, tail, pathops.PathOp.UNION, fix_winding=True, clockwise=True), adv)
 
 
+# Déliés de v, w, x (romain maigre) : leurs diagonales fines, plus maigres que les déliés des
+# lettres rondes, sont portées à la même épaisseur que celle du y ("bec2"). Chaque bande est
+# (x en bas, y bas, x en haut, y haut, largeur horizontale) : le bord droit du trait à épaissir
+# et la largeur voulue vers la gauche ; les bouts sont noyés dans les empattements et les
+# pointes. La chasse et le bord extérieur des lettres ne bougent pas.
+DELIES = True
+DELIES_BANDS = {
+    "v": [(672.4, 10, 1041.4, 900, 131)],
+    "w": [(537.4, 10, 898.1, 958, 129.4), (1209.7, 10, 1467.0, 900, 126)],
+    # x : la diagonale fine est en deux moitiés décalées de part et d'autre du croisement.
+    "x": [(228.5, 30, 623.5, 480, 161), (633.0, 470, 1012.5, 900, 161)],
+}
+
+
+def thicken_thins(paths, f):
+    glyf = f["glyf"]
+    for base, bands in DELIES_BANDS.items():
+        add = pathops.Path()
+        pen = add.getPen()
+        for x0, y0, x1, y1, w in bands:
+            pen.moveTo((x0, y0)); pen.lineTo((x0 - w, y0)); pen.lineTo((x1 - w, y1)); pen.lineTo((x1, y1))
+            pen.closePath()
+        names = [base] + [n for n in f.getGlyphOrder() if glyf[n].isComposite()
+                          and any(c.glyphName == base and (c.x, c.y) == (0, 0) for c in glyf[n].components)]
+        for name in names:
+            p, adv = paths[name]
+            paths[name] = (pathops.op(p, add, pathops.PathOp.UNION, fix_winding=True, clockwise=True), adv)
+
+
 def build(style, src, wght, italic, family="Bioreader"):
     path_src = os.path.join(FONTS, src)
     if italic and SERRE < 1:
@@ -546,6 +602,8 @@ def build(style, src, wght, italic, family="Bioreader"):
     shrink_dots(paths, xh)
     if Y_TAIL and style == "Regular":
         redraw_y(paths, f)
+    if DELIES and style == "Regular":
+        thicken_thins(paths, f)
 
     # Lettres supérieures : la lettre d'une graisse plus forte, réduite à la taille des
     # chiffres supérieurs et posée sur leur ligne de base (déplacée le long de la pente).
