@@ -32,8 +32,14 @@ class Fonts(private val c: Context) {
         val wght: Int = 400,            // police variable : graisse du romain et de l'italique (le gras reste à 700)
     )
 
-    /** Polices disponibles : Bookerly seulement si ses fichiers ont été fournis à la compilation. */
-    val families: List<Family> = FAMILIES.filter { it.id != "bookerly" || exists("Bookerly-Regular.ttf") }
+    /**
+     * Polices disponibles : Bookerly seulement si ses fichiers ont été fournis à la compilation ;
+     * sur liseuse, ni Newsreader ni Spectral, trop fines pour l'encre (Bioreader et Bioramond
+     * en sont les versions faites pour elle).
+     */
+    val families: List<Family> = FAMILIES.filter {
+        (it.id != "bookerly" || exists("Bookerly-Regular.ttf")) && !(Theme.eink && (it.id == "newsreader" || it.id == "spectral"))
+    }
 
     @Volatile var family: Family = families[0]
         private set
@@ -47,6 +53,17 @@ class Fonts(private val c: Context) {
         private set
     val ui = inter(c, 450)
     val uiBold = inter(c, 650)
+    /**
+     * Traductions sous les mots difficiles : Roboto Flex dans son dessin pour très petits corps
+     * (taille optique 8, graisse 600 : fichier figé et réduit au latin). À la moitié du corps,
+     * c'est la plus lisible des dix polices comparées sur la liseuse (Inter en 450 puis 600,
+     * Atkinson Hyperlegible, Geist, IBM Plex Sans, Source Sans 3, Figtree, Lexend, Literata).
+     */
+    val gloss: Typeface = try {
+        Typeface.createFromAsset(c.assets, "fonts/RobotoFlex-Legende.ttf")
+    } catch (e: Exception) {
+        inter(c, 600)
+    }
 
     init {
         select(Prefs.font)
@@ -99,6 +116,7 @@ class Fonts(private val c: Context) {
             Family("bookerly", "Bookerly", "Bookerly", false),
             Family("literata", "Literata", "Literata", true),
             Family("bioreader", "Bioreader", "Bioreader", false),
+            Family("bioramond", "Bioramond", "Bioramond", false),
             Family("newsreader", "Newsreader", "Newsreader", true, 12),
             Family("spectral", "Spectral", "Spectral", false),
         )

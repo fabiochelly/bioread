@@ -732,10 +732,14 @@ object WordWise {
         p.strokeWidth = sw
     }
 
-    /** Peinture des traductions : la police de l'interface, à un peu plus de la moitié du corps. */
+    /**
+     * Peinture des traductions : Roboto Flex petit corps ([Fonts.gloss]), à la moitié du corps,
+     * lettres un peu desserrées (à cette taille, elles se touchent presque sur l'encre).
+     */
     fun paint(f: Fonts, body: Float, density: Float): TextPaint = Theme.textPaint().apply {
-        typeface = f.ui
+        typeface = f.gloss
         textSize = maxOf(body * 0.5f, 8.5f * density)
+        letterSpacing = 0.02f
         color = if (Theme.eink) Theme.fg else Theme.ui
         Theme.hint(this, false)
         flags = flags or Paint.LINEAR_TEXT_FLAG
