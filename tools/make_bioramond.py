@@ -42,11 +42,11 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FONTS = os.path.join(ROOT, "app/src/main/assets/fonts")
 SRC = os.path.join(ROOT, "dict-out/ebgaramond")
 
-LARGEUR = 1.04     # lettres élargies (Garamond est étroite : chasse moyenne 44 % du corps, Bookerly 46)
-GRAISSE = 4.0      # crans ajoutés à l'horizontale (fûts), 0,2 % du corps par cran
+LARGEUR = 1.0816   # lettres élargies de 4 % deux fois (Garamond est étroite) : le réglage précédent vu à 104 % dans les Options
+GRAISSE = 4.16      # crans ajoutés à l'horizontale (fûts), 0,2 % du corps par cran
 VERT = 11.0        # crans ajoutés à la verticale (déliés, barres, attaches des arcs)
 ECHELLE = 1.16     # agrandissement de tout le dessin dans le cadratin
-APPROCHE = 0.7     # blanc ajouté entre les lettres, en % du corps (en plus de celui que mange la plume)
+APPROCHE = 0.728     # blanc ajouté entre les lettres, en % du corps (en plus de celui que mange la plume)
 BOUCLES = 0.1      # part de la plume qui mord dans les petites contre-formes (œil du e, panse du a)
 BOUCLES_I = 0.35   # la même pour l'italique, dont la barre du e est plus fine encore
 SEUIL = 0.62       # « petite » : moins haute que cette part de la hauteur d'x
